@@ -39,3 +39,14 @@
 
 # debug information files
 *.dwo
+
+# MacOS files
+.DS_Store
+
+# Editor files
+/.vscode
+*.bak
+Save/*
+
+# Local build files
+/build
