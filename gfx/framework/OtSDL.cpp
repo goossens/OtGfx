@@ -72,15 +72,15 @@ void OtFramework::initSDL() {
 	SDL_SetWindowAspectRatio(window, 16.0f / 9.0f, 16.0f / 9.0f);
 
 	// create GPU device
-	gpuDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, true, nullptr);
+	gpuDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, false, nullptr);
 
 	if (gpuDevice == nullptr) {
-		OtLogFatal("Error in  SDL_CreateGPUDevice(): {}", SDL_GetError());
+		OtLogFatal("Error in SDL_CreateGPUDevice: {}", SDL_GetError());
 	}
 
 	// claim window for GPU device
 	if (!SDL_ClaimWindowForGPUDevice(gpuDevice, window)) {
-		OtLogFatal("Error in  SDL_ClaimWindowForGPUDevice(): {}", SDL_GetError());
+		OtLogFatal("Error in SDL_ClaimWindowForGPUDevice: {}", SDL_GetError());
 	}
 
 	// start loop timer
@@ -139,12 +139,12 @@ void OtFramework::startFrameSDL() {
 	commandBuffer = SDL_AcquireGPUCommandBuffer(gpuDevice);
 
 	if(!commandBuffer) {
-		OtLogFatal("Error in  SDL_AcquireGPUCommandBuffer(): {}", SDL_GetError());
+		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
 	}
 
 	// get the swapchain texture
 	if (!SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer, window, &swapchainTexture, nullptr, nullptr)) {
-		OtLogFatal("Error in  SDL_WaitAndAcquireGPUSwapchainTexture(): {}", SDL_GetError());
+		OtLogFatal("Error in SDL_WaitAndAcquireGPUSwapchainTexture: {}", SDL_GetError());
 	}
 
 	gpuWaitTime = stopwatch.elapsed();
@@ -163,11 +163,11 @@ void OtFramework::endFrameSDL() {
 	SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(commandBuffer);
 
 	if (!fence) {
-		OtLogFatal("Error in  SDL_SubmitGPUCommandBufferAndAcquireFence(): {}", SDL_GetError());
+		OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
 	}
 
 	if (!SDL_WaitForGPUFences(gpuDevice, true, &fence, 1)) {
-		OtLogFatal("Error in  SDL_WaitForGPUFences(): {}", SDL_GetError());
+		OtLogFatal("Error in SDL_WaitForGPUFences: {}", SDL_GetError());
 	}
 
 	// record time and cleanup

@@ -119,12 +119,13 @@ void OtFramework::endFrameIMGUI() {
 	// render to the screen
 	ImGui::Render();
 	ImDrawData* drawData = ImGui::GetDrawData();
-	const bool is_minimized = (drawData->DisplaySize.x <= 0.0f || drawData->DisplaySize.y <= 0.0f);
+	const bool isMinimized = (drawData->DisplaySize.x <= 0.0f || drawData->DisplaySize.y <= 0.0f);
 
-	if (swapchainTexture != nullptr && !is_minimized) {
-		// setup and start a render pass
+	if (swapchainTexture != nullptr && !isMinimized) {
+		// run Dear ImGui copy pass
 		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, commandBuffer);
 
+		// setup Dear ImGui render target
 		SDL_GPUColorTargetInfo targetInfo = {};
 		targetInfo.texture = swapchainTexture;
 		targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
@@ -132,9 +133,9 @@ void OtFramework::endFrameIMGUI() {
 		targetInfo.mip_level = 0;
 		targetInfo.layer_or_depth_plane = 0;
 		targetInfo.cycle = false;
-		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
 
-		// render ImGui
+		// run Dear ImGui render pass
+		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
 		ImGui_ImplSDLGPU3_RenderDrawData(drawData, commandBuffer, renderPass);
 		SDL_EndGPURenderPass(renderPass);
 	}
@@ -165,8 +166,8 @@ void OtFramework::renderProfiler() {
 	ImGui::Text("CPU [ms per frame]:"); ImGui::SameLine(labelWith); ImGui::Text("%0.2f", cpuTime);
 	ImGui::Text("GPU [ms per frame]:"); ImGui::SameLine(labelWith); ImGui::Text("%0.2f", gpuTime);
 	ImGui::Text("GPU wait [ms]:"); ImGui::SameLine(labelWith); ImGui::Text("%0.2f", gpuWaitTime);
-	ImGui::Text("Backbuffer width:"); ImGui::SameLine(labelWith); ImGui::Text("%d", width);
-	ImGui::Text("Backbuffer height:"); ImGui::SameLine(labelWith); ImGui::Text("%d", height);
+	ImGui::Text("Back buffer width:"); ImGui::SameLine(labelWith); ImGui::Text("%d", width);
+	ImGui::Text("Back buffer height:"); ImGui::SameLine(labelWith); ImGui::Text("%d", height);
 	ImGui::Text("Anti-aliasing:"); ImGui::SameLine(labelWith); ImGui::Text("%d", antiAliasing);
 	ImGui::End();
 }

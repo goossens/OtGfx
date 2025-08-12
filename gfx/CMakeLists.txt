@@ -39,8 +39,12 @@ target_include_directories(gfx PUBLIC ${GFX_INCLUDE_DIRS})
 
 target_link_libraries(gfx PUBLIC
 	language
+	glslang
+	spirv-cross-core
 	SDL3-static
+	shadercross
 	imgui
+	imguifd
 	glm
 	${GFX_LIBS})
 

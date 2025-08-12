@@ -18,11 +18,9 @@ add_subdirectory(language)
 add_subdirectory(gfx)
 
 add_executable(example main.cpp)
+
 target_link_libraries(example
 	language
-	SDL3::SDL3
-	SDL3_Headers
-	imguifd
 	gfx)
 
 target_compile_options(example PRIVATE
