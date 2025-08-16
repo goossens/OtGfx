@@ -107,7 +107,7 @@ void OtFramework::endFrameIMGUI() {
 	if (profiler) {
 		renderProfiler();
 	}
-	
+
 	if (metrics) {
 		ImGui::ShowMetricsWindow();
 	}
@@ -147,8 +147,8 @@ void OtFramework::endFrameIMGUI() {
 //
 
 void OtFramework::endIMGUI() {
-	ImGui_ImplSDL3_Shutdown();
 	ImGui_ImplSDLGPU3_Shutdown();
+	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
 }
 

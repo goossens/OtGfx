@@ -7,3 +7,11 @@
 add_library(isocline STATIC isocline/isocline.c isocline/isocline.h)
 target_include_directories(isocline PUBLIC isocline)
 set_target_properties(isocline PROPERTIES FOLDER 3rdParty)
+
+add_library(llhttp STATIC llhttp/api.c llhttp/http.c llhttp/llhttp.c llhttp/llhttp.h)
+target_include_directories(llhttp PUBLIC llhttp)
+set_target_properties(llhttp PROPERTIES FOLDER 3rdParty)
+
+add_library(multipart STATIC multipart/multipartparser.c multipart/multipartparser.h)
+target_include_directories(multipart PUBLIC multipart)
+set_target_properties(multipart PROPERTIES FOLDER 3rdParty)

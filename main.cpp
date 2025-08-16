@@ -17,7 +17,7 @@
 //
 
 class SimpleApp : public OtFrameworkApp {
-	void onRender() override {
+	void onRender([[maybe_unused]] OtGraphicsDevice& device, [[maybe_unused]] OtCommandBuffer& commands) override {
 	}
 };
 

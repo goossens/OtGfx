@@ -9,11 +9,7 @@
 //	Include files
 //
 
-#import <objc/runtime.h>
-
 #import <AppKit/AppKit.h>
-#import <Cocoa/Cocoa.h>
-#import <Foundation/Foundation.h>
 
 #include "OtFramework.h"
 
@@ -31,7 +27,4 @@ void OtFramework::fixMenus() {
 	[[appMenu itemAtIndex: 0] setTitle: [@"About " stringByAppendingString: appName]];
 	[[appMenu itemAtIndex: 6] setTitle: [@"Hide " stringByAppendingString: appName]];
 	[[appMenu itemAtIndex: 10] setTitle: [@"Quit " stringByAppendingString: appName]];
-
-	NSMenu* windowMenu = [[[NSApp mainMenu] itemAtIndex: 1] submenu];
-	[windowMenu removeItemAtIndex: 0];
 }

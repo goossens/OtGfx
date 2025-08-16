@@ -15,12 +15,15 @@ add_subdirectory(deps)
 add_subdirectory(3rdparty)
 
 add_subdirectory(language)
+add_subdirectory(network)
+add_subdirectory(shaders)
 add_subdirectory(gfx)
 
 add_executable(example main.cpp)
 
 target_link_libraries(example
 	language
+	network
 	gfx)
 
 target_compile_options(example PRIVATE

@@ -182,6 +182,7 @@ void OtFramework::endFrameSDL() {
 
 void OtFramework::endSDL() {
 	// terminate SDL
+	SDL_ReleaseWindowFromGPUDevice(gpuDevice, window);
 	SDL_DestroyGPUDevice(gpuDevice);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
