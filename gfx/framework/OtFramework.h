@@ -16,9 +16,6 @@
 #include <string>
 
 #include "SDL3/SDL.h"
-#include "imgui.h"
-#include "imgui_impl_sdl3.h"
-#include "imgui_impl_sdlgpu3.h"
 
 #include "OtFrameworkApp.h"
 // #include "OtSampler.h"
@@ -68,17 +65,6 @@ private:
 	void startFrameIMGUI();
 	void endFrameIMGUI();
 	void endIMGUI();
-
-	// main window
-	SDL_Window* window;
-	SDL_GPUDevice* gpuDevice;
-	SDL_GPUCommandBuffer* commandBuffer;
-	SDL_GPUTexture* swapchainTexture;
-	int width;
-	int height;
-
-	// Input Method Editor (IME) support
-	SDL_Window* imeWindow = nullptr;
 
 	// time tracking
 	std::chrono::time_point<std::chrono::high_resolution_clock> lastTime;

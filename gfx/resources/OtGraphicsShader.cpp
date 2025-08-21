@@ -9,50 +9,45 @@
 //	Include files
 //
 
+#include "SDL3_shadercross/SDL_shadercross.h"
+
 #include "OtLog.h"
 
 #include "OtGraphicsShader.h"
+#include "OtGpu.h"
 
 
 //
 //	OtGraphicsShader::OtGraphicsShader
 //
 
-OtGraphicsShader::OtGraphicsShader(SDL_GPUDevice* d, const uint32_t* code, size_t size, Stage stage) {
-	// remember graphics device for destructor
-	device = d;
-
+OtGraphicsShader::OtGraphicsShader(const uint32_t* code, size_t size, Stage stage) {
 	// figure out shader metadata
-	metadata = SDL_ShaderCross_ReflectGraphicsSPIRV((Uint8*) code, size, 0);
+	SDL_ShaderCross_GraphicsShaderMetadata* metadata = SDL_ShaderCross_ReflectGraphicsSPIRV((Uint8*) code, size, 0);
 
 	if (metadata == nullptr) {
 		OtLogFatal("Error in SDL_ShaderCross_ReflectGraphicsSPIRV: {}", SDL_GetError());
 	}
 
 	// cross compile to the appropriate shader format and create a shader object
+	auto device = OtGpu::instance().device;
+
 	SDL_ShaderCross_SPIRV_Info info{};
 	info.bytecode = (Uint8*) code;
 	info.bytecode_size = size;
 	info.entrypoint = "main";
 	info.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage);
-	shader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(device, &info, metadata, 0);
+
+	shader = std::shared_ptr<SDL_GPUShader>(
+		SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(device, &info, metadata, 0),
+		[device](SDL_GPUShader* s) {
+			SDL_ReleaseGPUShader(device, s);
+		});
 
 	if (shader == nullptr) {
 		OtLogFatal("Error in SDL_ShaderCross_CompileGraphicsShaderFromSPIRV: {}", SDL_GetError());
 	}
-}
 
-
-//
-//	OtGraphicsShader::~OtGraphicsShader
-//
-
-OtGraphicsShader::~OtGraphicsShader() {
-	if (shader) {
-		SDL_ReleaseGPUShader(device, shader);
-	}
-
-	if (metadata) {
-		SDL_free(metadata);
-	}
+	// cleanup
+	SDL_free(metadata);
 }

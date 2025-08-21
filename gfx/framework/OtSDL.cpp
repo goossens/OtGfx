@@ -13,6 +13,7 @@
 #include "OtMeasure.h"
 
 #include "OtFramework.h"
+#include "OtGpu.h"
 
 
 //
@@ -24,6 +25,9 @@ void OtFramework::initSDL() {
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		OtLogFatal("Can't initialize SDL library: {}", SDL_GetError());
 	}
+
+	// initialize GPU data singleton
+	auto& gpu = OtGpu::instance();
 
 	// determine best default window size
 	int numberOfDisplays;
@@ -38,48 +42,48 @@ void OtFramework::initSDL() {
 	SDL_free(displays);
 
 	if (rect.w >= 1600 && rect.h >= 900) {
-		width = 1600;
-		height = 900;
+		gpu.width = 1600;
+		gpu.height = 900;
 
 	} else if (rect.w >= 1440 && rect.h >= 810) {
-		width = 1440;
-		height = 810;
+		gpu.width = 1440;
+		gpu.height = 810;
 
 	} else if (rect.w >= 1280 && rect.h >= 720) {
-		width = 1280;
-		height = 720;
+		gpu.width = 1280;
+		gpu.height = 720;
 
 	} else if (rect.w >= 1024 && rect.h >= 576) {
-		width = 1024;
-		height = 576;
+		gpu.width = 1024;
+		gpu.height = 576;
 
 	} else if (rect.w >= 800 && rect.h >= 450) {
-		width = 800;
-		height = 450;
+		gpu.width = 800;
+		gpu.height = 450;
 
 	} else {
-		width = 640;
-		height = 360;
+		gpu.width = 640;
+		gpu.height = 360;
 	}
 
 	// create a new window
-	window = SDL_CreateWindow("ObjectTalk", width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+	gpu.window = SDL_CreateWindow("ObjectTalk", gpu.width, gpu.height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
 
-	if (!window) {
+	if (!gpu.window) {
 		OtLogFatal("SDL library can't create window: {}", SDL_GetError());
 	}
 
-	SDL_SetWindowAspectRatio(window, 16.0f / 9.0f, 16.0f / 9.0f);
+	SDL_SetWindowAspectRatio(gpu.window, 16.0f / 9.0f, 16.0f / 9.0f);
 
 	// create GPU device
-	gpuDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, false, nullptr);
+	gpu.device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, false, nullptr);
 
-	if (gpuDevice == nullptr) {
+	if (gpu.device == nullptr) {
 		OtLogFatal("Error in SDL_CreateGPUDevice: {}", SDL_GetError());
 	}
 
 	// claim window for GPU device
-	if (!SDL_ClaimWindowForGPUDevice(gpuDevice, window)) {
+	if (!SDL_ClaimWindowForGPUDevice(gpu.device, gpu.window)) {
 		OtLogFatal("Error in SDL_ClaimWindowForGPUDevice: {}", SDL_GetError());
 	}
 
@@ -99,20 +103,21 @@ void OtFramework::initSDL() {
 void OtFramework::eventsSDL() {
 	// process available events
 	SDL_Event event;
+	auto& gpu = OtGpu::instance();
 
 	while (SDL_PollEvent(&event)) {
 		eventIMGUI(event);
 
 		if (event.type == SDL_EVENT_WINDOW_RESIZED) {
-			width = event.window.data1;
-			height = event.window.data2;
+			gpu.width = event.window.data1;
+			gpu.height = event.window.data2;
 
 		} else if (event.type == SDL_EVENT_QUIT) {
 			if (canQuit()) {
 				stop();
 			}
 
-		} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window)) {
+		} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(gpu.window)) {
 			if (canQuit()) {
 				stop();
 			}
@@ -136,14 +141,15 @@ void OtFramework::startFrameSDL() {
 	OtMeasureStopWatch stopwatch;
 
 	// acquire the command buffer
-	commandBuffer = SDL_AcquireGPUCommandBuffer(gpuDevice);
+	auto& gpu = OtGpu::instance();
+	gpu.commandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
 
-	if(!commandBuffer) {
+	if(!gpu.commandBuffer) {
 		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
 	}
 
 	// get the swapchain texture
-	if (!SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer, window, &swapchainTexture, nullptr, nullptr)) {
+	if (!SDL_WaitAndAcquireGPUSwapchainTexture(gpu.commandBuffer, gpu.window, &gpu.swapchainTexture, nullptr, nullptr)) {
 		OtLogFatal("Error in SDL_WaitAndAcquireGPUSwapchainTexture: {}", SDL_GetError());
 	}
 
@@ -160,19 +166,20 @@ void OtFramework::endFrameSDL() {
 	OtMeasureStopWatch stopwatch;
 
 	// submit the command buffer
-	SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(commandBuffer);
+	auto& gpu = OtGpu::instance();
+	SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(gpu.commandBuffer);
 
 	if (!fence) {
 		OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
 	}
 
-	if (!SDL_WaitForGPUFences(gpuDevice, true, &fence, 1)) {
+	if (!SDL_WaitForGPUFences(gpu.device, true, &fence, 1)) {
 		OtLogFatal("Error in SDL_WaitForGPUFences: {}", SDL_GetError());
 	}
 
 	// record time and cleanup
 	gpuTime = stopwatch.elapsed();
-	SDL_ReleaseGPUFence(gpuDevice, fence);
+	SDL_ReleaseGPUFence(gpu.device, fence);
 }
 
 
@@ -182,9 +189,10 @@ void OtFramework::endFrameSDL() {
 
 void OtFramework::endSDL() {
 	// terminate SDL
-	SDL_ReleaseWindowFromGPUDevice(gpuDevice, window);
-	SDL_DestroyGPUDevice(gpuDevice);
-	SDL_DestroyWindow(window);
+	auto& gpu = OtGpu::instance();
+	SDL_ReleaseWindowFromGPUDevice(gpu.device, gpu.window);
+	SDL_DestroyGPUDevice(gpu.device);
+	SDL_DestroyWindow(gpu.window);
 	SDL_Quit();
 }
 

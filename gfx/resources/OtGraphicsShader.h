@@ -13,8 +13,9 @@
 //
 
 #include <cstdint>
+#include <memory>
 
-#include "SDL3_shadercross/SDL_shadercross.h"
+#include "SDL3/SDL.h"
 
 
 //
@@ -30,15 +31,8 @@ public:
 	};
 
 	// constructor/destructor
-	OtGraphicsShader(SDL_GPUDevice* d, const uint32_t* code, size_t size, Stage stage);
-	~OtGraphicsShader();
-
-	// access information
-	SDL_ShaderCross_GraphicsShaderMetadata* getMetadata() { return metadata;}
-	SDL_GPUShader* getShader() { return shader;}
+	OtGraphicsShader(const uint32_t* code, size_t size, Stage stage);
 
 private:
-	SDL_GPUDevice* device = nullptr;
-	SDL_ShaderCross_GraphicsShaderMetadata* metadata = nullptr;
-	SDL_GPUShader* shader = nullptr;
+	std::shared_ptr<SDL_GPUShader> shader;
 };

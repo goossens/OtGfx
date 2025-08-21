@@ -16,8 +16,13 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlgpu3.h"
+
 #include "OtDejaVu.h"
 #include "OtFramework.h"
+#include "OtGpu.h"
 
 
 //
@@ -49,10 +54,11 @@ void OtFramework::initIMGUI() {
 		ImGuiHoveredFlags_AllowWhenDisabled;
 
 	// setup platform/renderer backends
-	ImGui_ImplSDL3_InitForSDLGPU(window);
+	auto& gpu = OtGpu::instance();
+	ImGui_ImplSDL3_InitForSDLGPU(gpu.window);
 	ImGui_ImplSDLGPU3_InitInfo init_info = {};
-	init_info.Device = gpuDevice;
-	init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpuDevice, window);
+	init_info.Device = gpu.device;
+	init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu.device, gpu.window);
 	init_info.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
 	ImGui_ImplSDLGPU3_Init(&init_info);
 
@@ -117,17 +123,18 @@ void OtFramework::endFrameIMGUI() {
 	}
 
 	// render to the screen
+	auto& gpu = OtGpu::instance();
 	ImGui::Render();
 	ImDrawData* drawData = ImGui::GetDrawData();
 	const bool isMinimized = (drawData->DisplaySize.x <= 0.0f || drawData->DisplaySize.y <= 0.0f);
 
-	if (swapchainTexture != nullptr && !isMinimized) {
+	if (gpu.swapchainTexture != nullptr && !isMinimized) {
 		// run Dear ImGui copy pass
-		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, commandBuffer);
+		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, gpu.commandBuffer);
 
 		// setup Dear ImGui render target
 		SDL_GPUColorTargetInfo targetInfo = {};
-		targetInfo.texture = swapchainTexture;
+		targetInfo.texture = gpu.swapchainTexture;
 		targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
 		targetInfo.store_op = SDL_GPU_STOREOP_STORE;
 		targetInfo.mip_level = 0;
@@ -135,8 +142,8 @@ void OtFramework::endFrameIMGUI() {
 		targetInfo.cycle = false;
 
 		// run Dear ImGui render pass
-		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
-		ImGui_ImplSDLGPU3_RenderDrawData(drawData, commandBuffer, renderPass);
+		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(gpu.commandBuffer, &targetInfo, 1, nullptr);
+		ImGui_ImplSDLGPU3_RenderDrawData(drawData, gpu.commandBuffer, renderPass);
 		SDL_EndGPURenderPass(renderPass);
 	}
 }
@@ -158,6 +165,7 @@ void OtFramework::endIMGUI() {
 //
 
 void OtFramework::renderProfiler() {
+	auto& gpu = OtGpu::instance();
 	auto labelWith = ImGui::CalcTextSize("                         ").x;
 
 	ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f), ImGuiCond_Once);
@@ -166,8 +174,8 @@ void OtFramework::renderProfiler() {
 	ImGui::Text("CPU [ms per frame]:"); ImGui::SameLine(labelWith); ImGui::Text("%0.2f", cpuTime);
 	ImGui::Text("GPU [ms per frame]:"); ImGui::SameLine(labelWith); ImGui::Text("%0.2f", gpuTime);
 	ImGui::Text("GPU wait [ms]:"); ImGui::SameLine(labelWith); ImGui::Text("%0.2f", gpuWaitTime);
-	ImGui::Text("Back buffer width:"); ImGui::SameLine(labelWith); ImGui::Text("%d", width);
-	ImGui::Text("Back buffer height:"); ImGui::SameLine(labelWith); ImGui::Text("%d", height);
+	ImGui::Text("Back buffer width:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.width);
+	ImGui::Text("Back buffer height:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.height);
 	ImGui::Text("Anti-aliasing:"); ImGui::SameLine(labelWith); ImGui::Text("%d", antiAliasing);
 	ImGui::End();
 }

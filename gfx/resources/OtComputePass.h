@@ -17,7 +17,6 @@
 
 #include "SDL3/SDL_gpu.h"
 
-#include "OtCommandBuffer.h"
 #include "OtComputePipeline.h"
 #include "OtTexture.h"
 
@@ -29,17 +28,15 @@
 class OtComputePass {
 public:
 	// add a texture
-	void addTexture(std::shared<OtTexture> texture);
+	void addTexture(OtTexture texture);
 
 	// add a buffer
 	void addBuffer();
 
-	void begin(OtCommandBuffer& commands, std::shared<OtComputePipeline> pipeline);
+	void begin(OtComputePipeline& pipeline);
 	void setUniforms(size_t slot, const void data, size_t size);
 	void dispatch(size_t threadsX, size_t threadsY, size_t threadsZ, size_t threadsPerGroupX=1, size_t threadsPerGroupY=1, size_t threadsPerGroupZ=1);
 	void end();
 
 private:
-	// work variables
-	SDL_GPUCommandBuffer* commandBuffer;
 };

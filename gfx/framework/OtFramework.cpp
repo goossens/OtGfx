@@ -39,7 +39,6 @@
 #include "OtCommandBuffer.h"
 #include "OtFramework.h"
 #include "OtFrameworkAtExit.h"
-#include "OtGraphicsDevice.h"
 #include "OtMessageBus.h"
 // #include "OtPass.h"
 
@@ -75,8 +74,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 	});
 
 	// let app perform its own setup
-	OtGraphicsDevice device(gpuDevice);
-	app->onSetup(device);
+	app->onSetup();
 
 	// run app until we are told to stop
 	running = true;
@@ -105,9 +103,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 
 		// let app render a frame
 		OtMeasureStopWatch stopwatch;
-		OtCommandBuffer commands(commandBuffer);
-		device.setSize(width, height);
-		app->onRender(device, commands);
+		app->onRender();
 		cpuTime = stopwatch.elapsed();
 
 		// put results on screen

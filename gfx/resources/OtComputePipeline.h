@@ -12,8 +12,10 @@
 //	Include files
 //
 
+#include <cstdint>
+#include <memory>
+
 #include "SDL3/SDL_gpu.h"
-#include "SDL3_shadercross/SDL_shadercross.h"
 
 
 //
@@ -22,12 +24,11 @@
 
 class OtComputePipeline {
 public:
-	// constructor/destructor
-	OtComputePipeline(SDL_GPUDevice* d, const uint32_t* code, size_t size);
-	~OtComputePipeline();
+	// load shader
+	void load(const uint32_t* code, size_t size);
 
+	// clear the object
+	void clear() { pipeline = nullptr; }
 private:
-	SDL_GPUDevice* device = nullptr;
-	SDL_ShaderCross_ComputePipelineMetadata* metadata = nullptr;
-	SDL_GPUComputePipeline* pipeline = nullptr;
+	std::shared_ptr<SDL_GPUComputePipeline> pipeline;
 };

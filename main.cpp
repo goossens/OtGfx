@@ -11,14 +11,29 @@
 
 #include "OtFramework.h"
 
+#include "OtComputePipeline.h"
+#include "OtGradientComp.h"
+
 
 //
 //	Simple app
 //
 
 class SimpleApp : public OtFrameworkApp {
-	void onRender([[maybe_unused]] OtGraphicsDevice& device, [[maybe_unused]] OtCommandBuffer& commands) override {
+public:
+	void onSetup() override {
+		generator.load(OtGradientComp,sizeof(OtGradientComp));
 	}
+
+	void onRender() override {
+	}
+
+	void onTerminate() override {
+		generator.clear();
+	}
+
+private:
+	OtComputePipeline generator;
 };
 
 

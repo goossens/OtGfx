@@ -9,14 +9,6 @@
 
 
 //
-//	Include files
-//
-
-#include "OtCommandBuffer.h"
-#include "OtGraphicsDevice.h"
-
-
-//
 //	OtFrameworkApp class
 //
 
@@ -26,8 +18,8 @@ public:
 	virtual inline ~OtFrameworkApp() {}
 
 	// event handlers
-	virtual inline void onSetup([[maybe_unused]] OtGraphicsDevice& device) {}
-	virtual inline void onRender([[maybe_unused]] OtGraphicsDevice& device, [[maybe_unused]] OtCommandBuffer& commands) {}
+	virtual inline void onSetup() {}
+	virtual inline void onRender() {}
 	virtual inline void onTerminate() {}
 	virtual inline bool onCanQuit() { return true; }
 };
