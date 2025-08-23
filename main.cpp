@@ -13,6 +13,7 @@
 
 #include "OtComputePipeline.h"
 #include "OtGradientComp.h"
+#include "OtLogo.h"
 
 
 //
@@ -26,14 +27,32 @@ public:
 	}
 
 	void onRender() override {
+		// render splash screen
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		ImGui::Begin(
+			"SplashScreen",
+			nullptr,
+			ImGuiWindowFlags_NoDecoration |
+				ImGuiWindowFlags_AlwaysAutoResize |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoBringToFrontOnFocus |
+				ImGuiWindowFlags_NoInputs);
+
+		ImGui::Image(logo.getTextureID(), logo.getSize());
+		ImGui::End();
 	}
 
 	void onTerminate() override {
 		generator.clear();
+		logo.clear();
 	}
 
 private:
 	OtComputePipeline generator;
+	OtLogo logo;
 };
 
 

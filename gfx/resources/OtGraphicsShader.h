@@ -17,6 +17,8 @@
 
 #include "SDL3/SDL.h"
 
+#include "OtGpu.h"
+
 
 //
 //	OtGraphicsShader
@@ -33,6 +35,22 @@ public:
 	// constructor/destructor
 	OtGraphicsShader(const uint32_t* code, size_t size, Stage stage);
 
+	// clear the object
+	void clear() { shader = nullptr; }
+
+	// see if pipeline is valid
+	inline bool isValid() { return shader != nullptr; }
+
 private:
+	// the GPU shader
 	std::shared_ptr<SDL_GPUShader> shader;
+
+	// memory manage SDL resource
+	inline void assign(SDL_GPUShader* newShader) {
+		shader = std::shared_ptr<SDL_GPUShader>(
+			newShader,
+			[](SDL_GPUShader* oldShader) {
+				SDL_ReleaseGPUShader(OtGpu::instance().device, oldShader);
+			});
+	}
 };

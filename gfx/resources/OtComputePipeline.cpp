@@ -14,7 +14,6 @@
 #include "OtLog.h"
 
 #include "OtComputePipeline.h"
-#include "OtGpu.h"
 
 
 //
@@ -30,19 +29,17 @@ void OtComputePipeline::load(const uint32_t* code, size_t size) {
 	}
 
 	// cross compile to the appropriate shader format and create a shader object
-	auto device = OtGpu::instance().device;
+	SDL_ShaderCross_SPIRV_Info info{
+		.bytecode = (Uint8*) code,
+		.bytecode_size = size,
+		.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
+		.enable_debug = false,
+		.entrypoint = "main",
+		.name = "",
+		.props = 0
+	};
 
-	SDL_ShaderCross_SPIRV_Info info{};
-	info.bytecode = (Uint8*) code;
-	info.bytecode_size = size;
-	info.entrypoint = "main";
-	info.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE;
-
-	pipeline = std::shared_ptr<SDL_GPUComputePipeline>(
-		SDL_ShaderCross_CompileComputePipelineFromSPIRV(device, &info, metadata, 0),
-		[device](SDL_GPUComputePipeline* p) {
-			SDL_ReleaseGPUComputePipeline(device, p);
-		});
+	assign(SDL_ShaderCross_CompileComputePipelineFromSPIRV(OtGpu::instance().device, &info, metadata, 0));
 
 	if (pipeline == nullptr) {
 		OtLogFatal("Error in SDL_ShaderCross_CompileComputePipelineFromSPIRV: {}", SDL_GetError());

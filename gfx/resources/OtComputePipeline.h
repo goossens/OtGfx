@@ -17,6 +17,8 @@
 
 #include "SDL3/SDL_gpu.h"
 
+#include "OtGpu.h"
+
 
 //
 //	OtComputePipeline
@@ -29,6 +31,20 @@ public:
 
 	// clear the object
 	void clear() { pipeline = nullptr; }
+
+	// see if pipeline is valid
+	inline bool isValid() { return pipeline != nullptr; }
+
 private:
+	// the GPU resource
 	std::shared_ptr<SDL_GPUComputePipeline> pipeline;
+
+	// memory manage SDL resource
+	inline void assign(SDL_GPUComputePipeline* newPipeline) {
+		pipeline = std::shared_ptr<SDL_GPUComputePipeline>(
+			newPipeline,
+			[](SDL_GPUComputePipeline* oldPipeline) {
+				SDL_ReleaseGPUComputePipeline(OtGpu::instance().device, oldPipeline);
+			});
+	}
 };

@@ -36,25 +36,12 @@ OtImage::OtImage(const std::string& path, bool powerof2, bool square) {
 
 
 //
-//	OtImage::~OtImage
-//
-
-OtImage::~OtImage() {
-	if (image) {
-		SDL_DestroySurface(image);
-		image = nullptr;
-	}
-}
-
-
-//
 //	OtImage::clear
 //
 
 void OtImage::clear() {
-	if (image) {
-		SDL_DestroySurface(image);
-		image = nullptr;
+	if (surface) {
+		surface = nullptr;
 		incrementVersion();
 	}
 }
@@ -65,14 +52,11 @@ void OtImage::clear() {
 //
 
 void OtImage::update(int width, int height, int format) {
-	if (!image || image->w != width || image->h != height || image->format != format) {
-		// remove previous image (if required)
-		clear();
-
+	if (!surface || surface->w != width || surface->h != height || surface->format != format) {
 		// create new image
-		image = SDL_CreateSurface(width, height, static_cast<SDL_PixelFormat>(format));
+		assign(SDL_CreateSurface(width, height, static_cast<SDL_PixelFormat>(format)));
 
-		if (!image) {
+		if (!surface) {
 			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
 		}
 	}
@@ -83,7 +67,7 @@ void OtImage::update(int width, int height, int format) {
 //	isPowerOfTwo
 //
 
-bool isPowerOfTwo(int n) {
+static bool isPowerOfTwo(int n) {
 	// handle the special case of 0, which is not a power of two
 	if (n <= 0) {
 		return false;
@@ -99,9 +83,6 @@ bool isPowerOfTwo(int n) {
 //
 
 void OtImage::load(const std::string& address, bool powerof2, bool square) {
-	// remove previous image (if required)
-	clear();
-
 	// do we have a URL?
 	if (OtText::startsWith(address, "http:") || OtText::startsWith(address, "https:")) {
 		OtUrl url(address);
@@ -110,28 +91,30 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 
 	} else {
 		// load image from file
-		image = IMG_Load(address.c_str());
+		assign(IMG_Load(address.c_str()));
 
-		if (!image) {
+		if (!surface) {
 			OtLogFatal("Error in IMG_Load: {}", SDL_GetError());
 		}
+
+		normalize();
 	}
 
 	// validate sides are power of 2 (if required)
-	if (powerof2 && !(isPowerOfTwo(image->w))) {
+	if (powerof2 && !(isPowerOfTwo(surface->w))) {
 		clear();
-		OtLogError("Image width {} is not a power of 2", image->w);
+		OtLogError("Image width {} is not a power of 2", surface->w);
 	}
 
-	if (powerof2 && !(isPowerOfTwo(image->h))) {
+	if (powerof2 && !(isPowerOfTwo(surface->h))) {
 		clear();
-		OtLogError("Image height {} is not a power of 2", image->h);
+		OtLogError("Image height {} is not a power of 2", surface->h);
 	}
 
 	// validate squareness (if required)
-	if (square && image->w != image->h) {
+	if (square && surface->w != surface->h) {
 		clear();
-		OtLogError("Image must be square not {} by {}", image->w, image->h);
+		OtLogError("Image must be square not {} by {}", surface->w, surface->h);
 	}
 }
 
@@ -141,13 +124,19 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 //
 
 void OtImage::load(int width, int height, int format, void* pixels) {
-	// remove previous image (if required)
-	clear();
-	image = SDL_CreateSurfaceFrom(width, height, static_cast<SDL_PixelFormat>(format), pixels, SDL_BYTESPERPIXEL(format) * width);
+	// load new image
+	assign(SDL_CreateSurfaceFrom(
+		width,
+		height,
+		static_cast<SDL_PixelFormat>(format),
+		pixels,
+		SDL_BYTESPERPIXEL(format) * width));
 
-	if (!image) {
+	if (!surface) {
 		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
 	}
+
+	normalize();
 }
 
 
@@ -163,11 +152,13 @@ void OtImage::load(void* data, size_t size) {
 		OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
 	}
 
-	image = IMG_Load_IO(io, true);
+	assign(IMG_Load_IO(io, true));
 
-	if (!image) {
+	if (!surface) {
 		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
 	}
+
+	normalize();
 }
 
 
@@ -180,7 +171,7 @@ void OtImage::saveToPNG(const std::string& path) {
 	OtAssert(isValid());
 
 	// write image to file
-	if (!IMG_SavePNG(image, path.c_str())){
+	if (!IMG_SavePNG(surface.get(), path.c_str())){
 		OtLogFatal("Error in IMG_SavePNG: {}", SDL_GetError());
 	}
 }
@@ -194,15 +185,15 @@ glm::vec4 OtImage::getPixelRgba(int x, int y) {
 	// sanity check
 	OtAssert(isValid());
 
-	x = std::clamp(x, 0, image->w - 1);
-	y = std::clamp(y, 0, image->h - 1);
+	x = std::clamp(x, 0, surface->w - 1);
+	y = std::clamp(y, 0, surface->h - 1);
 
-	if (image->format == SDL_PIXELFORMAT_RGBA8888) {
-		auto value = &((uint8_t*) image->pixels)[y * image->w + x];
+	if (surface->format == SDL_PIXELFORMAT_RGBA8888) {
+		auto value = &((uint8_t*) surface->pixels)[y * surface->w + x];
 		return glm::vec4(value[0] / 255.0f, value[1] / 255.0f, value[2] / 255.0f, value[3] / 255.0f);
 
-	} else if (image->format == SDL_PIXELFORMAT_RGBA128_FLOAT) {
-		auto value = &((float*) image->pixels)[y * image->w + x];
+	} else if (surface->format == SDL_PIXELFORMAT_RGBA128_FLOAT) {
+		auto value = &((float*) surface->pixels)[y * surface->w + x];
 		return glm::vec4(value[0], value[1], value[2], value[3]);
 
 	} else {
@@ -220,8 +211,8 @@ glm::vec4 OtImage::sampleValueRgba(float x, float y) {
 	// sanity check
 	OtAssert(isValid());
 
-	x *= image->w - 1;
-	y *= image->h - 1;
+	x *= surface->w - 1;
+	y *= surface->h - 1;
 
 	int x1 = static_cast<int>(std::floor(x));
 	int y1 = static_cast<int>(std::floor(y));
@@ -247,8 +238,8 @@ float OtImage::sampleValueGray(float x, float y) {
 	// sanity check
 	OtAssert(isValid());
 
-	x *= image->w - 1;
-	y *= image->h - 1;
+	x *= surface->w - 1;
+	y *= surface->h - 1;
 
 	int x1 = static_cast<int>(std::floor(x));
 	int y1 = static_cast<int>(std::floor(y));
@@ -263,4 +254,30 @@ float OtImage::sampleValueGray(float x, float y) {
 	auto hx1 = std::lerp(h11, h21, x - x1);
 	auto hx2 = std::lerp(h12, h22, x - x1);
 	return std::lerp(hx1, hx2, y - y1);
+}
+
+
+//
+//	OtImage::normalize
+//
+
+void OtImage::normalize() {
+	if (SDL_ISPIXELFORMAT_FLOAT(surface->format)) {
+		if (surface->format != SDL_PIXELFORMAT_RGBA128_FLOAT) {
+			assign(SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_RGBA128_FLOAT));
+
+			if (!surface) {
+				OtLogFatal("Error in SDL_ConvertSurface: {}", SDL_GetError());
+			}
+		}
+
+	} else {
+		if (surface->format != SDL_PIXELFORMAT_ABGR8888) {
+			assign(SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_ABGR8888));
+
+			if (!surface) {
+				OtLogFatal("Error in SDL_ConvertSurface: {}", SDL_GetError());
+			}
+		}
+	}
 }

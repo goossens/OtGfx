@@ -12,6 +12,7 @@
 //	Include files
 //
 
+#include <memory>
 #include <string>
 
 #include "glm/glm.hpp"
@@ -28,10 +29,9 @@ public:
 	static constexpr int rgba8Image = SDL_PIXELFORMAT_RGBA8888;
 	static constexpr int rgbaFloat32Image = SDL_PIXELFORMAT_RGBA128_FLOAT;
 
-	// constructors/destructor
+	// constructors
 	OtImage() = default;
 	OtImage(const std::string& path, bool powerof2=false, bool square=false);
-	~OtImage();
 
 	// clear the resources
 	void clear();
@@ -39,7 +39,7 @@ public:
 	// create/update an image
 	void update(int width, int height, int format);
 
-	// load image
+	// load image as RGBA
 	void load(const std::string& address, bool powerof2=false, bool square=false);
 	void load(int width, int height, int format, void* pixels);
 	void load(void* data, size_t size);
@@ -48,14 +48,14 @@ public:
 	void saveToPNG(const std::string& path);
 
 	// see if image is valid
-	inline bool isValid() { return image != nullptr; }
+	inline bool isValid() { return surface != nullptr; }
 
 	// get information about image
-	inline int getFormat() { return image->format; }
-	inline int getWidth() { return image->w; }
-	inline int getHeight() { return image->h; }
-	inline void* getPixels() { return image->pixels; }
-	inline int getPitch() { return image->pitch; }
+	inline int getFormat() { return surface->format; }
+	inline int getWidth() { return surface->w; }
+	inline int getHeight() { return surface->h; }
+	inline void* getPixels() { return surface->pixels; }
+	inline int getPitch() { return surface->pitch; }
 
 	// get pixel values
 	glm::vec4 getPixelRgba(int x, int y);
@@ -71,7 +71,7 @@ public:
 
 	// see if images are identical
 	inline bool operator==(OtImage& rhs) {
-		return image == rhs.image && version == rhs.version;
+		return surface == rhs.surface && version == rhs.version;
 	}
 
 	inline bool operator!=(OtImage& rhs) {
@@ -80,6 +80,21 @@ public:
 
 private:
 	// the actual image
-	SDL_Surface* image;
+	friend class OtTexture;
+	std::shared_ptr<SDL_Surface> surface;
 	int version = 0;
+
+	// memory manage SDL resource
+	inline void assign(SDL_Surface* newSurface) {
+		surface = std::shared_ptr<SDL_Surface>(
+			newSurface,
+			[](SDL_Surface* oldSurface) {
+				SDL_DestroySurface(oldSurface);
+			});
+
+		incrementVersion();
+	}
+
+	// local utility functions
+	void normalize();
 };

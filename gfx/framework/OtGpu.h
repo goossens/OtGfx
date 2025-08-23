@@ -23,11 +23,15 @@
 
 class OtGpu : public OtSingleton<OtGpu> {
 public:
-	// rendering data
+	// rendering properties
 	SDL_Window* window;
 	SDL_GPUDevice* device;
 	SDL_GPUCommandBuffer* commandBuffer;
 	SDL_GPUTexture* swapchainTexture;
 	int width;
 	int height;
+
+	SDL_GPUTexture* transparentDummyTexture;
+	SDL_GPUTexture* blackDummyTexture;
+	SDL_GPUTexture* whiteDummyTexture;
 };

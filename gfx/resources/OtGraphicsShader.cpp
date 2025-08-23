@@ -14,7 +14,6 @@
 #include "OtLog.h"
 
 #include "OtGraphicsShader.h"
-#include "OtGpu.h"
 
 
 //
@@ -30,19 +29,12 @@ OtGraphicsShader::OtGraphicsShader(const uint32_t* code, size_t size, Stage stag
 	}
 
 	// cross compile to the appropriate shader format and create a shader object
-	auto device = OtGpu::instance().device;
-
 	SDL_ShaderCross_SPIRV_Info info{};
 	info.bytecode = (Uint8*) code;
 	info.bytecode_size = size;
 	info.entrypoint = "main";
 	info.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage);
-
-	shader = std::shared_ptr<SDL_GPUShader>(
-		SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(device, &info, metadata, 0),
-		[device](SDL_GPUShader* s) {
-			SDL_ReleaseGPUShader(device, s);
-		});
+	assign(SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(OtGpu::instance().device, &info, metadata, 0));
 
 	if (shader == nullptr) {
 		OtLogFatal("Error in SDL_ShaderCross_CompileGraphicsShaderFromSPIRV: {}", SDL_GetError());
