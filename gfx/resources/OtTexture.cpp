@@ -44,7 +44,7 @@ void OtTexture::update(int w, int h, int f, int u) {
 		usage = u;
 
 		// create new texture
-		SDL_GPUTextureCreateInfo info = {
+		SDL_GPUTextureCreateInfo info{
 			.type = SDL_GPU_TEXTURETYPE_2D,
 			.format = SDL_GPUTextureFormat(format),
 			.usage = SDL_GPUTextureUsageFlags(usage),

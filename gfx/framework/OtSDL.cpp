@@ -24,7 +24,7 @@
 
 static SDL_GPUTexture* createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransferBuffer* buffer, SDL_Color pixel) {
 	// create new texture
-	SDL_GPUTextureCreateInfo textureInfo = {
+	SDL_GPUTextureCreateInfo textureInfo{
 		.type = SDL_GPU_TEXTURETYPE_2D,
 		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
 		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
@@ -161,9 +161,9 @@ void OtFramework::initSDL() {
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(commandBuffer);
 
 	// create dummy textures
-	SDL_Color transparent = { .r = 0, .g = 0, .b = 0, .a = 0 };
-	SDL_Color black = { .r = 0, .g = 0, .b = 0, .a = 255 };
-	SDL_Color white = { .r = 255, .g = 255, .b = 255, .a = 255 };
+	SDL_Color transparent{ .r = 0, .g = 0, .b = 0, .a = 0 };
+	SDL_Color black{ .r = 0, .g = 0, .b = 0, .a = 255 };
+	SDL_Color white{ .r = 255, .g = 255, .b = 255, .a = 255 };
 	gpu.transparentDummyTexture = createDummyTexture(copyPass, transferBuffer, transparent);
 	gpu.blackDummyTexture = createDummyTexture(copyPass, transferBuffer, black);
 	gpu.whiteDummyTexture = createDummyTexture(copyPass, transferBuffer, white);

@@ -41,7 +41,6 @@ void OtFramework::initIMGUI() {
 	// windows can only be dragged using the title bar
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-
 	// tweak default style
 	ImGui::StyleColorsDark();
 	auto& style = ImGui::GetStyle();
@@ -56,11 +55,14 @@ void OtFramework::initIMGUI() {
 	// setup platform/renderer backends
 	auto& gpu = OtGpu::instance();
 	ImGui_ImplSDL3_InitForSDLGPU(gpu.window);
-	ImGui_ImplSDLGPU3_InitInfo init_info = {};
-	init_info.Device = gpu.device;
-	init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu.device, gpu.window);
-	init_info.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
-	ImGui_ImplSDLGPU3_Init(&init_info);
+
+	ImGui_ImplSDLGPU3_InitInfo initInfo{
+		.Device = gpu.device,
+		.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu.device, gpu.window),
+		.MSAASamples = SDL_GPU_SAMPLECOUNT_1
+	};
+
+	ImGui_ImplSDLGPU3_Init(&initInfo);
 
 	// setup our font
 	ImFontConfig config;
@@ -133,13 +135,14 @@ void OtFramework::endFrameIMGUI() {
 		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, gpu.commandBuffer);
 
 		// setup Dear ImGui render target
-		SDL_GPUColorTargetInfo targetInfo = {};
-		targetInfo.texture = gpu.swapchainTexture;
-		targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-		targetInfo.store_op = SDL_GPU_STOREOP_STORE;
-		targetInfo.mip_level = 0;
-		targetInfo.layer_or_depth_plane = 0;
-		targetInfo.cycle = false;
+		SDL_GPUColorTargetInfo targetInfo{
+			.texture = gpu.swapchainTexture,
+			.load_op = SDL_GPU_LOADOP_CLEAR,
+			.store_op = SDL_GPU_STOREOP_STORE,
+			.mip_level = 0,
+			.layer_or_depth_plane = 0,
+			.cycle = false
+		};
 
 		// run Dear ImGui render pass
 		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(gpu.commandBuffer, &targetInfo, 1, nullptr);
