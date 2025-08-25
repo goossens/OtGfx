@@ -13,9 +13,7 @@
 
 #include "OtFramework.h"
 
-#include "OtComputePass.h"
-#include "OtComputePipeline.h"
-#include "OtGradientComp.h"
+#include "OtCheckerBoard.h"
 #include "OtLogo.h"
 
 
@@ -26,7 +24,6 @@
 class SimpleApp : public OtFrameworkApp {
 public:
 	void onSetup() override {
-		generator.load(OtGradientComp,sizeof(OtGradientComp));
 	}
 
 	void onRender() override {
@@ -58,13 +55,13 @@ public:
 		ImGui::Begin("Compute", nullptr, ImGuiWindowFlags_NoDecoration);
 		auto size = ImGui::GetContentRegionAvail();
 
-		texture.update(size.x, size.y, OtTexture::rgba8Texture, OtTexture::sampler | OtTexture::computeStorageWrite);
+		texture.update(
+			size.x,
+			size.y,
+			OtTexture::rgba8Texture,
+			OtTexture::sampler | OtTexture::computeStorageWrite);
 
-		OtComputePass pass;
-		pass.addOutputTexture(texture);
-		pass.begin(generator);
-		pass.dispatch(static_cast<size_t>(std::ceil(size.x / 16.0)), static_cast<size_t>(std::ceil(size.y / 16.0)), 1);
-		pass.end();
+		checkerBoard.render(texture);
 
 		ImGui::Image(texture.getTextureID(), size);
 		ImGui::End();
@@ -73,13 +70,13 @@ public:
 	void onTerminate() override {
 		logo.clear();
 		texture.clear();
-		generator.clear();
+		checkerBoard.clear();
 	}
 
 private:
 	OtLogo logo;
 	OtTexture texture;
-	OtComputePipeline generator;
+	OtCheckerBoard checkerBoard;
 };
 
 

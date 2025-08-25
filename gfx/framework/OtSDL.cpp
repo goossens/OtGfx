@@ -125,7 +125,9 @@ void OtFramework::initSDL() {
 		OtLogFatal("Error in SDL_CreateWindow: {}", SDL_GetError());
 	}
 
-	SDL_SetWindowAspectRatio(gpu.window, 16.0f / 9.0f, 16.0f / 9.0f);
+	if (!SDL_SetWindowAspectRatio(gpu.window, 16.0f / 9.0f, 16.0f / 9.0f)) {
+		OtLogFatal("Error in SDL_SetWindowAspectRatio: {}", SDL_GetError());
+	}
 
 	// create GPU device
 	gpu.device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, false, nullptr);

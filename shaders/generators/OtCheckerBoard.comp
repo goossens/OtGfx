@@ -6,8 +6,14 @@
 
 #version 450
 
-layout(set = 1, binding = 0, rgba8) uniform writeonly image2D outImage;
-layout(local_size_x = 16, local_size_y = 16) in;
+layout(local_size_x=16, local_size_y=16) in;
+layout(set=1, binding=0, rgba8) uniform writeonly image2D outImage;
+
+layout(std140, set=2, binding=0) uniform UBO {
+    vec4 blackColor;
+    vec4 whiteColor;
+    int repeat;
+};
 
 void main() {
 	ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
@@ -17,5 +23,5 @@ void main() {
 		return;
 	}
 
-    imageStore(outImage, coord, vec4(0.0, 0.0, ((coord.x / 20) & 1) ^ ((coord.y / 20) & 1), 1.0));
+    imageStore(outImage, coord, mix(blackColor, whiteColor, ((coord.x / repeat) & 1) ^ ((coord.y / repeat) & 1)));
 }

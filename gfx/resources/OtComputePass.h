@@ -12,6 +12,8 @@
 //	Include files
 //
 
+#include <cstddef>
+#include <cstring>
 #include <memory>
 #include <vector>
 
@@ -40,38 +42,48 @@ public:
 		textures.emplace_back(binding);
 	}
 
-	// add a buffer (must be called before begin)
-	inline void addBuffer() {
+	// add an output buffer
+	inline void addOutputBuffer() {
 	}
 
-	// start a compute shader pass
-	inline void begin(OtComputePipeline& pipeline) {
+	// add a set of uniforms
+	inline void addUniforms(const void* data, size_t size) {
+		auto& uniform = uniforms.emplace_back();
+		uniform.resize(size);
+		std::memcpy(uniform.data(), data, size);
+	}
+
+	// execute a compute shader pass
+	inline void execute(OtComputePipeline& pipeline, size_t groupCountX, size_t groupCountY, size_t groupCountZ) {
 		pass = SDL_BeginGPUComputePass(
 			OtGpu::instance().commandBuffer,
 			textures.data(),
-			textures.size(),
+			static_cast<Uint32>(textures.size()),
 			nullptr,
 			0);
 
-		SDL_BindGPUComputePipeline(pass, pipeline.pipeline.get());
-	}
+		SDL_BindGPUComputePipeline(pass, pipeline.getPipeline());
 
-	// set uniform for the compute shader pass (must be called between begin and end calls)
-	void setUniforms(size_t slot, const void* data, size_t size);
+		for (size_t i = 0; i < uniforms.size(); i++) {
+			SDL_PushGPUComputeUniformData(
+				OtGpu::instance().commandBuffer,
+				i,
+				uniforms[i].data(),
+				static_cast<Uint32>(uniforms[i].size()));
+		}
 
-	// run the compute shader (must be called between begin and end calls)
-	inline void dispatch(size_t groupCountX, size_t groupCountY, size_t groupCountZ) {
+		// run the pipeline
 		SDL_DispatchGPUCompute(pass, groupCountX, groupCountY, groupCountZ);
-	}
 
-	// end the compute shader pass
-	inline void end() {
+		// cleanup
 		SDL_EndGPUComputePass(pass);
 		textures.clear();
+		uniforms.clear();
 	}
 
 private:
 	// local data
 	SDL_GPUComputePass* pass;
 	std::vector<SDL_GPUStorageTextureReadWriteBinding> textures;
+	std::vector<std::vector<std::byte>> uniforms;
 };

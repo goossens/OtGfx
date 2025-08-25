@@ -29,35 +29,8 @@
 
 class OtComputePipeline {
 public:
-	// load shader
-	inline void load(const uint32_t* code, size_t size) {
-		// figure out shader metadata
-		SDL_ShaderCross_ComputePipelineMetadata* metadata = SDL_ShaderCross_ReflectComputeSPIRV((Uint8*) code, size, 0);
-
-		if (metadata == nullptr) {
-			OtLogFatal("Error in SDL_ShaderCross_ReflectComputeSPIRV: {}", SDL_GetError());
-		}
-
-		// cross compile to the appropriate shader format and create a shader object
-		SDL_ShaderCross_SPIRV_Info info{
-			.bytecode = (Uint8*) code,
-			.bytecode_size = size,
-			.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
-			.enable_debug = false,
-			.entrypoint = "main",
-			.name = "",
-			.props = 0
-		};
-
-		assign(SDL_ShaderCross_CompileComputePipelineFromSPIRV(OtGpu::instance().device, &info, metadata, 0));
-
-		if (pipeline == nullptr) {
-			OtLogFatal("Error in SDL_ShaderCross_CompileComputePipelineFromSPIRV: {}", SDL_GetError());
-		}
-
-		// cleanup
-		SDL_free(metadata);
-	}
+	// constructor
+	OtComputePipeline(const uint32_t* c, size_t s) : code(c), size(s) {}
 
 	// clear the object
 	inline void clear() { pipeline = nullptr; }
@@ -66,8 +39,11 @@ public:
 	inline bool isValid() { return pipeline != nullptr; }
 
 private:
+	// shader definition
+	const uint32_t* code;
+	size_t size;
+
 	// the GPU resource
-	friend class OtComputePass;
 	std::shared_ptr<SDL_GPUComputePipeline> pipeline;
 
 	// memory manage SDL resource
@@ -77,5 +53,43 @@ private:
 			[](SDL_GPUComputePipeline* oldPipeline) {
 				SDL_ReleaseGPUComputePipeline(OtGpu::instance().device, oldPipeline);
 			});
+	}
+
+	// get the raw pipeline object
+	friend class OtComputePass;
+
+	inline SDL_GPUComputePipeline* getPipeline() {
+		// create pipeline (if required)
+		if (!pipeline) {
+			// figure out shader metadata
+			SDL_ShaderCross_ComputePipelineMetadata* metadata = SDL_ShaderCross_ReflectComputeSPIRV((Uint8*) code, size, 0);
+
+			if (metadata == nullptr) {
+				OtLogFatal("Error in SDL_ShaderCross_ReflectComputeSPIRV: {}", SDL_GetError());
+			}
+
+			// cross compile to the appropriate shader format and create a pipeline object
+			SDL_ShaderCross_SPIRV_Info info{
+				.bytecode = (Uint8*) code,
+				.bytecode_size = size,
+				.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
+				.enable_debug = false,
+				.entrypoint = "main",
+				.name = "",
+				.props = 0
+			};
+
+			assign(SDL_ShaderCross_CompileComputePipelineFromSPIRV(OtGpu::instance().device, &info, metadata, 0));
+
+			if (pipeline == nullptr) {
+				OtLogFatal("Error in SDL_ShaderCross_CompileComputePipelineFromSPIRV: {}", SDL_GetError());
+			}
+
+			// cleanup
+			SDL_free(metadata);
+		}
+
+		// return the raw pipeline object
+		return pipeline.get();
 	}
 };
