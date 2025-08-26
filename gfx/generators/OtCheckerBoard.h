@@ -42,7 +42,6 @@ public:
 			int repeat;
 		} uniforms{blackColor, whiteColor, repeat};
 
-
 		run(pipeline, texture, &uniforms, sizeof(uniforms));
 	}
 

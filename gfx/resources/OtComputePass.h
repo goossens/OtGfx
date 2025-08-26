@@ -32,7 +32,7 @@ class OtComputePass {
 public:
 	// add an output texture
 	inline void addOutputTexture(OtTexture& texture) {
-			SDL_GPUStorageTextureReadWriteBinding binding{
+		SDL_GPUStorageTextureReadWriteBinding binding{
 			.texture = texture.getTexture(),
 			.mip_level = 0,
 			.layer = 0,
@@ -82,7 +82,7 @@ public:
 	}
 
 private:
-	// local data
+	// pass specific data
 	SDL_GPUComputePass* pass;
 	std::vector<SDL_GPUStorageTextureReadWriteBinding> textures;
 	std::vector<std::vector<std::byte>> uniforms;

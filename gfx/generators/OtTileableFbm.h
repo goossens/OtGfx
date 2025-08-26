@@ -1,0 +1,66 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+
+#pragma once
+
+
+//
+//	Include files
+//
+
+#include <cstdint>
+
+#include "OtTileableFbmComp.h"
+#include "OtComputePipeline.h"
+#include "OtGenerator.h"
+
+
+//
+//	OtTileableFbm (Fractional Brownian Motion)
+//
+
+class OtTileableFbm : public OtGenerator {
+public:
+	// set the properties
+	inline void setFrequency(int f) { frequency = f; }
+	inline void setLacunarity(int l) { lacunarity = l; }
+	inline void setAmplitude(float a) { amplitude = a; }
+	inline void setPersistence(float p) { persistence = p; }
+	inline void setOctaves(int o) { octaves = o; }
+
+	// clear GPU resources
+	inline void clear() { pipeline.clear(); }
+
+	// execute generator
+	inline void render(OtTexture& texture) override {
+		struct Uniforms {
+			int32_t frequency;
+			int32_t lacunarity;
+			float amplitude;
+			float persistence;
+			int32_t octaves;
+		} uniforms{
+			static_cast<int32_t>(frequency),
+			static_cast<int32_t>(lacunarity),
+			amplitude,
+			persistence,
+			static_cast<int32_t>(octaves)};
+
+		run(pipeline, texture, &uniforms, sizeof(uniforms));
+	}
+
+private:
+	// properties
+	int frequency = 10;
+	int lacunarity = 2;
+	float amplitude = 0.5f;
+	float persistence = 0.5f;
+	int octaves = 5;
+
+	// shader resources
+	OtComputePipeline pipeline{OtTileableFbmComp, sizeof(OtTileableFbmComp)};
+};

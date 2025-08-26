@@ -13,7 +13,7 @@
 
 #include "OtFramework.h"
 
-#include "OtCheckerBoard.h"
+#include "OtFbm.h"
 #include "OtLogo.h"
 
 
@@ -61,7 +61,7 @@ public:
 			OtTexture::rgba8Texture,
 			OtTexture::sampler | OtTexture::computeStorageWrite);
 
-		checkerBoard.render(texture);
+		fbm.render(texture);
 
 		ImGui::Image(texture.getTextureID(), size);
 		ImGui::End();
@@ -70,13 +70,13 @@ public:
 	void onTerminate() override {
 		logo.clear();
 		texture.clear();
-		checkerBoard.clear();
+		fbm.clear();
 	}
 
 private:
 	OtLogo logo;
 	OtTexture texture;
-	OtCheckerBoard checkerBoard;
+	OtFbm fbm;
 };
 
 
