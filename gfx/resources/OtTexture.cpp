@@ -35,7 +35,7 @@ void OtTexture::clear() {
 //	OtTexture::create
 //
 
-void OtTexture::update(int w, int h, int f, int u) {
+bool OtTexture::update(int w, int h, int f, int u) {
 	if (!texture || width != w || h != height || f != format || u != usage) {
 		// remember settings
 		width = w;
@@ -61,6 +61,11 @@ void OtTexture::update(int w, int h, int f, int u) {
 		if (!texture) {
 			OtLogFatal("Error in SDL_CreateGPUTexture: {}", SDL_GetError());
 		}
+
+		return true;
+
+	} else {
+		return false;
 	}
 }
 

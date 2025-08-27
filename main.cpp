@@ -55,13 +55,14 @@ public:
 		ImGui::Begin("Compute", nullptr, ImGuiWindowFlags_NoDecoration);
 		auto size = ImGui::GetContentRegionAvail();
 
-		texture.update(
+		if (texture.update(
 			size.x,
 			size.y,
 			OtTexture::rgba8Texture,
-			OtTexture::sampler | OtTexture::computeStorageWrite);
+			OtTexture::sampler | OtTexture::computeStorageWrite)) {
 
-		fbm.render(texture);
+			fbm.render(texture);
+		}
 
 		ImGui::Image(texture.getTextureID(), size);
 		ImGui::End();

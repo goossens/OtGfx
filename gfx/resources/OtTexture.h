@@ -62,8 +62,8 @@ public:
 	// see if texture is valid
 	inline bool isValid() { return texture != nullptr; }
 
-	// update a texture
-	void update(int width, int height, int format, int usage);
+	// update a texture (returns true if update was require, false if nothing needed to be done)
+	bool update(int width, int height, int format, int usage);
 
 	// load texture
 	void load(OtImage& image);
