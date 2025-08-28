@@ -12,7 +12,6 @@
 //	Include files
 //
 
-#include "OtComputePipeline.h"
 #include "OtFilter.h"
 #include "OtPixelateComp.h"
 
@@ -26,27 +25,24 @@ public:
 	// set properties
 	inline void setSize(int s) { size = s; }
 
-	// clear GPU resources
-	inline void clear() {
-		OtFilter::clear();
-		pipeline.clear();
-	}
+	// prepare the compute pass
+	void prepareRender(OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.initialize(OtPixelateComp, sizeof(OtPixelateComp));
+		}
 
-	// let filter transform texture to output
-	void render(OtTexture& origin, OtTexture& destination) override {
+		// set uniforms
 		struct Uniforms {
 			int32_t size;
 		} uniforms {
 			static_cast<int32_t>(size)
 		};
 
-		run(pipeline, origin, destination, &uniforms, sizeof(uniforms));
+		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
 
 private:
 	// properties
-	int size = 5;
-
-	// shader resources
-	OtComputePipeline pipeline{OtPixelateComp, sizeof(OtPixelateComp)};
+	int size = 10;
 };

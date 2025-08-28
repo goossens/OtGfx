@@ -28,18 +28,22 @@ public:
 	// destructor
 	virtual inline ~OtGenerator() {}
 
-	// let generator render to texture
-	virtual void render(OtTexture& texture) = 0;
+	// clear GPU resources
+	virtual inline void clear() {
+		pipeline.clear();
+	}
 
-protected:
-	// run generator
-	inline void run(OtComputePipeline& pipeline, OtTexture& texture, const void* uniforms=nullptr, size_t size=0) {
+	// method to be overridden by derived classes
+	virtual void prepareRender(OtComputePass& pass) = 0;
+
+	// let generator render to texture
+	void render(OtTexture& texture) {
 		OtComputePass pass;
 		pass.addOutputTexture(texture);
 
-		if (uniforms) {
-			pass.addUniforms(uniforms, size);
-		}
+		// ask derived class to prepare the compute pass
+		// e.g. create compute pipeline and/or set uniforms
+		prepareRender(pass);
 
 		pass.execute(
 			pipeline,
@@ -47,4 +51,8 @@ protected:
 			static_cast<size_t>(std::ceil(texture.getHeight() / 16.0)),
 			1);
 	}
+
+protected:
+	// the generator specific rendering pipeline (to be set by derived class)
+	OtComputePipeline pipeline;
 };

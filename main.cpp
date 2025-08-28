@@ -11,7 +11,11 @@
 
 #include "OtFramework.h"
 
+#include "OtCheckerBoard.h"
 #include "OtColorWheel.h"
+#include "OtFbm.h"
+#include "OtTileableFbm.h"
+
 #include "OtLogo.h"
 #include "OtPixelate.h"
 

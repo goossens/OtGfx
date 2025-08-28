@@ -13,7 +13,6 @@
 //
 
 #include "OtColorWheelComp.h"
-#include "OtComputePipeline.h"
 #include "OtGenerator.h"
 
 
@@ -23,15 +22,11 @@
 
 class OtColorWheel : public OtGenerator {
 public:
-	// clear GPU resources
-	inline void clear() { pipeline.clear(); }
-
-	// let generator render to texture
-	inline void render(OtTexture& texture) override {
-		run(pipeline, texture);
+	// prepare the compute pass
+	void prepareRender([[maybe_unused]] OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.initialize(OtColorWheelComp, sizeof(OtColorWheelComp));
+		}
 	}
-
-private:
-	// shader resources
-	OtComputePipeline pipeline{OtColorWheelComp, sizeof(OtColorWheelComp)};
 };

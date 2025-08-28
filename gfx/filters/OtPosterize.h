@@ -12,7 +12,6 @@
 //	Include files
 //
 
-#include "OtComputePipeline.h"
 #include "OtFilter.h"
 #include "OtPosterizeComp.h"
 
@@ -26,27 +25,24 @@ public:
 	// set properties
 	inline void setLevels(int l) { levels = l; }
 
-	// clear GPU resources
-	inline void clear() {
-		OtFilter::clear();
-		pipeline.clear();
-	}
+	// prepare the compute pass
+	void prepareRender(OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.initialize(OtPosterizeComp, sizeof(OtPosterizeComp));
+		}
 
-	// let filter transform texture to output
-	void render(OtTexture& origin, OtTexture& destination) override {
+		// set uniforms
 		struct Uniforms {
 			int32_t levels;
 		} uniforms {
 			static_cast<int32_t>(levels)
 		};
 
-		run(pipeline, origin, destination, &uniforms, sizeof(uniforms));
+		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
 
 private:
 	// properties
 	int levels = 10;
-
-	// shader resources
-	OtComputePipeline pipeline{OtPosterizeComp, sizeof(OtPosterizeComp)};
 };

@@ -30,28 +30,36 @@ public:
 	virtual inline ~OtFilter() {}
 
 	// clear GPU resources
-	inline void clear() { sampler.clear(); }
+	virtual inline void clear() {
+		pipeline.clear();
+		sampler.clear();
+	}
+
+	// method to be overridden by derived classes
+	virtual void prepareRender(OtComputePass& pass) = 0;
 
 	// let filter transform texture to output
-	virtual void render(OtTexture& origin, OtTexture& destination) = 0;
-
-protected:
-	// run filter
-	inline void run(OtComputePipeline& pipeline, OtTexture& input, OtTexture& output, const void* uniforms=nullptr, size_t size=0) {
+	void render(OtTexture& origin, OtTexture& destination) {
+		// start a compute pass and setup the input and output textures
 		OtComputePass pass;
-		pass.addInputSampler(input, sampler);
-		pass.addOutputTexture(output);
+		pass.addInputSampler(origin, sampler);
+		pass.addOutputTexture(destination);
 
-		if (uniforms) {
-			pass.addUniforms(uniforms, size);
-		}
+		// ask derived class to prepare the compute pass
+		// e.g. create compute pipeline, add input samplers and/or set uniforms
+		prepareRender(pass);
 
+		// execute the compute pass
 		pass.execute(
 			pipeline,
-			static_cast<size_t>(std::ceil(output.getWidth() / 16.0)),
-			static_cast<size_t>(std::ceil(output.getHeight() / 16.0)),
+			static_cast<size_t>(std::ceil(destination.getWidth() / 16.0)),
+			static_cast<size_t>(std::ceil(destination.getHeight() / 16.0)),
 			1);
 	}
+
+protected:
+	// the filter specific rendering pipeline (to be set by derived class)
+	OtComputePipeline pipeline;
 
 private:
 	// work variables

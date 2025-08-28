@@ -15,7 +15,6 @@
 #include <cstdint>
 
 #include "OtFbmComp.h"
-#include "OtComputePipeline.h"
 #include "OtGenerator.h"
 
 
@@ -50,11 +49,14 @@ public:
 	inline void setOctaves(int o) { octaves = o; }
 	inline void setNoiseType(NoiseType nt) { noiseType = nt; }
 
-	// clear GPU resources
-	inline void clear() { pipeline.clear(); }
+	// prepare the compute pass
+	void prepareRender(OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.initialize(OtFbmComp, sizeof(OtFbmComp));
+		}
 
-	// let generator render to texture
-	inline void render(OtTexture& texture) override {
+		// set uniforms
 		struct Uniforms {
 			int32_t frequency;
 			int32_t lacunarity;
@@ -71,7 +73,7 @@ public:
 			static_cast<int32_t>(noiseType)
 		};
 
-		run(pipeline, texture, &uniforms, sizeof(uniforms));
+		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
 
 private:
@@ -82,7 +84,4 @@ private:
 	float persistence = 0.5f;
 	int octaves = 5;
 	NoiseType noiseType = NoiseType::simplex;
-
-	// shader resources
-	OtComputePipeline pipeline{OtFbmComp, sizeof(OtFbmComp)};
 };

@@ -15,7 +15,6 @@
 #include <cstdint>
 
 #include "OtTileableFbmComp.h"
-#include "OtComputePipeline.h"
 #include "OtGenerator.h"
 
 
@@ -32,11 +31,14 @@ public:
 	inline void setPersistence(float p) { persistence = p; }
 	inline void setOctaves(int o) { octaves = o; }
 
-	// clear GPU resources
-	inline void clear() { pipeline.clear(); }
+	// prepare the compute pass
+	void prepareRender(OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.initialize(OtTileableFbmComp, sizeof(OtTileableFbmComp));
+		}
 
-	// let generator render to texture
-	inline void render(OtTexture& texture) override {
+		// set uniforms
 		struct Uniforms {
 			int32_t frequency;
 			int32_t lacunarity;
@@ -48,9 +50,11 @@ public:
 			static_cast<int32_t>(lacunarity),
 			amplitude,
 			persistence,
-			static_cast<int32_t>(octaves)};
+			static_cast<int32_t>(octaves)
+		};
 
-		run(pipeline, texture, &uniforms, sizeof(uniforms));
+
+		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
 
 private:
@@ -60,7 +64,4 @@ private:
 	float amplitude = 0.5f;
 	float persistence = 0.5f;
 	int octaves = 5;
-
-	// shader resources
-	OtComputePipeline pipeline{OtTileableFbmComp, sizeof(OtTileableFbmComp)};
 };

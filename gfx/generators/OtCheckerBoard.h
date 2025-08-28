@@ -16,7 +16,6 @@
 
 #include "OtCheckerBoardComp.h"
 #include "OtColor.h"
-#include "OtComputePipeline.h"
 #include "OtGenerator.h"
 
 
@@ -31,18 +30,21 @@ public:
 	inline void setBlackColor(OtColor color) { blackColor = color; }
 	inline void setWhiteColor(OtColor color) { whiteColor = color; }
 
-	// clear GPU resources
-	inline void clear() { pipeline.clear(); }
+	// prepare the compute pass
+	void prepareRender(OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.initialize(OtCheckerBoardComp, sizeof(OtCheckerBoardComp));
+		}
 
-	// let generator render to texture
-	inline void render(OtTexture& texture) override {
+		// set uniforms
 		struct Uniforms {
 			glm::vec4 blackColor;
 			glm::vec4 whiteColor;
 			int repeat;
 		} uniforms{blackColor, whiteColor, repeat};
 
-		run(pipeline, texture, &uniforms, sizeof(uniforms));
+		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
 
 private:
@@ -50,7 +52,4 @@ private:
 	OtColor blackColor{0.0f, 0.0f, 0.0f};
 	OtColor whiteColor{1.0f, 1.0f, 1.0f};
 	int repeat = 10;
-
-	// shader resources
-	OtComputePipeline pipeline{OtCheckerBoardComp, sizeof(OtCheckerBoardComp)};
 };
