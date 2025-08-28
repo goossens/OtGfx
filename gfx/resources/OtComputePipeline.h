@@ -30,18 +30,30 @@
 class OtComputePipeline {
 public:
 	// constructor
+	OtComputePipeline() = default;
 	OtComputePipeline(const uint32_t* c, size_t s) : code(c), size(s) {}
 
+	// initialize the pipeline
+	inline void initialize(const uint32_t* c, size_t s) {
+		code = c;
+		size = s;
+		pipeline = nullptr;
+	}
+
 	// clear the object
-	inline void clear() { pipeline = nullptr; }
+	inline void clear() {
+		code = nullptr;
+		size = 0;
+		pipeline = nullptr;
+	}
 
 	// see if pipeline is valid
 	inline bool isValid() { return pipeline != nullptr; }
 
 private:
 	// shader definition
-	const uint32_t* code;
-	size_t size;
+	const uint32_t* code = nullptr;
+	size_t size = 0;
 
 	// the GPU resource
 	std::shared_ptr<SDL_GPUComputePipeline> pipeline;
@@ -59,6 +71,11 @@ private:
 	friend class OtComputePass;
 
 	inline SDL_GPUComputePipeline* getPipeline() {
+		// ensure pipeline is initialized
+		if (!code || !size) {
+			OtLogFatal("Uninitialize compute pipeline");
+		}
+
 		// create pipeline (if required)
 		if (!pipeline) {
 			// figure out shader metadata

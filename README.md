@@ -5,6 +5,6 @@ This repository is used to develop a future Graphic Engine for [ObjectTalk](http
 Objectives:
 
 * Abstract graphics pipeline components with low overhead.
-* Replace [bx](https://github.com/bkaradzic/bx)/[bimg](https://github.com/bkaradzic/bimg), [bgfx](https://github.com/bkaradzic/bgfx) with SDL Image and SDL3 GPU.
+* Replace [bx](https://github.com/bkaradzic/bx), [bimg](https://github.com/bkaradzic/bimg) and [bgfx](https://github.com/bkaradzic/bgfx) with SDL Image and SDL3 GPU.
 * Cross compiler shaders from pure GLSL to Metal, Vulkan and DirectX12.
 * Support build and runtime shader compilation.

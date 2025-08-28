@@ -12,6 +12,8 @@
 //	Include files
 //
 
+#include <cmath>
+
 #include "OtComputePass.h"
 #include "OtComputePipeline.h"
 #include "OtTexture.h"
@@ -26,7 +28,7 @@ public:
 	// destructor
 	virtual inline ~OtGenerator() {}
 
-	// run generator
+	// let generator render to texture
 	virtual void render(OtTexture& texture) = 0;
 
 protected:

@@ -9,12 +9,11 @@
 //	Include files
 //
 
-#include <cmath>
-
 #include "OtFramework.h"
 
-#include "OtFbm.h"
+#include "OtColorWheel.h"
 #include "OtLogo.h"
+#include "OtPixelate.h"
 
 
 //
@@ -55,29 +54,41 @@ public:
 		ImGui::Begin("Compute", nullptr, ImGuiWindowFlags_NoDecoration);
 		auto size = ImGui::GetContentRegionAvail();
 
-		if (texture.update(
+		if (rawTexture.update(
 			size.x,
 			size.y,
 			OtTexture::rgba8Texture,
 			OtTexture::sampler | OtTexture::computeStorageWrite)) {
 
-			fbm.render(texture);
+			colorWheel.render(rawTexture);
+
+			filteredTexture.update(
+				size.x,
+				size.y,
+				OtTexture::rgba8Texture,
+				OtTexture::sampler | OtTexture::computeStorageWrite);
+
+			pixelate.render(rawTexture, filteredTexture);
 		}
 
-		ImGui::Image(texture.getTextureID(), size);
+		ImGui::Image(filteredTexture.getTextureID(), size);
 		ImGui::End();
 	}
 
 	void onTerminate() override {
 		logo.clear();
-		texture.clear();
-		fbm.clear();
+		rawTexture.clear();
+		filteredTexture.clear();
+		colorWheel.clear();
+		pixelate.clear();
 	}
 
 private:
 	OtLogo logo;
-	OtTexture texture;
-	OtFbm fbm;
+	OtTexture rawTexture;
+	OtTexture filteredTexture;
+	OtColorWheel colorWheel;
+	OtPixelate pixelate;
 };
 
 

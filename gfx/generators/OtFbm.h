@@ -53,7 +53,7 @@ public:
 	// clear GPU resources
 	inline void clear() { pipeline.clear(); }
 
-	// execute generator
+	// let generator render to texture
 	inline void render(OtTexture& texture) override {
 		struct Uniforms {
 			int32_t frequency;
@@ -68,7 +68,8 @@ public:
 			amplitude,
 			persistence,
 			static_cast<int32_t>(octaves),
-			static_cast<int32_t>(noiseType)};
+			static_cast<int32_t>(noiseType)
+		};
 
 		run(pipeline, texture, &uniforms, sizeof(uniforms));
 	}

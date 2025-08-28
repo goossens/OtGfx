@@ -71,12 +71,6 @@ public:
 	void load(int width, int height, int format, void* pixels, bool async=false);
 	void load(void* data, size_t size, bool async=false);
 
-	inline SDL_GPUTexture* getTexture() {
-		return isValid()
-			? texture.get()
-			: OtGpu::instance().transparentDummyTexture;
-	}
-
 	// return texture ID (for Dear ImGUI use)
 	inline ImTextureID getTextureID() {
 		return isValid()
@@ -140,4 +134,13 @@ private:
 	std::shared_ptr<OtImage> asyncImage;
 	uv_async_t* asyncHandle = nullptr;
 	void loadAsync();
+
+	// get the raw sampler object
+	friend class OtComputePass;
+
+	inline SDL_GPUTexture* getTexture() {
+		return isValid()
+			? texture.get()
+			: OtGpu::instance().transparentDummyTexture;
+	}
 };

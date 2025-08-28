@@ -35,7 +35,7 @@ public:
 	// clear GPU resources
 	inline void clear() { pipeline.clear(); }
 
-	// execute generator
+	// let generator render to texture
 	inline void render(OtTexture& texture) override {
 		struct Uniforms {
 			int32_t frequency;
