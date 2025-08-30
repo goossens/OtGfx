@@ -12,6 +12,8 @@
 //	Include files
 //
 
+#include <cstdint>
+
 #include "OtFilter.h"
 #include "OtPosterizeComp.h"
 
@@ -23,7 +25,7 @@
 class OtPosterize : public OtFilter {
 public:
 	// set properties
-	inline void setLevels(int l) { levels = l; }
+	inline void setLevels(int value) { levels = value; }
 
 	// prepare the compute pass
 	void prepareRender(OtComputePass& pass) override {

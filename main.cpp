@@ -16,6 +16,13 @@
 #include "OtFbm.h"
 #include "OtTileableFbm.h"
 
+#include "OtPixelate.h"
+#include "OtPosterize.h"
+#include "OtRgbaAdjust.h"
+#include "OtRgbaCurve.h"
+#include "OtSeamlessTile.h"
+#include "OtSharpen.h"
+
 #include "OtLogo.h"
 #include "OtPixelate.h"
 
@@ -64,7 +71,7 @@ public:
 			OtTexture::rgba8Texture,
 			OtTexture::sampler | OtTexture::computeStorageWrite)) {
 
-			colorWheel.render(rawTexture);
+			generator.render(rawTexture);
 
 			filteredTexture.update(
 				size.x,
@@ -72,7 +79,7 @@ public:
 				OtTexture::rgba8Texture,
 				OtTexture::sampler | OtTexture::computeStorageWrite);
 
-			pixelate.render(rawTexture, filteredTexture);
+			filter.render(rawTexture, filteredTexture);
 		}
 
 		ImGui::Image(filteredTexture.getTextureID(), size);
@@ -83,16 +90,16 @@ public:
 		logo.clear();
 		rawTexture.clear();
 		filteredTexture.clear();
-		colorWheel.clear();
-		pixelate.clear();
+		generator.clear();
+		filter.clear();
 	}
 
 private:
 	OtLogo logo;
 	OtTexture rawTexture;
 	OtTexture filteredTexture;
-	OtColorWheel colorWheel;
-	OtPixelate pixelate;
+	OtColorWheel generator;
+	OtRgbaCurve filter;
 };
 
 

@@ -12,6 +12,8 @@
 //	Include files
 //
 
+#include <cstdint>
+
 #include "glm/glm.hpp"
 
 #include "OtCheckerBoardComp.h"
@@ -41,8 +43,11 @@ public:
 		struct Uniforms {
 			glm::vec4 blackColor;
 			glm::vec4 whiteColor;
-			int repeat;
-		} uniforms{blackColor, whiteColor, repeat};
+			int32_t repeat;
+		} uniforms{
+			blackColor,
+			whiteColor,
+			static_cast<int32_t>(repeat)};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}

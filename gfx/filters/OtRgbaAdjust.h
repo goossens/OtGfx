@@ -12,33 +12,33 @@
 //	Include files
 //
 
-#include <cstdint>
+#include "glm/glm.hpp"
 
 #include "OtFilter.h"
-#include "OtPixelateComp.h"
+#include "OtRgbaAdjustComp.h"
 
 
 //
-//	OtPixelate
+//	OtRgbaAdjust
 //
 
-class OtPixelate : public OtFilter {
+class OtRgbaAdjust : public OtFilter {
 public:
 	// set properties
-	inline void setSize(int value) { size = value; }
+	inline void setRgba(glm::vec4 value) { rgba = value; }
 
 	// prepare the compute pass
 	void prepareRender(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtPixelateComp, sizeof(OtPixelateComp));
+			pipeline.initialize(OtRgbaAdjustComp, sizeof(OtRgbaAdjustComp));
 		}
 
 		// set uniforms
 		struct Uniforms {
-			int32_t size;
+			glm::vec4 rgba;
 		} uniforms {
-			static_cast<int32_t>(size)
+			rgba
 		};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
@@ -46,5 +46,5 @@ public:
 
 private:
 	// properties
-	int size = 10;
+	glm::vec4 rgba{1.0f};
 };

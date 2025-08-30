@@ -15,30 +15,30 @@
 #include <cstdint>
 
 #include "OtFilter.h"
-#include "OtPixelateComp.h"
+#include "OtSharpenComp.h"
 
 
 //
-//	OtPixelate
+//	OtSharpen
 //
 
-class OtPixelate : public OtFilter {
+class OtSharpen : public OtFilter {
 public:
 	// set properties
-	inline void setSize(int value) { size = value; }
+	inline void setStrength(float value) { strength = value; }
 
 	// prepare the compute pass
 	void prepareRender(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtPixelateComp, sizeof(OtPixelateComp));
+			pipeline.initialize(OtSharpenComp, sizeof(OtSharpenComp));
 		}
 
 		// set uniforms
 		struct Uniforms {
-			int32_t size;
+			int32_t strength;
 		} uniforms {
-			static_cast<int32_t>(size)
+			static_cast<int32_t>(strength)
 		};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
@@ -46,5 +46,5 @@ public:
 
 private:
 	// properties
-	int size = 10;
+	float strength = 100.0f;
 };
