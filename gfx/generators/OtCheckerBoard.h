@@ -32,8 +32,8 @@ public:
 	inline void setBlackColor(OtColor color) { blackColor = color; }
 	inline void setWhiteColor(OtColor color) { whiteColor = color; }
 
-	// prepare the compute pass
-	void prepareRender(OtComputePass& pass) override {
+	// configure the compute pass
+	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.initialize(OtCheckerBoardComp, sizeof(OtCheckerBoardComp));

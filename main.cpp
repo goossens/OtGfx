@@ -16,6 +16,13 @@
 #include "OtFbm.h"
 #include "OtTileableFbm.h"
 
+#include "OtAlphaOver.h"
+#include "OtBlit.h"
+#include "OtBlur.h"
+#include "OtContrastSaturationBrightness.h"
+#include "OtGaussian.h"
+#include "OtIslandizer.h"
+#include "OtNormalMapper.h"
 #include "OtPixelate.h"
 #include "OtPosterize.h"
 #include "OtRgbaAdjust.h"
@@ -98,8 +105,8 @@ private:
 	OtLogo logo;
 	OtTexture rawTexture;
 	OtTexture filteredTexture;
-	OtColorWheel generator;
-	OtRgbaCurve filter;
+	OtCheckerBoard generator;
+	OtBlur filter;
 };
 
 

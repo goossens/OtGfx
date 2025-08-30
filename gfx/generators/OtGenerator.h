@@ -34,16 +34,16 @@ public:
 	}
 
 	// method to be overridden by derived classes
-	virtual void prepareRender(OtComputePass& pass) = 0;
+	virtual void configurePass(OtComputePass& pass) = 0;
 
 	// let generator render to texture
 	void render(OtTexture& texture) {
 		OtComputePass pass;
 		pass.addOutputTexture(texture);
 
-		// ask derived class to prepare the compute pass
+		// ask derived class to configure the compute pass
 		// e.g. create compute pipeline and/or set uniforms
-		prepareRender(pass);
+		configurePass(pass);
 
 		pass.execute(
 			pipeline,

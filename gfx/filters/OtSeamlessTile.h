@@ -22,8 +22,8 @@
 
 class OtSeamlessTile : public OtFilter {
 public:
-	// prepare the compute pass
-	void prepareRender([[maybe_unused]] OtComputePass& pass) override {
+	// configure the compute pass
+	void configurePass([[maybe_unused]] OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.initialize(OtSeamlessTileComp, sizeof(OtSeamlessTileComp));

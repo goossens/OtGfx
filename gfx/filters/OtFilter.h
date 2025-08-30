@@ -36,23 +36,23 @@ public:
 	}
 
 	// methods to be overridden by derived classes (if required)
-	virtual void preRender() {}
-	virtual void prepareRender([[maybe_unused]] OtComputePass& pass) {}
+	virtual void beforePass() {}
+	virtual void configurePass([[maybe_unused]] OtComputePass& pass) {}
 
 	// let filter transform texture to output
 	void render(OtTexture& origin, OtTexture& destination) {
 		// give subclasses the option to do things before we start the compute pass
 		// e.g. prepare buffers
-		preRender();
+		beforePass();
 
 		// start a compute pass and setup the input and output textures
 		OtComputePass pass;
 		pass.addInputSampler(origin, sampler);
 		pass.addOutputTexture(destination);
 
-		// ask derived class to prepare the compute pass
+		// ask derived class to configure the compute pass
 		// e.g. create compute pipeline, add input samplers and/or set uniforms
-		prepareRender(pass);
+		configurePass(pass);
 
 		// execute the compute pass
 		pass.execute(
@@ -66,7 +66,6 @@ protected:
 	// the filter specific rendering pipeline (to be set by derived class)
 	OtComputePipeline pipeline;
 
-private:
 	// work variables
 	OtSampler sampler{OtSampler::nearestSampling | OtSampler::clampSampling};
 };

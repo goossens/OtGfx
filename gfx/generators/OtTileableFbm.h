@@ -31,8 +31,8 @@ public:
 	inline void setPersistence(float p) { persistence = p; }
 	inline void setOctaves(int o) { octaves = o; }
 
-	// prepare the compute pass
-	void prepareRender(OtComputePass& pass) override {
+	// configure the compute pass
+	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.initialize(OtTileableFbmComp, sizeof(OtTileableFbmComp));

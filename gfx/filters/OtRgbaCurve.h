@@ -14,7 +14,6 @@
 
 #include <array>
 #include <cstdint>
-#include <cstring>
 
 #include "glm/glm.hpp"
 
@@ -45,14 +44,14 @@ public:
 	inline void setWhiteLevel(OtColor value) { whiteLevel = value; }
 
 	// prepare the lookup table (if required)
-	void preRender() override {
+	void beforePass() override {
 		if (lutDirty) {
 			lutDirty = false;
 		}
 	}
 
-	// prepare the compute pass
-	void prepareRender(OtComputePass& pass) override {
+	// configure the compute pass
+	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.initialize(OtRgbaCurveComp, sizeof(OtRgbaCurveComp));

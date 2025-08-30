@@ -8,8 +8,8 @@
 
 layout(local_size_x=16, local_size_y=16) in;
 
-layout(set=0, binding=0) uniform sampler2D inImage;
-layout(set=1, binding=0, rgba8) uniform writeonly image2D outImage;
+layout(set=0, binding=0) uniform sampler2D inTexture;
+layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
     int posterizeSize;
@@ -17,7 +17,7 @@ layout(std140, set=2, binding=0) uniform UBO {
 
 void main() {
 	ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
-	ivec2 size = imageSize(outImage);
+	ivec2 size = imageSize(outTexture);
 
 	if (coord.x >= size.x || coord.y >= size.y) {
 		return;
@@ -34,5 +34,5 @@ void main() {
 	x = coord.x + x;
 	y = coord.y + y;
 
-    imageStore(outImage, coord, texture(inImage, vec2(x, y) / size));
+    imageStore(outTexture, coord, texture(inTexture, vec2(x, y) / size));
 }

@@ -49,8 +49,8 @@ public:
 	inline void setOctaves(int o) { octaves = o; }
 	inline void setNoiseType(NoiseType nt) { noiseType = nt; }
 
-	// prepare the compute pass
-	void prepareRender(OtComputePass& pass) override {
+	// configure the compute pass
+	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.initialize(OtFbmComp, sizeof(OtFbmComp));

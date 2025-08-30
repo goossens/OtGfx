@@ -7,7 +7,7 @@
 #version 450
 
 layout(local_size_x=16, local_size_y=16) in;
-layout(set=1, binding=0, rgba8) uniform writeonly image2D outImage;
+layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
 	int frequency;
@@ -195,7 +195,7 @@ float noise(vec2 uv) {
 
 void main() {
 	ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
-	ivec2 size = imageSize(outImage);
+	ivec2 size = imageSize(outTexture);
 
 	if (coord.x >= size.x || coord.y >= size.y) {
 		return;
@@ -216,5 +216,5 @@ void main() {
 		a *= persistence;
 	}
 
-    imageStore(outImage, coord, vec4(sum / denom, 0.0, 0.0, 1.0));
+    imageStore(outTexture, coord, vec4(sum / denom, 0.0, 0.0, 1.0));
 }

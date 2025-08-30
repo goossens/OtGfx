@@ -27,8 +27,8 @@ public:
 	// set properties
 	inline void setRgba(glm::vec4 value) { rgba = value; }
 
-	// prepare the compute pass
-	void prepareRender(OtComputePass& pass) override {
+	// configure the compute pass
+	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.initialize(OtRgbaAdjustComp, sizeof(OtRgbaAdjustComp));

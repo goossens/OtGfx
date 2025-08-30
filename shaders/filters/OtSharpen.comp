@@ -8,8 +8,8 @@
 
 layout(local_size_x=16, local_size_y=16) in;
 
-layout(set=0, binding=0) uniform sampler2D inImage;
-layout(set=1, binding=0, rgba8) uniform writeonly image2D outImage;
+layout(set=0, binding=0) uniform sampler2D inTexture;
+layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
     float strength;
@@ -17,7 +17,7 @@ layout(std140, set=2, binding=0) uniform UBO {
 
 void main() {
 	ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
-	ivec2 size = imageSize(outImage);
+	ivec2 size = imageSize(outTexture);
 
 	if (coord.x >= size.x || coord.y >= size.y) {
 		return;
@@ -29,12 +29,12 @@ void main() {
 
 	for (int i = 0; i < 2; i++) {
 		float offset = (float(i) + 1.0) * strength;
-		sum += -1.0 * texture(inImage, uv + vec2(-1.0,  0.0) * pixelSize * offset).rgb;
-		sum += -1.0 * texture(inImage, uv + vec2( 0.0, -1.0) * pixelSize * offset).rgb;
-		sum +=  5.0 * texture(inImage, uv + vec2( 0.0,  0.0) * pixelSize * offset).rgb;
-		sum += -1.0 * texture(inImage, uv + vec2( 0.0,  1.0) * pixelSize * offset).rgb;
-		sum += -1.0 * texture(inImage, uv + vec2( 1.0,  0.0) * pixelSize * offset).rgb;
+		sum += -1.0 * texture(inTexture, uv + vec2(-1.0,  0.0) * pixelSize * offset).rgb;
+		sum += -1.0 * texture(inTexture, uv + vec2( 0.0, -1.0) * pixelSize * offset).rgb;
+		sum +=  5.0 * texture(inTexture, uv + vec2( 0.0,  0.0) * pixelSize * offset).rgb;
+		sum += -1.0 * texture(inTexture, uv + vec2( 0.0,  1.0) * pixelSize * offset).rgb;
+		sum += -1.0 * texture(inTexture, uv + vec2( 1.0,  0.0) * pixelSize * offset).rgb;
 	}
 
-    imageStore(outImage, coord, vec4(sum / 2.0, 1.0));
+    imageStore(outTexture, coord, vec4(sum / 2.0, 1.0));
 }
