@@ -132,7 +132,7 @@ void OtFramework::endFrameIMGUI() {
 
 	if (gpu.swapchainTexture != nullptr && !isMinimized) {
 		// run Dear ImGui copy pass
-		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, gpu.commandBuffer);
+		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, gpu.pipelineCommandBuffer);
 
 		// setup Dear ImGui render target
 		SDL_GPUColorTargetInfo targetInfo{
@@ -145,8 +145,8 @@ void OtFramework::endFrameIMGUI() {
 		};
 
 		// run Dear ImGui render pass
-		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(gpu.commandBuffer, &targetInfo, 1, nullptr);
-		ImGui_ImplSDLGPU3_RenderDrawData(drawData, gpu.commandBuffer, renderPass);
+		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(gpu.pipelineCommandBuffer, &targetInfo, 1, nullptr);
+		ImGui_ImplSDLGPU3_RenderDrawData(drawData, gpu.pipelineCommandBuffer, renderPass);
 		SDL_EndGPURenderPass(renderPass);
 	}
 }

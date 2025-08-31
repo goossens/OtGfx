@@ -138,7 +138,7 @@ void OtTexture::load(OtImage& image) {
 		.d = 1
 	};
 
-	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.commandBuffer);
+	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.pipelineCommandBuffer);
 	SDL_UploadToGPUTexture(copyPass, &transferInfo, &region, false);
 	SDL_EndGPUCopyPass(copyPass);
 	SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);

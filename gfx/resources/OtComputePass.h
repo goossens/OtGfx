@@ -76,7 +76,7 @@ public:
 	// execute a compute shader pass
 	inline void execute(OtComputePipeline& pipeline, size_t groupCountX, size_t groupCountY, size_t groupCountZ) {
 		pass = SDL_BeginGPUComputePass(
-			OtGpu::instance().commandBuffer,
+			OtGpu::instance().pipelineCommandBuffer,
 			textures.data(),
 			static_cast<Uint32>(textures.size()),
 			nullptr,
@@ -90,7 +90,7 @@ public:
 
 		for (size_t i = 0; i < uniforms.size(); i++) {
 			SDL_PushGPUComputeUniformData(
-				OtGpu::instance().commandBuffer,
+				OtGpu::instance().pipelineCommandBuffer,
 				i,
 				uniforms[i].data(),
 				static_cast<Uint32>(uniforms[i].size()));

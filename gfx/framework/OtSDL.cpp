@@ -232,16 +232,23 @@ void OtFramework::startFrameSDL() {
 	// use stopwatch to see how long we have to wait for GPU
 	OtMeasureStopWatch stopwatch;
 
-	// acquire a command buffer
+	// acquire a copy command buffer
 	auto& gpu = OtGpu::instance();
-	gpu.commandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
+	gpu.copyCommandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
 
-	if (!gpu.commandBuffer) {
+	if (!gpu.copyCommandBuffer) {
+		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
+	}
+
+	// acquire a pipeline command buffer
+	gpu.pipelineCommandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
+
+	if (!gpu.pipelineCommandBuffer) {
 		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
 	}
 
 	// get the swapchain texture
-	if (!SDL_WaitAndAcquireGPUSwapchainTexture(gpu.commandBuffer, gpu.window, &gpu.swapchainTexture, nullptr, nullptr)) {
+	if (!SDL_WaitAndAcquireGPUSwapchainTexture(gpu.pipelineCommandBuffer, gpu.window, &gpu.swapchainTexture, nullptr, nullptr)) {
 		OtLogFatal("Error in SDL_WaitAndAcquireGPUSwapchainTexture: {}", SDL_GetError());
 	}
 
@@ -257,9 +264,15 @@ void OtFramework::endFrameSDL() {
 	// use stopwatch to see how long the GPU takes toprocess the command buffer
 	OtMeasureStopWatch stopwatch;
 
-	// submit the command buffer
+	// submit the copy command buffer
 	auto& gpu = OtGpu::instance();
-	SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(gpu.commandBuffer);
+
+	if (!SDL_SubmitGPUCommandBuffer(gpu.copyCommandBuffer)) {
+		OtLogFatal("Error in SDL_SubmitGPUCommandBuffer: {}", SDL_GetError());
+	}
+
+	// submit the pipeline command buffer
+	SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(gpu.pipelineCommandBuffer);
 
 	if (!fence) {
 		OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());

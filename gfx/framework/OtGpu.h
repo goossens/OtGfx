@@ -26,7 +26,8 @@ public:
 	// rendering properties
 	SDL_Window* window;
 	SDL_GPUDevice* device;
-	SDL_GPUCommandBuffer* commandBuffer;
+	SDL_GPUCommandBuffer* copyCommandBuffer;
+	SDL_GPUCommandBuffer* pipelineCommandBuffer;
 	SDL_GPUTexture* swapchainTexture;
 	int width;
 	int height;
