@@ -1,0 +1,106 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+
+#pragma once
+
+
+//
+//	Include files
+//
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+#include "OtAABB.h"
+#include "OtFrustum.h"
+#include "OtGpu.h"
+
+
+//
+//	OtCamera Class
+//
+
+class OtCamera {
+public:
+	// constructors
+	OtCamera() = default;
+
+	inline OtCamera(int w, int h, const glm::mat4 pm, const glm::mat4& vm) :
+		width(w),
+		height(h),
+		viewMatrix(vm),
+		projectionMatrix(pm) {
+
+		// update camera
+		update();
+	}
+
+	inline OtCamera(int w, int h, float nearPlane, float farPlane, float fov, const glm::mat4& vm) :
+		width(w),
+		height(h),
+		viewMatrix(vm) {
+
+		// calculate projection matrix
+		projectionMatrix = OtGpuHasHomogeneousDepth()
+			? glm::perspectiveFovRH_NO(glm::radians(fov), static_cast<float>(width), static_cast<float>(height), nearPlane, farPlane)
+			: glm::perspectiveFovRH_ZO(glm::radians(fov), static_cast<float>(width), static_cast<float>(height), nearPlane, farPlane);
+
+		// update camera
+		update();
+	}
+
+	inline OtCamera(int w, int h, float nearPlane, float farPlane, float fov, const glm::vec3& eye, const glm::vec3& at) :
+		width(w),
+		height(h) {
+
+		// determine view and projection matrices
+		viewMatrix = glm::lookAt(eye, at, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		projectionMatrix = OtGpuHasHomogeneousDepth()
+			? glm::perspectiveFovRH_NO(glm::radians(fov), static_cast<float>(width), static_cast<float>(height), nearPlane, farPlane)
+			: glm::perspectiveFovRH_ZO(glm::radians(fov), static_cast<float>(width), static_cast<float>(height), nearPlane, farPlane);
+
+		// initialize camera
+		update();
+	}
+
+	// get the near and far value from the projection matrix
+	inline void getNearFar(float& nearPlane, float& farPlane) {
+		if (OtGpuHasHomogeneousDepth()) {
+			nearPlane = (2.0f * projectionMatrix[3][2]) / (2.0f * projectionMatrix[2][2] - 2.0f);
+			farPlane = ((projectionMatrix[2][2] - 1.0f) * nearPlane) / (projectionMatrix[2][2] + 1.0f);
+
+		} else {
+			nearPlane = projectionMatrix[3][2] / projectionMatrix[2][2];
+			farPlane = (projectionMatrix[2][2] * nearPlane) / (projectionMatrix[2][2] + 1.0f);
+		}
+	}
+
+	// update camera
+	inline void update() {
+		// determine camera position
+		position = -glm::vec3(viewMatrix[3]);
+
+		// determine view/projection matrix
+		viewProjectionMatrix = projectionMatrix * viewMatrix;
+
+		// determine the camera's frustum in world space
+		frustum = OtFrustum(viewProjectionMatrix);
+	}
+
+	// see if an AABB box is visible
+	bool isVisibleAABB(const OtAABB& aabb) { return frustum.isVisibleAABB(aabb); }
+
+	// properties
+	int width = 0;
+	int height = 0;
+	glm::vec3 position = glm::vec3(0.0f);
+	glm::mat4 viewMatrix = glm::mat4(0.0f);
+	glm::mat4 projectionMatrix = glm::mat4(0.0f);
+	glm::mat4 viewProjectionMatrix = glm::mat4(0.0f);
+	OtFrustum frustum;
+};

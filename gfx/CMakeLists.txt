@@ -44,6 +44,7 @@ target_link_libraries(gfx PUBLIC
 	shadercross
 	imgui
 	imguifd
-	glm)
+	glm
+	entt)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${GFX_INCLUDES} ${GFX_SOURCES})
