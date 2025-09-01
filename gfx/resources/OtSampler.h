@@ -96,12 +96,13 @@ private:
 				.enable_compare = false
 			};
 
-			assign(SDL_CreateGPUSampler(OtGpu::instance().device, &info));
+			auto sdlSampler =SDL_CreateGPUSampler(OtGpu::instance().device, &info);
 
-			if (sampler == nullptr) {
+			if (sdlSampler == nullptr) {
 				OtLogFatal("Error in SDL_CreateGPUSampler: {}", SDL_GetError());
 			}
 
+			assign(sdlSampler);
 			createdFlags = requestedFlags;
 		}
 

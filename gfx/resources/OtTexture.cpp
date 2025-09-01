@@ -56,12 +56,13 @@ bool OtTexture::update(int w, int h, int f, int u) {
 			.props = 0
 		};
 
-		assign(SDL_CreateGPUTexture(OtGpu::instance().device, &info));
+		auto sdlTexture = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
 
-		if (!texture) {
+		if (!sdlTexture) {
 			OtLogFatal("Error in SDL_CreateGPUTexture: {}", SDL_GetError());
 		}
 
+		assign(sdlTexture);
 		return true;
 
 	} else {
@@ -76,7 +77,7 @@ bool OtTexture::update(int w, int h, int f, int u) {
 
 void OtTexture::load(OtImage& image) {
 	// format mapping table
-	struct formatMapping {
+	struct formatMapping{
 		SDL_PixelFormat surface;
 		SDL_GPUTextureFormat texture;
 		int bpp;
@@ -106,7 +107,7 @@ void OtTexture::load(OtImage& image) {
 	update(image.getWidth(), image.getHeight(), format, sampler | computeStorageRead);
 
 	// create a transfer buffer
-	SDL_GPUTransferBufferCreateInfo bufferInfo {
+	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
 		.size = static_cast<Uint32>(width * height * bpp)
 	};
@@ -124,12 +125,12 @@ void OtTexture::load(OtImage& image) {
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
 
 	// upload image to GPU
-	SDL_GPUTextureTransferInfo transferInfo {
+	SDL_GPUTextureTransferInfo transferInfo{
 		.offset = 0,
 		.transfer_buffer = transferBuffer
 	};
 
-	SDL_GPUTextureRegion region {
+	SDL_GPUTextureRegion region{
 		.texture = texture.get(),
 		.x = 0,
 		.y = 0,
@@ -138,7 +139,7 @@ void OtTexture::load(OtImage& image) {
 		.d = 1
 	};
 
-	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.pipelineCommandBuffer);
+	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 	SDL_UploadToGPUTexture(copyPass, &transferInfo, &region, false);
 	SDL_EndGPUCopyPass(copyPass);
 	SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);

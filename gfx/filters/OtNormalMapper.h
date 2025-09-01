@@ -34,7 +34,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtNormalMapperComp, sizeof(OtNormalMapperComp));
+			pipeline.setShader(OtNormalMapperComp, sizeof(OtNormalMapperComp));
 		}
 
 		// set uniforms

@@ -72,8 +72,10 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		}
 	});
 
-	// let app perform its own setup
+	// setup framework and app
+	startSetupSDL();
 	app->onSetup();
+	endSetupSDL();
 
 	// run app until we are told to stop
 	running = true;
@@ -91,9 +93,6 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 
 		// run all animations
 		// OtAnimator::update();
-
-		// reset view ID
-		// OtPassReset();
 
 		// handle libuv events
 		// this is done at this point so asynchronous callbacks

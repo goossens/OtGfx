@@ -33,6 +33,9 @@
 #include "OtLogo.h"
 #include "OtPixelate.h"
 
+#include "OtIndexBuffer.h"
+#include "OtVertexBuffer.h"
+
 
 //
 //	Simple app
@@ -44,7 +47,7 @@ public:
 	}
 
 	void onRender() override {
-		compute();
+		splash();
 	}
 
 	void splash() {

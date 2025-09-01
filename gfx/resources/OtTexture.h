@@ -135,7 +135,7 @@ private:
 	uv_async_t* asyncHandle = nullptr;
 	void loadAsync();
 
-	// get the raw sampler object
+	// get the raw texture object
 	friend class OtComputePass;
 
 	inline SDL_GPUTexture* getTexture() {

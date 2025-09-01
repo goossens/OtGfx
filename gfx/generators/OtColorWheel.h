@@ -26,7 +26,7 @@ public:
 	void configurePass([[maybe_unused]] OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtColorWheelComp, sizeof(OtColorWheelComp));
+			pipeline.setShader(OtColorWheelComp, sizeof(OtColorWheelComp));
 		}
 	}
 };

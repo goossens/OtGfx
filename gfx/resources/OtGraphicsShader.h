@@ -51,11 +51,13 @@ public:
 			.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage)
 		};
 
-		assign(SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(OtGpu::instance().device, &info, metadata, 0));
+		auto graphicsShader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(OtGpu::instance().device, &info, metadata, 0);
 
-		if (shader == nullptr) {
+		if (graphicsShader == nullptr) {
 			OtLogFatal("Error in SDL_ShaderCross_CompileGraphicsShaderFromSPIRV: {}", SDL_GetError());
 		}
+
+		assign(graphicsShader);
 
 		// cleanup
 		SDL_free(metadata);

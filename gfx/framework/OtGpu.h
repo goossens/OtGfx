@@ -14,6 +14,7 @@
 
 #include "SDL3/SDL.h"
 
+#include "OtLog.h"
 #include "OtSingleton.h"
 
 
@@ -32,6 +33,7 @@ public:
 	int width;
 	int height;
 
+	// dummy textures
 	SDL_GPUTexture* transparentDummyTexture;
 	SDL_GPUTexture* blackDummyTexture;
 	SDL_GPUTexture* whiteDummyTexture;

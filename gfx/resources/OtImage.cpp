@@ -54,11 +54,13 @@ void OtImage::clear() {
 void OtImage::update(int width, int height, int format) {
 	if (!surface || surface->w != width || surface->h != height || surface->format != format) {
 		// create new image
-		assign(SDL_CreateSurface(width, height, static_cast<SDL_PixelFormat>(format)));
+		auto sdlSurface = SDL_CreateSurface(width, height, static_cast<SDL_PixelFormat>(format));
 
-		if (!surface) {
+		if (!sdlSurface) {
 			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
 		}
+
+		assign(sdlSurface);
 	}
 }
 
@@ -91,12 +93,13 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 
 	} else {
 		// load image from file
-		assign(IMG_Load(address.c_str()));
+		auto sdlSurface = IMG_Load(address.c_str());
 
-		if (!surface) {
+		if (!sdlSurface) {
 			OtLogFatal("Error in IMG_Load: {}", SDL_GetError());
 		}
 
+		assign(sdlSurface);
 		normalize();
 	}
 
@@ -125,17 +128,18 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 
 void OtImage::load(int width, int height, int format, void* pixels) {
 	// load new image
-	assign(SDL_CreateSurfaceFrom(
+	auto sdlSurface = SDL_CreateSurfaceFrom(
 		width,
 		height,
 		static_cast<SDL_PixelFormat>(format),
 		pixels,
-		SDL_BYTESPERPIXEL(format) * width));
+		SDL_BYTESPERPIXEL(format) * width);
 
-	if (!surface) {
+	if (!sdlSurface) {
 		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
 	}
 
+	assign(sdlSurface);
 	normalize();
 }
 
@@ -152,12 +156,13 @@ void OtImage::load(void* data, size_t size) {
 		OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
 	}
 
-	assign(IMG_Load_IO(io, true));
+	auto sdlSurface = IMG_Load_IO(io, true);
 
-	if (!surface) {
+	if (!sdlSurface) {
 		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
 	}
 
+	assign(sdlSurface);
 	normalize();
 }
 
@@ -264,20 +269,24 @@ float OtImage::sampleValueGray(float x, float y) {
 void OtImage::normalize() {
 	if (SDL_ISPIXELFORMAT_FLOAT(surface->format)) {
 		if (surface->format != SDL_PIXELFORMAT_RGBA128_FLOAT) {
-			assign(SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_RGBA128_FLOAT));
+			auto sdlSurface = SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_RGBA128_FLOAT);
 
-			if (!surface) {
+			if (!sdlSurface) {
 				OtLogFatal("Error in SDL_ConvertSurface: {}", SDL_GetError());
 			}
+
+			assign(sdlSurface);
 		}
 
 	} else {
 		if (surface->format != SDL_PIXELFORMAT_ABGR8888) {
-			assign(SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_ABGR8888));
+			auto sdlSurface = SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_ABGR8888);
 
-			if (!surface) {
+			if (!sdlSurface) {
 				OtLogFatal("Error in SDL_ConvertSurface: {}", SDL_GetError());
 			}
+
+			assign(sdlSurface);
 		}
 	}
 }

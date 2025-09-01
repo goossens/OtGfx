@@ -18,9 +18,6 @@
 #include "SDL3/SDL.h"
 
 #include "OtFrameworkApp.h"
-// #include "OtSampler.h"
-// #include "OtShaderProgram.h"
-// #include "OtTexture.h"
 
 
 //
@@ -55,6 +52,8 @@ private:
 
 	// initialize, run and terminate libraries
 	void initSDL();
+	void startSetupSDL();
+	void endSetupSDL();
 	void eventsSDL();
 	void startFrameSDL();
 	void endFrameSDL();
@@ -65,6 +64,10 @@ private:
 	void startFrameIMGUI();
 	void endFrameIMGUI();
 	void endIMGUI();
+
+	// support functions for command buffers
+	void startCommandCycle();
+	void endCommandCycle();
 
 	// time tracking
 	std::chrono::time_point<std::chrono::high_resolution_clock> lastTime;

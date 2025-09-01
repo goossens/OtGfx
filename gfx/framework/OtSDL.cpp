@@ -141,12 +141,22 @@ void OtFramework::initSDL() {
 		OtLogFatal("Error in SDL_ClaimWindowForGPUDevice: {}", SDL_GetError());
 	}
 
-	// get a command buffer
-	SDL_GPUCommandBuffer* commandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
+	// start loop timer
+	lastTime = std::chrono::high_resolution_clock::now();
 
-	if (!commandBuffer) {
-		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
-	}
+#if __APPLE__
+	fixMenus();
+#endif
+}
+
+
+//
+//	OtFramework::startSetupSDL
+//
+
+void OtFramework::startSetupSDL() {
+	// start a new command cycle
+	startCommandCycle();
 
 	// create a transfer buffer to create the dummy textures
 	SDL_GPUTransferBufferCreateInfo bufferInfo {
@@ -154,13 +164,14 @@ void OtFramework::initSDL() {
 		.size = sizeof(Uint32)
 	};
 
+	auto& gpu = OtGpu::instance();
 	SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
 
 	if (!transferBuffer) {
 		OtLogFatal("Error in SDL_CreateGPUTransferBuffer: {}", SDL_GetError());
 	}
 
-	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(commandBuffer);
+	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 
 	// create dummy textures
 	SDL_Color transparent{ .r = 0, .g = 0, .b = 0, .a = 0 };
@@ -171,20 +182,17 @@ void OtFramework::initSDL() {
 	gpu.whiteDummyTexture = createDummyTexture(copyPass, transferBuffer, white);
 
 	SDL_EndGPUCopyPass(copyPass);
-
-	if (!SDL_SubmitGPUCommandBuffer(commandBuffer)) {
-		OtLogFatal("Error in SDL_SubmitGPUCommandBuffer: {}", SDL_GetError());
-	}
-
-	// cleanup
 	SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);
+}
 
-	// start loop timer
-	lastTime = std::chrono::high_resolution_clock::now();
 
-#if __APPLE__
-	fixMenus();
-#endif
+//
+//	OtFramework::endSetupSDL
+//
+
+void OtFramework::endSetupSDL() {
+	// execute the command buffers
+	endCommandCycle();
 }
 
 
@@ -232,20 +240,9 @@ void OtFramework::startFrameSDL() {
 	// use stopwatch to see how long we have to wait for GPU
 	OtMeasureStopWatch stopwatch;
 
-	// acquire a copy command buffer
+	// start a new GPU command cycle
 	auto& gpu = OtGpu::instance();
-	gpu.copyCommandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
-
-	if (!gpu.copyCommandBuffer) {
-		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
-	}
-
-	// acquire a pipeline command buffer
-	gpu.pipelineCommandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
-
-	if (!gpu.pipelineCommandBuffer) {
-		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
-	}
+	startCommandCycle();
 
 	// get the swapchain texture
 	if (!SDL_WaitAndAcquireGPUSwapchainTexture(gpu.pipelineCommandBuffer, gpu.window, &gpu.swapchainTexture, nullptr, nullptr)) {
@@ -264,27 +261,11 @@ void OtFramework::endFrameSDL() {
 	// use stopwatch to see how long the GPU takes toprocess the command buffer
 	OtMeasureStopWatch stopwatch;
 
-	// submit the copy command buffer
-	auto& gpu = OtGpu::instance();
-
-	if (!SDL_SubmitGPUCommandBuffer(gpu.copyCommandBuffer)) {
-		OtLogFatal("Error in SDL_SubmitGPUCommandBuffer: {}", SDL_GetError());
-	}
-
-	// submit the pipeline command buffer
-	SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(gpu.pipelineCommandBuffer);
-
-	if (!fence) {
-		OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
-	}
-
-	if (!SDL_WaitForGPUFences(gpu.device, true, &fence, 1)) {
-		OtLogFatal("Error in SDL_WaitForGPUFences: {}", SDL_GetError());
-	}
+	// execute command buffers
+	endCommandCycle();
 
 	// record time and cleanup
 	gpuTime = stopwatch.elapsed();
-	SDL_ReleaseGPUFence(gpu.device, fence);
 }
 
 
@@ -313,4 +294,58 @@ void OtFramework::endSDL() {
 
 void OtFramework::openURL(const std::string& url) {
 	SDL_OpenURL(url.c_str());
+}
+
+
+//
+//	OtFramework::startCommandCycle
+//
+
+void OtFramework::startCommandCycle() {
+	// start a command cycle
+	auto& gpu = OtGpu::instance();
+	gpu.copyCommandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
+
+	if (!gpu.copyCommandBuffer) {
+		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
+	}
+
+	// acquire a pipeline command buffer
+	gpu.pipelineCommandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
+
+	if (!gpu.pipelineCommandBuffer) {
+		OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
+	}
+}
+
+
+//
+//	OtFramework::endCommandCycle
+//
+
+void OtFramework::endCommandCycle() {
+	// end a command cycle
+	auto& gpu = OtGpu::instance();
+	SDL_GPUFence* fences[2];
+
+	// submit the copy command buffer
+	fences[0] = SDL_SubmitGPUCommandBufferAndAcquireFence(gpu.copyCommandBuffer);
+
+	if (!fences[0]) {
+		OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
+	}
+
+	// submit the pipeline command buffer
+	fences[1] = SDL_SubmitGPUCommandBufferAndAcquireFence(gpu.pipelineCommandBuffer);
+
+	if (!fences[1]) {
+		OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
+	}
+
+	if (!SDL_WaitForGPUFences(gpu.device, true, fences, 2)) {
+		OtLogFatal("Error in SDL_WaitForGPUFences: {}", SDL_GetError());
+	}
+
+	SDL_ReleaseGPUFence(gpu.device, fences[0]);
+	SDL_ReleaseGPUFence(gpu.device, fences[1]);
 }

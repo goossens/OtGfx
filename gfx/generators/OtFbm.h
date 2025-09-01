@@ -53,7 +53,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtFbmComp, sizeof(OtFbmComp));
+			pipeline.setShader(OtFbmComp, sizeof(OtFbmComp));
 		}
 
 		// set uniforms

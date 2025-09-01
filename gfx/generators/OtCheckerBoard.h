@@ -36,7 +36,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtCheckerBoardComp, sizeof(OtCheckerBoardComp));
+			pipeline.setShader(OtCheckerBoardComp, sizeof(OtCheckerBoardComp));
 		}
 
 		// set uniforms

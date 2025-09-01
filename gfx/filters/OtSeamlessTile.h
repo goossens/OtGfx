@@ -26,7 +26,7 @@ public:
 	void configurePass([[maybe_unused]] OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtSeamlessTileComp, sizeof(OtSeamlessTileComp));
+			pipeline.setShader(OtSeamlessTileComp, sizeof(OtSeamlessTileComp));
 		}
 	}
 };

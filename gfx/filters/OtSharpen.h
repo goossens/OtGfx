@@ -31,7 +31,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtSharpenComp, sizeof(OtSharpenComp));
+			pipeline.setShader(OtSharpenComp, sizeof(OtSharpenComp));
 		}
 
 		// set uniforms

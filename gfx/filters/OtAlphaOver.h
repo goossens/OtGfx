@@ -38,7 +38,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtAlphaOverComp, sizeof(OtAlphaOverComp));
+			pipeline.setShader(OtAlphaOverComp, sizeof(OtAlphaOverComp));
 		}
 
 		pass.addInputSampler(overlayTexture, overlaySampler);

@@ -31,7 +31,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtContrastSaturationBrightnessComp, sizeof(OtContrastSaturationBrightnessComp));
+			pipeline.setShader(OtContrastSaturationBrightnessComp, sizeof(OtContrastSaturationBrightnessComp));
 		}
 
 		// set uniforms

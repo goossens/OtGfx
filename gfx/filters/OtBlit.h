@@ -30,7 +30,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtBlitComp, sizeof(OtBlitComp));
+			pipeline.setShader(OtBlitComp, sizeof(OtBlitComp));
 		}
 
 		// set uniforms

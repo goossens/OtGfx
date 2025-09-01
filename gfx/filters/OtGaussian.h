@@ -38,7 +38,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtGaussianComp, sizeof(OtGaussianComp));
+			pipeline.setShader(OtGaussianComp, sizeof(OtGaussianComp));
 		}
 
 		// set uniforms

@@ -31,19 +31,19 @@ class OtComputePipeline {
 public:
 	// constructor
 	OtComputePipeline() = default;
-	OtComputePipeline(const uint32_t* c, size_t s) : code(c), size(s) {}
+	OtComputePipeline(const uint32_t* code, size_t size) : computeShaderCode(code), computeShaderSize(size) {}
 
-	// initialize the pipeline
-	inline void initialize(const uint32_t* c, size_t s) {
-		code = c;
-		size = s;
+	// associate shader with pipeline
+	inline void setShader(const uint32_t* code, size_t size) {
+		computeShaderCode = code;
+		computeShaderSize = size;
 		pipeline = nullptr;
 	}
 
 	// clear the object
 	inline void clear() {
-		code = nullptr;
-		size = 0;
+		computeShaderCode = nullptr;
+		computeShaderSize = 0;
 		pipeline = nullptr;
 	}
 
@@ -52,8 +52,8 @@ public:
 
 private:
 	// shader definition
-	const uint32_t* code = nullptr;
-	size_t size = 0;
+	const uint32_t* computeShaderCode = nullptr;
+	size_t computeShaderSize = 0;
 
 	// the GPU resource
 	std::shared_ptr<SDL_GPUComputePipeline> pipeline;
@@ -72,14 +72,14 @@ private:
 
 	inline SDL_GPUComputePipeline* getPipeline() {
 		// ensure pipeline is initialized
-		if (!code || !size) {
-			OtLogFatal("Uninitialize compute pipeline");
+		if (!computeShaderCode || !computeShaderSize) {
+			OtLogFatal("Compute pipeline is missing shader");
 		}
 
 		// create pipeline (if required)
 		if (!pipeline) {
 			// figure out shader metadata
-			SDL_ShaderCross_ComputePipelineMetadata* metadata = SDL_ShaderCross_ReflectComputeSPIRV((Uint8*) code, size, 0);
+			SDL_ShaderCross_ComputePipelineMetadata* metadata = SDL_ShaderCross_ReflectComputeSPIRV((Uint8*) computeShaderCode, computeShaderSize, 0);
 
 			if (metadata == nullptr) {
 				OtLogFatal("Error in SDL_ShaderCross_ReflectComputeSPIRV: {}", SDL_GetError());
@@ -87,8 +87,8 @@ private:
 
 			// cross compile to the appropriate shader format and create a pipeline object
 			SDL_ShaderCross_SPIRV_Info info{
-				.bytecode = (Uint8*) code,
-				.bytecode_size = size,
+				.bytecode = (Uint8*) computeShaderCode,
+				.bytecode_size = computeShaderSize,
 				.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
 				.enable_debug = false,
 				.entrypoint = "main",
@@ -96,11 +96,13 @@ private:
 				.props = 0
 			};
 
-			assign(SDL_ShaderCross_CompileComputePipelineFromSPIRV(OtGpu::instance().device, &info, metadata, 0));
+			auto computePipeline = SDL_ShaderCross_CompileComputePipelineFromSPIRV(OtGpu::instance().device, &info, metadata, 0);
 
-			if (pipeline == nullptr) {
+			if (computePipeline == nullptr) {
 				OtLogFatal("Error in SDL_ShaderCross_CompileComputePipelineFromSPIRV: {}", SDL_GetError());
 			}
+
+			assign(computePipeline);
 
 			// cleanup
 			SDL_free(metadata);

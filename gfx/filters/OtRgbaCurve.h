@@ -54,7 +54,7 @@ public:
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.initialize(OtRgbaCurveComp, sizeof(OtRgbaCurveComp));
+			pipeline.setShader(OtRgbaCurveComp, sizeof(OtRgbaCurveComp));
 
 			for (int i = 0; i < 256; i++) {
 				lut[i] = static_cast<float>(i) / 255.0f;
