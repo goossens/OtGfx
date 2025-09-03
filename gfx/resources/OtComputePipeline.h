@@ -71,13 +71,13 @@ private:
 	friend class OtComputePass;
 
 	inline SDL_GPUComputePipeline* getPipeline() {
-		// ensure pipeline is initialized
-		if (!computeShaderCode || !computeShaderSize) {
-			OtLogFatal("Compute pipeline is missing shader");
-		}
-
 		// create pipeline (if required)
 		if (!pipeline) {
+			// ensure shader is provided
+			if (!computeShaderCode || !computeShaderSize) {
+				OtLogFatal("Compute pipeline is missing shader");
+			}
+
 			// figure out shader metadata
 			SDL_ShaderCross_ComputePipelineMetadata* metadata = SDL_ShaderCross_ReflectComputeSPIRV((Uint8*) computeShaderCode, computeShaderSize, 0);
 

@@ -41,11 +41,11 @@ public:
 			pipeline.setShader(OtAlphaOverComp, sizeof(OtAlphaOverComp));
 		}
 
-		pass.addInputSampler(overlayTexture, overlaySampler);
+		pass.addInputSampler(overlaySampler, overlayTexture);
 	}
 
 private:
 	// properties
 	OtTexture overlayTexture;
-	OtSampler overlaySampler{OtSampler::nearestSampling | OtSampler::clampSampling};
+	OtSampler overlaySampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 };

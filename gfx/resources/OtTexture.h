@@ -32,29 +32,33 @@
 class OtTexture {
 public:
 	// texture formats
-	static constexpr int noTexture = 0;
-	static constexpr int r8Texture = SDL_GPU_TEXTUREFORMAT_R8_UNORM;
-	static constexpr int rFloat32Texture = SDL_GPU_TEXTUREFORMAT_R32_FLOAT;
-	static constexpr int rgFloat16Texture = SDL_GPU_TEXTUREFORMAT_R16G16_FLOAT;
-	static constexpr int rgba8Texture = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-	static constexpr int rgbaFloat16Texture = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
-	static constexpr int rgbaFloat32Texture = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
-	static constexpr int dFloatTexture = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
-	static constexpr int d24s8Texture = SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT;
+	enum class Format {
+		none = SDL_GPU_TEXTUREFORMAT_INVALID,
+		r8 = SDL_GPU_TEXTUREFORMAT_R8_UNORM,
+		rFloat32 = SDL_GPU_TEXTUREFORMAT_R32_FLOAT,
+		rgFloat16 = SDL_GPU_TEXTUREFORMAT_R16G16_FLOAT,
+		rgba8 = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+		rgbaFloat16 = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
+		rgbaFloat32 = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT,
+		dFloat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
+		d24s8 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
+	};
 
 	// texture usage
-	static constexpr int noUsage = 0;
-	static constexpr int sampler = SDL_GPU_TEXTUREUSAGE_SAMPLER;
-	static constexpr int colorTarget = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
-	static constexpr int depthStencilTarget = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
-	static constexpr int graphicsStorageRead = SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ;
-	static constexpr int computeStorageRead = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ;
-	static constexpr int computeStorageWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE;
-	static constexpr int computeStorageReadWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE;
+	enum Usage {
+		none = 0,
+		sampler = SDL_GPU_TEXTUREUSAGE_SAMPLER,
+		colorTarget = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET,
+		depthStencilTarget = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
+		graphicsStorageRead = SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ,
+		computeStorageRead = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
+		computeStorageWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE,
+		computeStorageReadWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE
+	};
 
 	// constructors
 	OtTexture() = default;
-	OtTexture(int width, int height, int format, int usage) { update(width, height, format, usage); }
+	OtTexture(int width, int height, Format format, Usage usage) { update(width, height, format, usage); }
 
 	// clear the texture
 	void clear();
@@ -63,7 +67,7 @@ public:
 	inline bool isValid() { return texture != nullptr; }
 
 	// update a texture (returns true if update was require, false if nothing needed to be done)
-	bool update(int width, int height, int format, int usage);
+	bool update(int width, int height, Format format, Usage usage);
 
 	// load texture
 	void load(OtImage& image);
@@ -81,8 +85,8 @@ public:
 	// get texture properties
 	inline int getWidth() { return width; }
 	inline int getHeight() { return height; }
-	inline int getFormat() { return format; }
-	inline int getUsage() { return usage; }
+	inline Format getFormat() { return format; }
+	inline Usage getUsage() { return usage; }
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -105,7 +109,7 @@ public:
 
 	// see if texture has stencil component
 	inline bool hasStencil() {
-		return (usage & depthStencilTarget) != 0 && (format & SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT) != 0;
+		return (usage & depthStencilTarget) != 0 && format == Format::d24s8;
 	}
 
 private:
@@ -126,8 +130,8 @@ private:
 	// properties
 	int width = 1;
 	int height = 1;
-	int format = noTexture;
-	int usage = noUsage;
+	Format format = Format::none;
+	Usage usage = Usage::none;
 	int version = 0;
 
 	// support for async loading
@@ -137,6 +141,7 @@ private:
 
 	// get the raw texture object
 	friend class OtComputePass;
+	friend class OtRenderPass;
 
 	inline SDL_GPUTexture* getTexture() {
 		return isValid()

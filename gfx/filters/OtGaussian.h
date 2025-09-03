@@ -27,7 +27,7 @@ public:
 	// constructor
 	OtGaussian() {
 		// switch to linear sampling for input texture
-		sampler.setFlags(OtSampler::linearSampling | OtSampler::clampSampling);
+		sampler.setFilter(OtSampler::Filter::linear);
 	}
 
 	// set properties

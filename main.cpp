@@ -33,8 +33,11 @@
 #include "OtLogo.h"
 #include "OtPixelate.h"
 
+#include "OtFrameBuffer.h"
 #include "OtIndexBuffer.h"
 #include "OtVertexBuffer.h"
+#include "OtRenderPass.h"
+#include "OtRenderPipeline.h"
 
 
 //
@@ -47,7 +50,7 @@ public:
 	}
 
 	void onRender() override {
-		splash();
+		compute();
 	}
 
 	void splash() {
@@ -74,21 +77,11 @@ public:
 		ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
 		ImGui::Begin("Compute", nullptr, ImGuiWindowFlags_NoDecoration);
 		auto size = ImGui::GetContentRegionAvail();
+		auto usage = OtTexture::Usage(OtTexture::Usage::sampler | OtTexture::Usage::computeStorageWrite);
 
-		if (rawTexture.update(
-			size.x,
-			size.y,
-			OtTexture::rgba8Texture,
-			OtTexture::sampler | OtTexture::computeStorageWrite)) {
-
+		if (rawTexture.update(size.x, size.y, OtTexture::Format::rgba8, usage)) {
 			generator.render(rawTexture);
-
-			filteredTexture.update(
-				size.x,
-				size.y,
-				OtTexture::rgba8Texture,
-				OtTexture::sampler | OtTexture::computeStorageWrite);
-
+			filteredTexture.update(size.x, size.y, OtTexture::Format::rgba8, usage);
 			filter.render(rawTexture, filteredTexture);
 		}
 

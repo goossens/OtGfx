@@ -34,7 +34,7 @@
 class OtComputePass {
 public:
 	// add an input sampler
-	inline void addInputSampler(OtTexture& texture, OtSampler& sampler) {
+	inline void addInputSampler(OtSampler& sampler, OtTexture& texture) {
 		if ((texture.getUsage() & OtTexture::sampler) == 0) {
 			OtLogFatal("Can't add texture without [sampler] usage to compute pass");
 		}
@@ -48,7 +48,7 @@ public:
 	}
 	// add an output texture
 	inline void addOutputTexture(OtTexture& texture) {
-		if ((texture.getUsage() & (OtTexture::computeStorageWrite | OtTexture::computeStorageReadWrite)) == 0) {
+		if ((texture.getUsage() & (OtTexture::Usage::computeStorageWrite | OtTexture::Usage::computeStorageReadWrite)) == 0) {
 			OtLogFatal("Can't add texture without [write] usage to compute pass");
 		}
 
@@ -75,7 +75,7 @@ public:
 
 	// execute a compute shader pass
 	inline void execute(OtComputePipeline& pipeline, size_t groupCountX, size_t groupCountY, size_t groupCountZ) {
-		pass = SDL_BeginGPUComputePass(
+		SDL_GPUComputePass* pass = SDL_BeginGPUComputePass(
 			OtGpu::instance().pipelineCommandBuffer,
 			textures.data(),
 			static_cast<Uint32>(textures.size()),
@@ -108,7 +108,6 @@ public:
 
 private:
 	// pass specific data
-	SDL_GPUComputePass* pass;
 	std::vector<SDL_GPUTextureSamplerBinding> samplers;
 	std::vector<SDL_GPUStorageTextureReadWriteBinding> textures;
 	std::vector<std::vector<std::byte>> uniforms;

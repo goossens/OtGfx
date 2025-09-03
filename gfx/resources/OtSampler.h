@@ -25,17 +25,24 @@
 
 class OtSampler {
 public:
-	// flags
-	static constexpr int nearestSampling = 1 << 0;
-	static constexpr int linearSampling = 1 << 1;
-	static constexpr int anisotropicSampling = 1 << 2;
-	static constexpr int repeatSampling = 1 << 3;
-	static constexpr int mirrorSampling = 1 << 4;
-	static constexpr int clampSampling = 1 << 5;
+	// filtering options
+	enum class Filter {
+		none,
+		nearest,
+		linear,
+		anisotropic
+	};
+
+	enum class Addressing {
+		none,
+		repeat,
+		mirror,
+		clamp
+	};
 
 	// constructors
 	OtSampler() = default;
-	OtSampler(int flags) : requestedFlags(flags) {}
+	OtSampler(Filter filter, Addressing address) : requestedFilter(filter), requestedAddressing(address) {}
 
 	// clear the object
 	inline void clear() { sampler = nullptr; }
@@ -43,17 +50,21 @@ public:
 	// see if sampler is valid
 	inline bool isValid() { return sampler != nullptr; }
 
-	// access flags
-	inline void setFlags(int flags) { requestedFlags = flags; }
-	inline int getFlags() { return requestedFlags; };
+	// access options
+	inline void setFilter(Filter filter) { requestedFilter = filter; }
+	inline Filter getFilter() { return requestedFilter; };
+	inline void setAddressing(Addressing address) { requestedAddressing = address; }
+	inline Addressing getAddressing() { return requestedAddressing; };
 
 private:
 	// sampler
 	std::shared_ptr<SDL_GPUSampler> sampler;
 
 	// properties
-	int requestedFlags = linearSampling | repeatSampling;
-	int createdFlags = 0;
+	Filter requestedFilter = Filter::linear;
+	Addressing requestedAddressing = Addressing::repeat;
+	Filter currentFilter = Filter::none;
+	Addressing currentAddressing = Addressing::none;
 
 	// memory manage SDL resource
 	inline void assign(SDL_GPUSampler* newSampler) {
@@ -68,16 +79,24 @@ private:
 	friend class OtComputePass;
 
 	inline SDL_GPUSampler* getSampler() {
-		if (!sampler || requestedFlags != createdFlags) {
+		if (!sampler || requestedFilter != currentFilter || requestedAddressing != currentAddressing) {
+			if (requestedFilter == Filter::none) {
+				OtLogFatal("Invalid filter type for sampler");
+			}
+
+			if (requestedAddressing == Addressing::none) {
+				OtLogFatal("Invalid addressing type for sampler");
+			}
+
 			SDL_GPUFilter filter =
-				(requestedFlags & nearestSampling)
+				(requestedFilter == Filter::nearest)
 					? SDL_GPU_FILTER_NEAREST
 					: SDL_GPU_FILTER_LINEAR;
 
 			SDL_GPUSamplerAddressMode addressMode =
-				(requestedFlags & repeatSampling)
+				(requestedAddressing == Addressing::repeat)
 					? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
-					: (requestedFlags & mirrorSampling)
+					: (requestedAddressing == Addressing::mirror)
 						? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
 						: SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
@@ -88,11 +107,11 @@ private:
 				.address_mode_v = addressMode,
 				.address_mode_w = addressMode,
 				.mip_lod_bias = 0,
-				.max_anisotropy = (requestedFlags | anisotropicSampling) ? 8.0f : 0.0f,
+				.max_anisotropy = (requestedFilter == Filter::anisotropic) ? 8.0f : 0.0f,
 				.compare_op = SDL_GPU_COMPAREOP_ALWAYS,
 				.min_lod = 0,
 				.max_lod = 0,
-				.enable_anisotropy = (requestedFlags | anisotropicSampling) != 0,
+				.enable_anisotropy = (requestedFilter == Filter::anisotropic) != 0,
 				.enable_compare = false
 			};
 
@@ -103,7 +122,8 @@ private:
 			}
 
 			assign(sdlSampler);
-			createdFlags = requestedFlags;
+			currentFilter = requestedFilter;
+			currentAddressing = requestedAddressing;
 		}
 
 		return sampler.get();

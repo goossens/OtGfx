@@ -26,7 +26,8 @@ void OtTexture::clear() {
 	texture = nullptr;
 	width = 1;
 	height = 1;
-	format = noTexture;
+	format = Format::none;
+	usage = Usage::none;
 	incrementVersion();
 }
 
@@ -35,7 +36,7 @@ void OtTexture::clear() {
 //	OtTexture::create
 //
 
-bool OtTexture::update(int w, int h, int f, int u) {
+bool OtTexture::update(int w, int h, Format f, Usage u) {
 	if (!texture || width != w || h != height || f != format || u != usage) {
 		// remember settings
 		width = w;
@@ -79,32 +80,32 @@ void OtTexture::load(OtImage& image) {
 	// format mapping table
 	struct formatMapping{
 		SDL_PixelFormat surface;
-		SDL_GPUTextureFormat texture;
+		Format format;
 		int bpp;
 	};
 
 	formatMapping mappingTable[] = {
-		{ SDL_PIXELFORMAT_ABGR8888, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, 4 },
-		{ SDL_PIXELFORMAT_RGBA128_FLOAT, SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT, 16 }
+		{ SDL_PIXELFORMAT_ABGR8888, Format::rgba8, 4 },
+		{ SDL_PIXELFORMAT_RGBA128_FLOAT, Format::rgbaFloat32, 16 }
 	};
 
 	// find correct format
-	int format = -1;
+	Format format = Format::none;
 	int bpp = -1;
 
 	for (auto& mapping : mappingTable) {
 		if (mapping.surface == image.getFormat()) {
-			format = mapping.texture;
+			format = mapping.format;
 			bpp = mapping.bpp;
 		}
 	}
 
-	if (format < 0) {
+	if (format == Format::none) {
 		OtLogFatal("Unsupported image format: {}", image.getFormat());
 	}
 
 	// update the texture
-	update(image.getWidth(), image.getHeight(), format, sampler | computeStorageRead);
+	update(image.getWidth(), image.getHeight(), format, Usage::sampler);
 
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{

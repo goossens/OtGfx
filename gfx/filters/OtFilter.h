@@ -47,7 +47,7 @@ public:
 
 		// start a compute pass and setup the input and output textures
 		OtComputePass pass;
-		pass.addInputSampler(origin, sampler);
+		pass.addInputSampler(sampler, origin);
 		pass.addOutputTexture(destination);
 
 		// ask derived class to configure the compute pass
@@ -67,5 +67,5 @@ protected:
 	OtComputePipeline pipeline;
 
 	// work variables
-	OtSampler sampler{OtSampler::nearestSampling | OtSampler::clampSampling};
+	OtSampler sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 };

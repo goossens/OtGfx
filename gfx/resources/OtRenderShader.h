@@ -23,10 +23,10 @@
 
 
 //
-//	OtGraphicsShader
+//	OtRenderShader
 //
 
-class OtGraphicsShader {
+class OtRenderShader {
 public:
 	// shader stages
 	enum class Stage {
@@ -34,8 +34,8 @@ public:
 		fragment = SDL_SHADERCROSS_SHADERSTAGE_FRAGMENT
 	};
 
-	// constructor/destructor
-	inline OtGraphicsShader(const uint32_t* code, size_t size, Stage stage) {
+	// constructor
+	inline OtRenderShader(const uint32_t* code, size_t size, Stage stage) {
 		// figure out shader metadata
 		SDL_ShaderCross_GraphicsShaderMetadata* metadata = SDL_ShaderCross_ReflectGraphicsSPIRV((Uint8*) code, size, 0);
 
@@ -70,7 +70,7 @@ public:
 	inline bool isValid() { return shader != nullptr; }
 
 private:
-	// the GPU shader
+	// the GPU resource
 	std::shared_ptr<SDL_GPUShader> shader;
 
 	// memory manage SDL resource
@@ -81,4 +81,8 @@ private:
 				SDL_ReleaseGPUShader(OtGpu::instance().device, oldShader);
 			});
 	}
+
+	// get the raw shader object
+	friend class OtRenderPipeline;
+	inline SDL_GPUShader* getShader() { return shader.get(); }
 };
