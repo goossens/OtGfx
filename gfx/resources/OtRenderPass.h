@@ -14,6 +14,9 @@
 
 #include <vector>
 
+#include "glm/glm.hpp"
+#include "SDL3/SDL.h"
+
 #include "OtFrameBuffer.h"
 // #include "OtGbuffer.h"
 #include "OtGpu.h"
@@ -32,27 +35,14 @@ public:
 			OtLogFatal("Can't use invalid framebuffer in render pass");
 		}
 
-		// describe color target
-		SDL_GPUColorTargetInfo colorTargetInfo{
-			.texture = framebuffer.getColorTexture().getTexture(),
-			.load_op = SDL_GPU_LOADOP_CLEAR,
-			.store_op = SDL_GPU_STOREOP_STORE
-		};
-
-		// describe depth/stencil target
-		SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo {
-			.texture = framebuffer.getDepthTexture().getTexture(),
-			.clear_depth = 1.0f,
-			.load_op = SDL_GPU_LOADOP_CLEAR,
-			.store_op = SDL_GPU_STOREOP_STORE
-		};
-
 		// start rendering pass
+		auto info = framebuffer.getRenderTargetInfo();
+
 		pass = SDL_BeginGPURenderPass(
 			OtGpu::instance().pipelineCommandBuffer,
-			colorTargetInfo.texture != nullptr ? &colorTargetInfo : nullptr,
-			colorTargetInfo.texture != nullptr ? 1 : 0,
-			depthStencilTargetInfo.texture != nullptr ? &depthStencilTargetInfo : nullptr);
+			info->colorTargetInfo,
+			info->numColorTargets,
+			info->depthStencilTargetInfo);
 
 		if (!pass) {
 			OtLogFatal("Error in SDL_BeginGPURenderPass: {}", SDL_GetError());

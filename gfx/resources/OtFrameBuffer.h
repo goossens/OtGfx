@@ -17,6 +17,7 @@
 
 #include "OtLog.h"
 
+#include "OtRenderTarget.h"
 #include "OtTexture.h"
 
 
@@ -24,7 +25,7 @@
 //	OtFrameBuffer
 //
 
-class OtFrameBuffer {
+class OtFrameBuffer : OtRenderTarget {
 public:
 	// constructors
 	OtFrameBuffer() = default;
@@ -51,15 +52,29 @@ public:
 		// clear other fields
 		width = -1;
 		height = -1;
+		valid = false;
 	}
 
 	// see if framebuffer is valid
-	inline bool isValid() { return colorTexture.isValid() || depthTexture.isValid(); }
+	inline bool isValid() { return valid; }
+
+	// set clear properties
+	inline void setClearColor(bool flag, const glm::vec4& value=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) {
+		clearColorTexture = flag;
+		clearColorValue = value;
+		valid = false;
+	}
+
+	inline void setClearDepth(bool flag, float value=1.0f) {
+		clearDepthTexture = flag;
+		clearDepthValue = value;
+		valid = false;
+	}
 
 	// update frame buffer
 	inline  void update(int w, int h) {
 		// update framebuffer if required
-		if (!isValid() || w != width || h != height) {
+		if (!valid || w != width || h != height) {
 			// clear old resources
 			clear();
 
@@ -73,6 +88,9 @@ public:
 					w, h,
 					colorTextureType,
 					OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler));
+
+			} else {
+				clearColorTexture = false;
 			}
 
 			if (depthTextureType != OtTexture::Format::none) {
@@ -80,13 +98,44 @@ public:
 					w, h,
 					depthTextureType,
 					OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler));
+
+			} else {
+				clearDepthTexture = false;
 			}
 
 			// remember dimensions
 			width = w;
 			height = h;
+
+			// create/update render target information
+			colorTargetInfo.texture = colorTexture.getTexture();
+
+			colorTargetInfo.clear_color = SDL_FColor{
+				.r = clearColorValue.r,
+				.g = clearColorValue.g,
+				.b =clearColorValue.b,
+				.a = clearColorValue.a
+			};
+
+			colorTargetInfo.load_op = clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+			colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+
+			depthStencilTargetInfo.texture = depthTexture.getTexture();
+			depthStencilTargetInfo.clear_depth = clearDepthValue;
+			depthStencilTargetInfo.load_op = clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+			depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+
+			info.colorTargetInfo = &colorTargetInfo;
+			info.numColorTargets = 1;
+			info.depthStencilTargetInfo = &depthStencilTargetInfo;
+
+			// set state
+			valid = true;
 		}
 	}
+
+	// get render target information
+	OtRenderTargetInfo* getRenderTargetInfo() override { return &info; }
 
 	// get framebuffer dimensions
 	inline int getWidth() { return width; }
@@ -118,7 +167,21 @@ private:
 	int width = -1;
 	int height = -1;
 
+	// state
+	bool valid = false;
+
 	// resource handles
 	OtTexture colorTexture;
 	OtTexture depthTexture;
+
+	// clearing flags
+	bool clearColorTexture = true;
+	bool clearDepthTexture = true;
+	glm::vec4 clearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
+	float clearDepthValue = 1.0f;
+
+	// render target description
+	SDL_GPUColorTargetInfo colorTargetInfo;
+	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
+	OtRenderTargetInfo info;
 };

@@ -141,7 +141,7 @@ private:
 
 	// get the raw texture object
 	friend class OtComputePass;
-	friend class OtRenderPass;
+	friend class OtFrameBuffer;
 
 	inline SDL_GPUTexture* getTexture() {
 		return isValid()

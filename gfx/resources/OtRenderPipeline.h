@@ -15,6 +15,8 @@
 #include <memory>
 #include <vector>
 
+#include "SDL3/SDL.h"
+
 #include "OtLog.h"
 
 #include "OtRenderShader.h"

@@ -84,7 +84,7 @@ struct OtVertex {
 
 		static OtVertexDescription description{
 			.size = sizeof(OtVertex),
-			.members = sizeof(attributes),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
 			.attributes = attributes
 		};
 
