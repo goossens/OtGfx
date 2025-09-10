@@ -280,7 +280,7 @@ private:
 			case RenderTargetType::rgba32: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
 			case RenderTargetType::rgba8d: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
 			case RenderTargetType::rgba32d: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
-			case RenderTargetType::gBuffer : return SDL_GPU_TEXTUREFORMAT_INVALID;
+			case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		}
 	}
 
@@ -291,7 +291,7 @@ private:
 			case RenderTargetType::rgba32: return false;
 			case RenderTargetType::rgba8d: return true;
 			case RenderTargetType::rgba32d: return true;
-			case RenderTargetType::gBuffer : return true;
+			case RenderTargetType::gBuffer: return true;
 		}
 	}
 
@@ -302,7 +302,7 @@ private:
 			case RenderTargetType::rgba32: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rgba8d: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 			case RenderTargetType::rgba32d: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
-			case RenderTargetType::gBuffer : return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+			case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		}
 	}
 

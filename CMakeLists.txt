@@ -21,6 +21,8 @@ add_subdirectory(gfx)
 
 add_executable(example main.cpp)
 
+target_include_directories(example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/demos)
+
 target_link_libraries(example
 	language
 	network
@@ -33,6 +35,7 @@ target_compile_options(example PRIVATE
 if(APPLE)
 	target_link_options(example PRIVATE LINKER:-no_warn_duplicate_libraries)
 endif()
+
 
 add_custom_command(TARGET example POST_BUILD COMMAND $<$<CONFIG:release>:${CMAKE_STRIP}> ARGS ${CMAKE_BINARY_DIR}/Release/example)
 

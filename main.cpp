@@ -9,29 +9,15 @@
 //	Include files
 //
 
+#include <memory>
+
+#include "imgui.h"
+
 #include "OtFramework.h"
 
-#include "OtCheckerBoard.h"
-#include "OtColorWheel.h"
-#include "OtFbm.h"
-#include "OtTileableFbm.h"
-
-#include "OtAlphaOver.h"
-#include "OtBlit.h"
-#include "OtBlur.h"
-#include "OtContrastSaturationBrightness.h"
-#include "OtGaussian.h"
-#include "OtIslandizer.h"
-#include "OtNormalMapper.h"
-#include "OtPixelate.h"
-#include "OtPosterize.h"
-#include "OtRgbaAdjust.h"
-#include "OtRgbaCurve.h"
-#include "OtSeamlessTile.h"
-#include "OtSharpen.h"
-
-#include "OtLogo.h"
-#include "OtPixelate.h"
+#include "OtFilterDemo.h"
+#include "OtGeneratorDemo.h"
+#include "OtSplashScreen.h"
 
 #include "OtFrameBuffer.h"
 #include "OtIndexBuffer.h"
@@ -47,62 +33,51 @@
 class SimpleApp : public OtFrameworkApp {
 public:
 	void onSetup() override {
+		// setup first demo
+		demo = demos[currentDemo]();
 	}
 
 	void onRender() override {
-		compute();
-	}
+		// see if we need to change demo based on user inputs
+		if (ImGui::IsKeyPressed(ImGuiKey_UpArrow)) {
+			if (currentDemo == 0) {
+				currentDemo = demos.size() - 1;
 
-	void splash() {
-		// render splash screen
-		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+			} else {
+				currentDemo--;
+			}
 
-		ImGui::Begin(
-			"SplashScreen",
-			nullptr,
-			ImGuiWindowFlags_NoDecoration |
-				ImGuiWindowFlags_AlwaysAutoResize |
-				ImGuiWindowFlags_NoResize |
-				ImGuiWindowFlags_NoMove |
-				ImGuiWindowFlags_NoBringToFrontOnFocus |
-				ImGuiWindowFlags_NoInputs);
+			demo = demos[currentDemo]();
 
-		ImGui::Image(logo.getTextureID(), logo.getSize());
-		ImGui::End();
-	}
+		} else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow)) {
+			currentDemo++;
 
-	void compute(){
-		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-		ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
-		ImGui::Begin("Compute", nullptr, ImGuiWindowFlags_NoDecoration);
-		auto size = ImGui::GetContentRegionAvail();
-		auto usage = OtTexture::Usage(OtTexture::Usage::sampler | OtTexture::Usage::computeStorageWrite);
+			if (currentDemo == demos.size()) {
+				currentDemo = 0;
+			}
 
-		if (rawTexture.update(size.x, size.y, OtTexture::Format::rgba8, usage)) {
-			generator.render(rawTexture);
-			filteredTexture.update(size.x, size.y, OtTexture::Format::rgba8, usage);
-			filter.render(rawTexture, filteredTexture);
+			demo = demos[currentDemo]();
 		}
 
-		ImGui::Image(filteredTexture.getTextureID(), size);
-		ImGui::End();
+		// run the demo
+		demo->run();
 	}
 
 	void onTerminate() override {
-		logo.clear();
-		rawTexture.clear();
-		filteredTexture.clear();
-		generator.clear();
-		filter.clear();
+		demo = nullptr;
 	}
 
 private:
-	OtLogo logo;
-	OtTexture rawTexture;
-	OtTexture filteredTexture;
-	OtCheckerBoard generator;
-	OtBlur filter;
+
+	// properties
+	std::unique_ptr<OtDemo> demo;
+	size_t currentDemo = 0;
+
+	std::vector<std::function<std::unique_ptr<OtDemo>()>> demos {
+		[]() { return std::make_unique<OtSplashScreen>(); },
+		[]() { return std::make_unique<OtGeneratorDemo>(); },
+		[]() { return std::make_unique<OtFilterDemo>(); }
+	};
 };
 
 
