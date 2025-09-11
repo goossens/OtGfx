@@ -24,19 +24,19 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
-	vec2 halfPixel = vec2(1.0) / vec2(size) / 2.0;
+	vec2 halfPixel = vec2(1.0f) / vec2(size) / 2.0f;
 
-	vec4 sum = (4.0 / 16.0) * texture(inTexture, uv);
+	vec4 sum = (4.0f / 16.0f) * texture(inTexture, uv);
 
-	sum += (2.0 / 16.0) * texture(inTexture, uv + vec2(-halfPixel.x, 0.0));
-	sum += (2.0 / 16.0) * texture(inTexture, uv + vec2(0.0, +halfPixel.y));
-	sum += (2.0 / 16.0) * texture(inTexture, uv + vec2(+halfPixel.x, 0.0));
-	sum += (2.0 / 16.0) * texture(inTexture, uv + vec2(0.0, -halfPixel.y));
+	sum += (2.0f / 16.0f) * texture(inTexture, uv + vec2(-halfPixel.x, 0.0f));
+	sum += (2.0f / 16.0f) * texture(inTexture, uv + vec2(0.0f, +halfPixel.y));
+	sum += (2.0f / 16.0f) * texture(inTexture, uv + vec2(+halfPixel.x, 0.0f));
+	sum += (2.0f / 16.0f) * texture(inTexture, uv + vec2(0.0f, -halfPixel.y));
 
-	sum += (1.0 / 16.0) * texture(inTexture, uv + vec2(-halfPixel.x, -halfPixel.y));
-	sum += (1.0 / 16.0) * texture(inTexture, uv + vec2(-halfPixel.x, +halfPixel.y));
-	sum += (1.0 / 16.0) * texture(inTexture, uv + vec2(+halfPixel.x, -halfPixel.y));
-	sum += (1.0 / 16.0) * texture(inTexture, uv + vec2(+halfPixel.x, +halfPixel.y));
+	sum += (1.0f / 16.0f) * texture(inTexture, uv + vec2(-halfPixel.x, -halfPixel.y));
+	sum += (1.0f / 16.0f) * texture(inTexture, uv + vec2(-halfPixel.x, +halfPixel.y));
+	sum += (1.0f / 16.0f) * texture(inTexture, uv + vec2(+halfPixel.x, -halfPixel.y));
+	sum += (1.0f / 16.0f) * texture(inTexture, uv + vec2(+halfPixel.x, +halfPixel.y));
 
     imageStore(outTexture, coord, sum * intensity);
 }

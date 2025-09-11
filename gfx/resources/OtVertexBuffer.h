@@ -12,9 +12,12 @@
 //	Include files
 //
 
+#include <cstring>
 #include <memory>
 
 #include "SDL3/SDL_gpu.h"
+
+#include "OtLog.h"
 
 #include "OtGpu.h"
 #include "OtVertex.h"
@@ -33,10 +36,67 @@ public:
 	inline bool isValid() { return buffer != nullptr; }
 
 	// set vertices
-	void set(void* data, size_t count, OtVertexDescription* description);
+	inline void set(void* data, size_t count, OtVertexDescription* description) {
+		// remember the vertex description and count
+		vertexDescription = description;
+		vertexCount = count;
 
-	// submit to GPU
-	void submit();
+		// create the vertex buffer
+		auto size = count * description->size;
+
+		SDL_GPUBufferCreateInfo bufferInfo{
+			.usage = SDL_GPU_BUFFERUSAGE_VERTEX,
+			.size = static_cast<Uint32>(size),
+			.props = 0
+		};
+
+		auto& gpu = OtGpu::instance();
+		SDL_GPUBuffer* vertexBuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
+
+		if (!vertexBuffer) {
+			OtLogFatal("Error in SDL_CreateGPUBuffer: {}", SDL_GetError());
+		}
+
+		assign(vertexBuffer);
+
+		// create a transfer buffer
+		SDL_GPUTransferBufferCreateInfo transferInfo{
+			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+			.size = static_cast<Uint32>(size),
+			.props = 0
+		};
+
+		SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
+
+		if (!transferBuffer) {
+			OtLogFatal("Error in SDL_CreateGPUTransferBuffer: {}", SDL_GetError());
+		}
+
+		// put vertex data in transfer buffer
+		void* bufferData = SDL_MapGPUTransferBuffer(gpu.device, transferBuffer, false);
+		std::memcpy(bufferData, data, size);
+		SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
+
+		// upload vertex buffer to GPU
+		SDL_GPUTransferBufferLocation location{
+			.transfer_buffer = transferBuffer,
+			.offset = 0
+		};
+
+		SDL_GPUBufferRegion region{
+			.buffer = buffer.get(),
+			.offset = 0,
+			.size = static_cast<Uint32>(size)
+		};
+
+		SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
+		SDL_UploadToGPUBuffer(copyPass, &location, &region, false);
+		SDL_EndGPUCopyPass(copyPass);
+		SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);
+	}
+
+	// get vertex count
+	inline size_t getCount() { return vertexCount; }
 
 private:
 	// the GPU resource
@@ -51,6 +111,11 @@ private:
 			});
 	}
 
-	// vertex description
+	// vertex description and count
 	OtVertexDescription* vertexDescription = nullptr;
+	size_t vertexCount = 0;
+
+	// get accesss to the raw buffer handle
+	friend class OtRenderPass;
+	SDL_GPUBuffer* getBuffer() { return buffer.get(); }
 };

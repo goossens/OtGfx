@@ -25,7 +25,7 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
-	vec2 pixelSize = vec2(1.0) / vec2(size);
+	vec2 pixelSize = vec2(1.0f) / vec2(size);
 
 	// convert height map to normal map using Sobel filter
 	float tl = texture(inTexture, uv + vec2(-pixelSize.x, -pixelSize.y)).r;
@@ -39,9 +39,9 @@ void main() {
 	float br = texture(inTexture, uv + vec2(pixelSize.x, pixelSize.y)).r;
 
 	vec3 normal = normalize(vec3(
-		(tr + (2.0 * cr) + br) - (tl + (2.0 * cl) + bl),
-		(bl + (2.0 * bc) + br) - (tl + (2.0 * tc) + tr),
+		(tr + (2.0f * cr) + br) - (tl + (2.0f * cl) + bl),
+		(bl + (2.0f * bc) + br) - (tl + (2.0f * tc) + tr),
 		1.0 / normalStrength));
 
-    imageStore(outTexture, coord, vec4(normal * 0.5 + 0.5, includeHeight ? cc : 1.0));
+    imageStore(outTexture, coord, vec4(normal * 0.5f + 0.5f, includeHeight ? cc : 1.0f));
 }

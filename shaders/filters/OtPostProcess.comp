@@ -71,11 +71,11 @@ void main() {
 	}
 
 	// gamma correction
-	color = pow(color, vec3(1.0 / 2.2));
+	color = pow(color, vec3(1.0f / 2.2f));
 
 	// apply exposure and contrast
-	color = ((color - 0.5) * contrast + 0.5) * exposure;
+	color = ((color - 0.5f) * contrast + 0.5f) * exposure;
 
 	// store final result
-    imageStore(outTexture, coord, vec4(color, 1.0));
+    imageStore(outTexture, coord, vec4(color, 1.0f));
 }

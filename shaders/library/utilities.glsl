@@ -14,8 +14,8 @@ vec4 preMultiplyAlpha(vec4 color) {
 
 // un pre multiply color
 vec4 unPreMultiplyAlpha(vec4 color)  {
-	if (color.a == 0.0) {
-		return vec4(0.0);
+	if (color.a == 0.0f) {
+		return vec4(0.0f);
 	}
 
 	return vec4(color.rgb / color.a, color.a);
@@ -31,20 +31,20 @@ float remap(float value, float inMin, float inMax, float outMin, float outMax) {
 }
 
 float saturate(float x) {
-  return clamp(x, 0.0, 1.0);
+  return clamp(x, 0.0f, 1.0f);
 }
 
 // create matrices
 mat3 rotateY(float theta) {
 	float c = cos(theta);
 	float s = sin(theta);
-	return mat3(vec3(c, 0, s), vec3(0, 1, 0), vec3(-s, 0, c));
+	return mat3(vec3(c, 0.0f, s), vec3(0.0f, 1.0f, 0.0f), vec3(-s, 0.0f, c));
 }
 
 mat3 rotateAxis(vec3 axis, float angle) {
 	float s = sin(angle);
 	float c = cos(angle);
-	float oc = 1.0 - c;
+	float oc = 1.0f - c;
 
 	return mat3(
 		oc * axis.x * axis.x + c,          oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s,

@@ -37,10 +37,10 @@
 
 
 //
-//	OtFilterDemo
+//	OtFilters
 //
 
-class OtFilterDemo : public OtDemo {
+class OtFilters : public OtDemo {
 public:
 	// run demo
 	inline void run() override {

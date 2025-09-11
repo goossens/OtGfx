@@ -72,7 +72,7 @@ public:
 	}
 
 	// update frame buffer
-	inline  void update(int w, int h) {
+	inline bool update(int w, int h) {
 		// update framebuffer if required
 		if (!valid || w != width || h != height) {
 			// clear old resources
@@ -82,15 +82,12 @@ public:
 				OtLogFatal("Internal error: you can't have a FrameBuffer without Textures");
 			}
 
-			// create new textures
+			// create new textures (if required)
 			if (colorTextureType != OtTexture::Format::none) {
-				depthTexture.update(
+				colorTexture.update(
 					w, h,
 					colorTextureType,
 					OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler));
-
-			} else {
-				clearColorTexture = false;
 			}
 
 			if (depthTextureType != OtTexture::Format::none) {
@@ -98,9 +95,6 @@ public:
 					w, h,
 					depthTextureType,
 					OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler));
-
-			} else {
-				clearDepthTexture = false;
 			}
 
 			// remember dimensions
@@ -113,29 +107,30 @@ public:
 			colorTargetInfo.clear_color = SDL_FColor{
 				.r = clearColorValue.r,
 				.g = clearColorValue.g,
-				.b =clearColorValue.b,
+				.b = clearColorValue.b,
 				.a = clearColorValue.a
 			};
 
-			colorTargetInfo.load_op = clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+			colorTargetInfo.load_op = hasColorTexture() && clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
 			colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
 			depthStencilTargetInfo.texture = depthTexture.getTexture();
 			depthStencilTargetInfo.clear_depth = clearDepthValue;
-			depthStencilTargetInfo.load_op = clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+			depthStencilTargetInfo.load_op = hasDepthTexture() && clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
 			depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
 			info.colorTargetInfo = &colorTargetInfo;
 			info.numColorTargets = 1;
-			info.depthStencilTargetInfo = &depthStencilTargetInfo;
+			info.depthStencilTargetInfo = hasDepthTexture() ? &depthStencilTargetInfo : nullptr;
 
 			// set state
 			valid = true;
+			return true;
+
+		} else {
+			return false;
 		}
 	}
-
-	// get render target information
-	OtRenderTargetInfo* getRenderTargetInfo() override { return &info; }
 
 	// get framebuffer dimensions
 	inline int getWidth() { return width; }
@@ -184,4 +179,8 @@ private:
 	SDL_GPUColorTargetInfo colorTargetInfo;
 	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
 	OtRenderTargetInfo info;
+
+	// get render target information
+	friend class OtRenderPass;
+	OtRenderTargetInfo* getRenderTargetInfo() override { return &info; }
 };

@@ -32,10 +32,66 @@ public:
 	inline bool isValid() { return buffer != nullptr; }
 
 	// set indices
-	void set(uint32_t* data, size_t count);
+	inline void set(uint32_t* data, size_t count) {
+		// create the index buffer
+		auto size = count * sizeof(uint32_t);
 
-	// submit to GPU
-	void submit();
+		SDL_GPUBufferCreateInfo bufferInfo{
+			.usage = SDL_GPU_BUFFERUSAGE_INDEX,
+			.size = static_cast<Uint32>(size),
+			.props = 0
+		};
+
+		auto& gpu = OtGpu::instance();
+		SDL_GPUBuffer* indexBuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
+
+		if (!indexBuffer) {
+			OtLogFatal("Error in SDL_CreateGPUBuffer: {}", SDL_GetError());
+		}
+
+		assign(indexBuffer);
+
+		// create a transfer buffer
+		SDL_GPUTransferBufferCreateInfo transferInfo{
+			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+			.size = static_cast<Uint32>(size),
+			.props = 0
+		};
+
+		SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
+
+		if (!transferBuffer) {
+			OtLogFatal("Error in SDL_CreateGPUTransferBuffer: {}", SDL_GetError());
+		}
+
+		// put index data in transfer buffer
+		void* bufferData = SDL_MapGPUTransferBuffer(gpu.device, transferBuffer, false);
+		std::memcpy(bufferData, data, size);
+		SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
+
+		// upload index buffer to GPU
+		SDL_GPUTransferBufferLocation location{
+			.transfer_buffer = transferBuffer,
+			.offset = 0
+		};
+
+		SDL_GPUBufferRegion region{
+			.buffer = buffer.get(),
+			.offset = 0,
+			.size = static_cast<Uint32>(size)
+		};
+
+		SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
+		SDL_UploadToGPUBuffer(copyPass, &location, &region, false);
+		SDL_EndGPUCopyPass(copyPass);
+		SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);
+
+		// remember index count
+		indexCount = count;
+	}
+
+	// get index count
+	inline size_t getCount() { return indexCount; }
 
 private:
 	// the GPU resource
@@ -49,4 +105,11 @@ private:
 				SDL_ReleaseGPUBuffer(OtGpu::instance().device, oldBuffer);
 			});
 	}
+
+	// number of indices
+	size_t indexCount = 0;
+
+	// get accesss to the raw buffer handle
+	friend class OtRenderPass;
+	SDL_GPUBuffer* getBuffer() { return buffer.get(); }
 };

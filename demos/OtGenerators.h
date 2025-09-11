@@ -25,23 +25,23 @@
 
 
 //
-//	OtGeneratorDemo
+//	OtGenerators
 //
 
-class OtGeneratorDemo : public OtDemo {
+class OtGenerators : public OtDemo {
 public:
+	// constructor
+	OtGenerators() {
+		generator = generators[currentGenerator]();
+	}
+
 	// run demo
 	inline void run() override {
 		// track changes
 		bool changed = false;
 
-		// initialize (if required)
-		if (!generator) {
-			generator = generators[currentGenerator]();
-			changed = true;
-
 		// handle user interactions
-		} else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {
+		if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {
 			if (currentGenerator == 0) {
 				currentGenerator = generators.size() - 1;
 

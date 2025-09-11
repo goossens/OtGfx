@@ -136,7 +136,7 @@ private:
 	BlendOperation blendOperation = BlendOperation::none;
 
 	// get the raw pipeline object
-	friend class OtGraphicsPass;
+	friend class OtRenderPass;
 
 	inline SDL_GPUGraphicsPipeline* getPipeline() {
 		// create pipeline (if required)

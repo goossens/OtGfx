@@ -26,19 +26,19 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
-	vec2 pixelSize = vec2(1.0) / vec2(size);
+	vec2 pixelSize = vec2(1.0f) / vec2(size);
 
 	vec4 color;
 	vec2 offset = direction.xy * pixelSize;
-	color  = texture(inTexture, uv - 4.0 * offset) * 0.05;
-	color += texture(inTexture, uv - 3.0 * offset) * 0.09;
-	color += texture(inTexture, uv - 2.0 * offset) * 0.12;
-	color += texture(inTexture, uv - 1.0 * offset) * 0.15;
-	color += texture(inTexture, uv + 0.0 * offset) * 0.16;
-	color += texture(inTexture, uv + 1.0 * offset) * 0.15;
-	color += texture(inTexture, uv + 2.0 * offset) * 0.12;
-	color += texture(inTexture, uv + 3.0 * offset) * 0.09;
-	color += texture(inTexture, uv + 4.0 * offset) * 0.05;
+	color  = texture(inTexture, uv - 4.0f * offset) * 0.05f;
+	color += texture(inTexture, uv - 3.0f * offset) * 0.09f;
+	color += texture(inTexture, uv - 2.0f * offset) * 0.12f;
+	color += texture(inTexture, uv - 1.0f * offset) * 0.15f;
+	color += texture(inTexture, uv + 0.0f * offset) * 0.16f;
+	color += texture(inTexture, uv + 1.0f * offset) * 0.15f;
+	color += texture(inTexture, uv + 2.0f * offset) * 0.12f;
+	color += texture(inTexture, uv + 3.0f * offset) * 0.09f;
+	color += texture(inTexture, uv + 4.0f * offset) * 0.05f;
 
     imageStore(outTexture, coord, color * vec4(brightness, brightness, brightness, transparency));
 }

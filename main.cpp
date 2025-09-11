@@ -15,15 +15,10 @@
 
 #include "OtFramework.h"
 
-#include "OtFilterDemo.h"
-#include "OtGeneratorDemo.h"
+#include "OtFilters.h"
+#include "OtGenerators.h"
 #include "OtSplashScreen.h"
-
-#include "OtFrameBuffer.h"
-#include "OtIndexBuffer.h"
-#include "OtVertexBuffer.h"
-#include "OtRenderPass.h"
-#include "OtRenderPipeline.h"
+#include "OtTriangle.h"
 
 
 //
@@ -75,8 +70,9 @@ private:
 
 	std::vector<std::function<std::unique_ptr<OtDemo>()>> demos {
 		[]() { return std::make_unique<OtSplashScreen>(); },
-		[]() { return std::make_unique<OtGeneratorDemo>(); },
-		[]() { return std::make_unique<OtFilterDemo>(); }
+		[]() { return std::make_unique<OtGenerators>(); },
+		[]() { return std::make_unique<OtFilters>(); },
+		[]() { return std::make_unique<OtTriangle>(); }
 	};
 };
 

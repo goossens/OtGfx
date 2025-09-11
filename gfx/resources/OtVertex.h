@@ -79,7 +79,7 @@ struct OtVertex {
 				.location = 4,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
 				.offset = offsetof(OtVertex, uv),
-			},
+			}
 		};
 
 		static OtVertexDescription description{
@@ -92,3 +92,42 @@ struct OtVertex {
 	}
 };
 
+//
+//	OtVertexPosColor
+//
+
+struct OtVertexPosColor {
+	// vertex elements
+	glm::vec3 position;
+	glm::vec4 color;
+
+	// constructors
+	OtVertexPosColor() = default;
+
+	inline OtVertexPosColor(const glm::vec3& p, const glm::vec4& c) : position(p), color(c) {}
+
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{
+				.buffer_slot = 0,
+				.location = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+				.offset = offsetof(OtVertexPosColor, position),
+			},
+			{
+				.buffer_slot = 0,
+				.location = 1,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = offsetof(OtVertexPosColor, color),
+			}
+		};
+
+		static OtVertexDescription description{
+			.size = sizeof(OtVertexPosColor),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
+			.attributes = attributes
+		};
+
+		return &description;
+	}
+};

@@ -18,18 +18,18 @@ layout(std140, set=2, binding=0) uniform UBO {
 };
 
 float hash(vec2 p, float scale) {
-	return fract(sin(dot(mod(p, scale), vec2(27.16898, 38.90563))) * 5151.5473453);
+	return fract(sin(dot(mod(p, scale), vec2(27.16898f, 38.90563f))) * 5151.5473453f);
 }
 
 float tileableNoise(vec2 p, float scale) {
 	p *= scale;
 	vec2 f = fract(p);
 	p = floor(p);
-	f = f * f * (3.0 - 2.0 * f);
+	f = f * f * (3.0f - 2.0f * f);
 
 	return mix(
-		mix(hash(p, scale), hash(p + vec2(1.0, 0.0), scale), f.x),
-		mix(hash(p + vec2(0.0, 1.0), scale), hash(p + vec2(1.0, 1.0), scale), f.x), f.y);
+		mix(hash(p, scale), hash(p + vec2(1.0f, 0.0f), scale), f.x),
+		mix(hash(p + vec2(0.0f, 1.0f), scale), hash(p + vec2(1.0f, 1.0f), scale), f.x), f.y);
 }
 
 void main() {
@@ -42,7 +42,7 @@ void main() {
 
 	vec2 uv = vec2(coord) / vec2(size);
 
-	float sum = 0.0;
+	float sum = 0.0f;
 	float f = frequency;
 	float a = amplitude;
 
@@ -52,5 +52,5 @@ void main() {
 		a *= persistence;
 	}
 
-    imageStore(outTexture, coord, vec4(sum, 0.0, 0.0, 1.0));
+    imageStore(outTexture, coord, vec4(sum, 0.0f, 0.0f, 1.0f));
 }

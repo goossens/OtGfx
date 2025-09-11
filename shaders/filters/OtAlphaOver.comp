@@ -25,7 +25,7 @@ void main() {
 
 	vec4 bg = texture(inTexture, uv);
 	vec4 fg = texture(overlayTexture, uv);
-	float inv = 1.0 - fg.a;
+	float inv = 1.0f - fg.a;
 	float alpha = fg.a + bg.a * inv;
 
     imageStore(outTexture, coord, vec4(

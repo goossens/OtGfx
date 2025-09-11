@@ -20,13 +20,13 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
-	vec2 uv2 = vec2(fract(uv + 0.5));
+	vec2 uv2 = vec2(fract(uv + 0.5f));
 
-	float dist = distance(uv2, vec2(0.5, 0.5));
-	float alpha = clamp((dist - 0.3) / (0.5 - 0.3), 0.0, 1.0);
+	float dist = distance(uv2, vec2(0.5f, 0.5f));
+	float alpha = clamp((dist - 0.3f) / (0.5f - 0.3f), 0.0f, 1.0f);
 
 	vec3 color1 = texture(inTexture, uv).xyz;
 	vec3 color2 = texture(inTexture, uv2).xyz;
 
-    imageStore(outTexture, coord, vec4(mix(color2, color1, alpha), 1.0));
+    imageStore(outTexture, coord, vec4(mix(color2, color1, alpha), 1.0f));
 }

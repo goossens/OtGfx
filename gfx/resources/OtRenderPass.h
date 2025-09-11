@@ -20,6 +20,9 @@
 #include "OtFrameBuffer.h"
 // #include "OtGbuffer.h"
 #include "OtGpu.h"
+#include "OtIndexBuffer.h"
+#include "OtRenderPipeline.h"
+#include "OtVertexBuffer.h"
 
 
 //
@@ -29,7 +32,7 @@
 class OtRenderPass {
 public:
 	// start a render pass
-	void start(OtFrameBuffer& framebuffer) {
+	inline void start(OtFrameBuffer& framebuffer) {
 		// sanity check
 		if (!framebuffer.isValid()) {
 			OtLogFatal("Can't use invalid framebuffer in render pass");
@@ -49,12 +52,77 @@ public:
 		}
 	}
 
-	// void start(OtGbuffer& gbuffer) {
+	// inline void start(OtGbuffer& gbuffer) {
 
 	// }
 
+	// bind a render pipeline
+	inline void bindPipeline(OtRenderPipeline& pipeline) {
+		SDL_BindGPUGraphicsPipeline(pass, pipeline.getPipeline());
+	}
+
+	// bind a vertex buffer
+	inline void bindVertexBuffer(OtVertexBuffer& buffer) {
+		SDL_GPUBufferBinding bufferBindings{
+			.buffer = buffer.getBuffer(),
+			.offset = 0
+		};
+
+		SDL_BindGPUVertexBuffers(pass, 0, &bufferBindings, 1);
+	}
+
+	// set uniforms
+	inline void setVertexUniforms(size_t slot, const void* data, size_t size) {
+		SDL_PushGPUVertexUniformData(
+			OtGpu::instance().pipelineCommandBuffer,
+			static_cast<Uint32>(slot),
+			data,
+			static_cast<Uint32>(size));
+	}
+
+	inline void setFragmentUniforms(size_t slot, const void* data, size_t size) {
+		SDL_PushGPUFragmentUniformData(
+			OtGpu::instance().pipelineCommandBuffer,
+			static_cast<Uint32>(slot),
+			data,
+			static_cast<Uint32>(size));
+	}
+
+	// render triangles
+	inline void render(OtVertexBuffer& buffer) {
+		// bind the vertex buffer to the pass
+		SDL_GPUBufferBinding bufferBindings{
+			.buffer = buffer.getBuffer(),
+			.offset = 0
+		};
+
+		SDL_BindGPUVertexBuffers(pass, 0, &bufferBindings, 1);
+
+		// render the triangles
+		SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(buffer.getCount()), 1, 0, 0);
+	}
+
+	inline void render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer) {
+		// bind the vertex buffer to the pass
+		SDL_GPUBufferBinding vertexBufferBindings{
+			.buffer = vertexBuffer.getBuffer(),
+			.offset = 0
+		};
+
+		SDL_GPUBufferBinding indexBufferBinding = {
+			.buffer = indexBuffer.getBuffer(),
+			.offset = 0
+		};
+
+		SDL_BindGPUVertexBuffers(pass, 0, &vertexBufferBindings, 1);
+		SDL_BindGPUIndexBuffer(pass, &indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
+
+		// render the triangles
+		SDL_DrawGPUIndexedPrimitives(pass, static_cast<Uint32>(indexBuffer.getCount()), 1, 0, 0, 0);
+	}
+
 	// end a render pass
-	void end() {
+	inline void end() {
 		SDL_EndGPURenderPass(pass);
 	}
 
