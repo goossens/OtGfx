@@ -158,14 +158,14 @@ private:
 	OtTexture::Format colorTextureType = OtTexture::Format::none;
 	OtTexture::Format depthTextureType = OtTexture::Format::none;
 
-	// dimensions of framebuffer;
+	// dimensions of framebuffer
 	int width = -1;
 	int height = -1;
 
 	// state
 	bool valid = false;
 
-	// resource handles
+	// resources
 	OtTexture colorTexture;
 	OtTexture depthTexture;
 

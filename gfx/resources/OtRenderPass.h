@@ -18,7 +18,7 @@
 #include "SDL3/SDL.h"
 
 #include "OtFrameBuffer.h"
-// #include "OtGbuffer.h"
+#include "OtGbuffer.h"
 #include "OtGpu.h"
 #include "OtIndexBuffer.h"
 #include "OtRenderPipeline.h"
@@ -52,9 +52,25 @@ public:
 		}
 	}
 
-	// inline void start(OtGbuffer& gbuffer) {
+	inline void start(OtGbuffer& gbuffer) {
+		// sanity check
+		if (!gbuffer.isValid()) {
+			OtLogFatal("Can't use invalid gbuffer in render pass");
+		}
 
-	// }
+		// start rendering pass
+		auto info = gbuffer.getRenderTargetInfo();
+
+		pass = SDL_BeginGPURenderPass(
+			OtGpu::instance().pipelineCommandBuffer,
+			info->colorTargetInfo,
+			info->numColorTargets,
+			info->depthStencilTargetInfo);
+
+		if (!pass) {
+			OtLogFatal("Error in SDL_BeginGPURenderPass: {}", SDL_GetError());
+		}
+	}
 
 	// bind a render pipeline
 	inline void bindPipeline(OtRenderPipeline& pipeline) {
