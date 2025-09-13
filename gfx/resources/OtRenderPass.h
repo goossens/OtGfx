@@ -77,16 +77,6 @@ public:
 		SDL_BindGPUGraphicsPipeline(pass, pipeline.getPipeline());
 	}
 
-	// bind a vertex buffer
-	inline void bindVertexBuffer(OtVertexBuffer& buffer) {
-		SDL_GPUBufferBinding bufferBindings{
-			.buffer = buffer.getBuffer(),
-			.offset = 0
-		};
-
-		SDL_BindGPUVertexBuffers(pass, 0, &bufferBindings, 1);
-	}
-
 	// set uniforms
 	inline void setVertexUniforms(size_t slot, const void* data, size_t size) {
 		SDL_PushGPUVertexUniformData(
