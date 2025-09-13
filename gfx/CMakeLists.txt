@@ -45,6 +45,8 @@ target_link_libraries(gfx PUBLIC
 	imgui
 	imguifd
 	glm
+	manifold
+	plutovg
 	entt
 	assimp)
 

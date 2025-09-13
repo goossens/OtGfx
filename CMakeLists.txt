@@ -7,6 +7,19 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(OtGfx VERSION 1.0 DESCRIPTION "ObjectTalk Graphics Framework" LANGUAGES C CXX)
 
+if(APPLE)
+	set(OT_INCLUDE_UI ON)
+endif()
+
+if(UNIX AND NOT APPLE)
+	include(FindX11)
+	set(OT_INCLUDE_UI ${X11_FOUND})
+endif()
+
+if(WIN32)
+	set(OT_INCLUDE_UI ON)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
