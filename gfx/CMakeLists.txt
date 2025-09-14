@@ -48,6 +48,7 @@ target_link_libraries(gfx PUBLIC
 	manifold
 	plutovg
 	entt
-	assimp)
+	assimp
+	bsthreadpool)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${GFX_INCLUDES} ${GFX_SOURCES})
