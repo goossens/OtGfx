@@ -169,7 +169,7 @@ void OtTexture::load(const std::string& path, bool async) {
 //	OtTexture::load
 //
 
-void OtTexture::load(int w, int h, int f, void* pixels, bool async) {
+void OtTexture::load(int w, int h, OtImage::Format f, void* pixels, bool async) {
 	if (async) {
 		// get image and schedule an asynchronous load to the GPU
 		asyncImage = std::make_shared<OtImage>();

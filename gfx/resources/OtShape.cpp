@@ -367,7 +367,7 @@ void OtShape::renderStroke(OtImage& image, const OtColor& color, float lineWidth
 	plutovg_path_extents(path, &rect, true);
 	auto w = int(rect.w + margin * 2.0f);
 	auto h = int(rect.h + margin * 2.0f);
-	image.update(w, h, OtImage::rgba8Image);
+	image.update(w, h, OtImage::Format::rgba8);
 
 	// create the rendering surface and canvas
 	plutovg_surface_t* surface = plutovg_surface_create(w, h);
@@ -400,7 +400,7 @@ void OtShape::renderFill(OtImage& image, const OtColor& color) {
 	plutovg_path_extents(path, &rect, true);
 	auto w = int(rect.w + margin * 2.0f);
 	auto h = int(rect.h + margin * 2.0f);
-	image.update(w, h, OtImage::rgba8Image);
+	image.update(w, h, OtImage::Format::rgba8);
 
 	// create the rendering surface and canvas
 	plutovg_surface_t* surface = plutovg_surface_create(w, h);

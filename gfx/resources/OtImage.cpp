@@ -51,10 +51,12 @@ void OtImage::clear() {
 //	OtImage::update
 //
 
-void OtImage::update(int width, int height, int format) {
-	if (!surface || surface->w != width || surface->h != height || surface->format != format) {
-		// create new image
-		auto sdlSurface = SDL_CreateSurface(width, height, static_cast<SDL_PixelFormat>(format));
+void OtImage::update(int width, int height, Format format) {
+	// create new image (if required)
+	auto fmt = static_cast<SDL_PixelFormat>(format);
+
+	if (!surface || surface->w != width || surface->h != height || surface->format != fmt) {
+		auto sdlSurface = SDL_CreateSurface(width, height, fmt);
 
 		if (!sdlSurface) {
 			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
@@ -126,14 +128,16 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 //	OtImage::load
 //
 
-void OtImage::load(int width, int height, int format, void* pixels) {
+void OtImage::load(int width, int height, Format format, void* pixels) {
 	// load new image
+	auto fmt = static_cast<SDL_PixelFormat>(format);
+
 	auto sdlSurface = SDL_CreateSurfaceFrom(
 		width,
 		height,
-		static_cast<SDL_PixelFormat>(format),
+		fmt,
 		pixels,
-		SDL_BYTESPERPIXEL(format) * width);
+		SDL_BYTESPERPIXEL(fmt) * width);
 
 	if (!sdlSurface) {
 		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());

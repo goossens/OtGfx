@@ -25,9 +25,12 @@
 
 class OtImage {
 public:
-	// image types
-	static constexpr int rgba8Image = SDL_PIXELFORMAT_RGBA8888;
-	static constexpr int rgbaFloat32Image = SDL_PIXELFORMAT_RGBA128_FLOAT;
+	// image formats
+	enum class Format {
+		none = SDL_PIXELFORMAT_UNKNOWN,
+		rgba8 = SDL_PIXELFORMAT_RGBA8888,
+		rgbaFloat32 = SDL_PIXELFORMAT_RGBA128_FLOAT
+	};
 
 	// constructors
 	OtImage() = default;
@@ -37,11 +40,11 @@ public:
 	void clear();
 
 	// create/update an image
-	void update(int width, int height, int format);
+	void update(int width, int height, Format format);
 
 	// load image as RGBA
 	void load(const std::string& address, bool powerof2=false, bool square=false);
-	void load(int width, int height, int format, void* pixels);
+	void load(int width, int height, Format format, void* pixels);
 	void load(void* data, size_t size);
 
 	// save the image to disk
