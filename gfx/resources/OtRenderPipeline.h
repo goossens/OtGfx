@@ -95,6 +95,7 @@ public:
 	inline void setDepthTest(DepthTest value) { depthTest = value; }
 	inline void setCulling(Culling value) { culling = value; }
 	inline void setBlendOperation(BlendOperation value) { blendOperation = value; }
+	inline void setFill(bool mode) { fill = mode; }
 
 	// clear the object
 	inline void clear() {
@@ -102,7 +103,16 @@ public:
 		vertexShaderSize = 0;
 		fragmentShaderCode = nullptr;
 		fragmentShaderSize = 0;
+
 		pipeline = nullptr;
+
+		vertexDescription = nullptr;
+		renderTargetType = RenderTargetType::rgba8d;
+		targetChannel = TargetChannel::rgba;
+		depthTest = DepthTest::less;
+		culling = Culling::cw;
+		blendOperation = BlendOperation::none;
+		fill = true;
 	}
 
 	// see if pipeline is valid
@@ -134,6 +144,7 @@ private:
 	DepthTest depthTest = DepthTest::less;
 	Culling culling = Culling::cw;
 	BlendOperation blendOperation = BlendOperation::none;
+	bool fill = true;
 
 	// get the raw pipeline object
 	friend class OtRenderPass;
@@ -229,7 +240,7 @@ private:
 				},
 				.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
 				.rasterizer_state = SDL_GPURasterizerState{
-					.fill_mode = SDL_GPU_FILLMODE_FILL,
+					.fill_mode = fill ? SDL_GPU_FILLMODE_FILL : SDL_GPU_FILLMODE_LINE,
 					.cull_mode = getCullingMode(),
 					.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE,
 					.depth_bias_constant_factor = 0.0f,

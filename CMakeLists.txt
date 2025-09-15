@@ -20,6 +20,8 @@ if(WIN32)
 	set(OT_INCLUDE_UI ON)
 endif()
 
+add_compile_definitions("OT_DEBUG=$<CONFIG:Debug>")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)

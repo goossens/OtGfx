@@ -19,8 +19,10 @@
 
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
+#include "OtGeometry.h"
 #include "OtGpu.h"
 #include "OtIndexBuffer.h"
+#include "OtMesh.h"
 #include "OtRenderPipeline.h"
 #include "OtVertexBuffer.h"
 
@@ -125,6 +127,15 @@ public:
 
 		// render the triangles
 		SDL_DrawGPUIndexedPrimitives(pass, static_cast<Uint32>(indexBuffer.getCount()), 1, 0, 0, 0);
+	}
+
+	inline void render(OtMesh& mesh) {
+		render(mesh.getVertexBuffer(), mesh.getIndexBuffer());
+	}
+
+	inline void render(OtGeometry& geometry) {
+		auto& mesh = geometry.getMesh();
+		render(mesh.getVertexBuffer(), mesh.getIndexBuffer());
 	}
 
 	// end a render pass

@@ -22,6 +22,7 @@
 #include "OtLog.h"
 
 #include "OtComputePipeline.h"
+#include "OtCubeMap.h"
 #include "OtGpu.h"
 #include "OtSampler.h"
 #include "OtTexture.h"
@@ -46,6 +47,7 @@ public:
 
 		samplers.emplace_back(binding);
 	}
+
 	// add an output texture
 	inline void addOutputTexture(OtTexture& texture) {
 		if ((texture.getUsage() & (OtTexture::Usage::computeStorageWrite | OtTexture::Usage::computeStorageReadWrite)) == 0) {
@@ -54,6 +56,18 @@ public:
 
 		SDL_GPUStorageTextureReadWriteBinding binding{
 			.texture = texture.getTexture(),
+			.mip_level = 0,
+			.layer = 0,
+			.cycle = false
+		};
+
+		textures.emplace_back(binding);
+	}
+
+	// add an output texture
+	inline void addOutputCubeMap(OtCubeMap& cubemap) {
+		SDL_GPUStorageTextureReadWriteBinding binding{
+			.texture = cubemap.getTexture(),
 			.mip_level = 0,
 			.layer = 0,
 			.cycle = false

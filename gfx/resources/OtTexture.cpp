@@ -78,7 +78,7 @@ bool OtTexture::update(int w, int h, Format f, Usage u) {
 
 void OtTexture::load(OtImage& image) {
 	// format mapping table
-	struct formatMapping{
+	struct formatMapping {
 		SDL_PixelFormat surface;
 		Format format;
 		int bpp;

@@ -130,7 +130,13 @@ void OtFramework::initSDL() {
 	}
 
 	// create GPU device
-	gpu.device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, false, nullptr);
+#if OT_DEBUG
+	static constexpr bool debug = true;
+#else
+	static constexpr bool debug = true;
+#endif
+
+gpu.device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, debug, nullptr);
 
 	if (gpu.device == nullptr) {
 		OtLogFatal("Error in SDL_CreateGPUDevice: {}", SDL_GetError());

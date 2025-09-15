@@ -37,9 +37,6 @@ public:
 	// see if mesh is valid
 	inline bool isValid() { return vertices.size() && indices.size(); }
 
-	// generate simple primitives
-	void generateCube();
-
 	// load/save a mesh
 	void load(const std::string& path);
 	void save(const std::string& path);
@@ -93,8 +90,12 @@ public:
 	void generateNormals();
 	void generateTangents();
 
-	// get access to vertices and indices (to allow transformations)
-	std::vector<OtVertex>& getVertices(bool update=false);
+	// get access to vertices and indices (to allow transformations and rendering)
+	inline std::vector<OtVertex>& getVertices(bool update=false) {
+		refreshBuffers |= update;
+		return vertices;
+	}
+
 	inline std::vector<uint32_t>& getIndices() { return indices; }
 
 	// get the AABB
@@ -112,6 +113,25 @@ private:
 	OtVertexBuffer vertexBuffer;
 	OtIndexBuffer indexBuffer;
 	bool refreshBuffers = true;
+
+	// access buffers
+	friend class OtRenderPass;
+
+	inline OtVertexBuffer& getVertexBuffer() {
+		if (refreshBuffers) {
+			updateBuffers();
+		}
+
+		return vertexBuffer;
+	}
+
+	inline OtIndexBuffer& getIndexBuffer() {
+		if (refreshBuffers) {
+			updateBuffers();
+		}
+
+		return indexBuffer;
+	}
 
 	// house keeping function
 	void updateBuffers();
