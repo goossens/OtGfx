@@ -44,11 +44,15 @@ target_link_libraries(gfx PUBLIC
 	shadercross
 	imgui
 	imguifd
+	imguiwidgets
 	glm
+	delaunator
 	manifold
 	plutovg
 	entt
 	assimp
-	bsthreadpool)
+	md4c
+	bsthreadpool
+	tweeny)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${GFX_INCLUDES} ${GFX_SOURCES})
