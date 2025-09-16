@@ -53,10 +53,14 @@ public:
 
 	enum class DepthTest {
 		none,
+		never,
 		less,
+		equal,
 		lessEqual,
 		greater,
-		greaterEqual
+		notEqual,
+		greaterEqual,
+		always
 	};
 
 	enum class Culling {
@@ -67,8 +71,28 @@ public:
 
 	enum class BlendOperation {
 		none,
-		alpha,
-		add
+		add,
+		subtract,
+		reverseSubtract,
+		min,
+		max
+	};
+
+	enum class BlendFactor {
+		none,
+		zero,
+		one,
+		srcColor,
+		oneMinusSrcColor,
+		dstColor,
+		oneMinusDstColor,
+		srcAlpha,
+		oneMinusSrcAlpha,
+		dstAlpha,
+		oneMinusDstAlpha,
+		constantColor,
+		oneMinusConstantColor,
+		alphaSaturate
 	};
 
 	// constructor
@@ -94,8 +118,28 @@ public:
 	inline void setTargetChannel(TargetChannel value) { targetChannel = value; }
 	inline void setDepthTest(DepthTest value) { depthTest = value; }
 	inline void setCulling(Culling value) { culling = value; }
-	inline void setBlendOperation(BlendOperation value) { blendOperation = value; }
 	inline void setFill(bool mode) { fill = mode; }
+
+	inline void setBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
+		colorBlendOperation = operation;
+		colorSrcFactor = src;
+		colorDstFactor = dst;
+		alphaBlendOperation = operation;
+		alphaSrcFactor = src;
+		alphaDstFactor = dst;
+	}
+
+	inline void setColorBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
+		colorBlendOperation = operation;
+		colorSrcFactor = src;
+		colorDstFactor = dst;
+	}
+
+	inline void setAlphaBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
+		alphaBlendOperation = operation;
+		alphaSrcFactor = src;
+		alphaDstFactor = dst;
+	}
 
 	// clear the object
 	inline void clear() {
@@ -111,8 +155,14 @@ public:
 		targetChannel = TargetChannel::rgba;
 		depthTest = DepthTest::less;
 		culling = Culling::cw;
-		blendOperation = BlendOperation::none;
 		fill = true;
+
+		colorBlendOperation = BlendOperation::none;
+		alphaBlendOperation = BlendOperation::none;
+		colorSrcFactor = BlendFactor::none;
+		colorDstFactor = BlendFactor::none;
+		alphaSrcFactor = BlendFactor::none;
+		alphaDstFactor = BlendFactor::none;
 	}
 
 	// see if pipeline is valid
@@ -137,14 +187,20 @@ private:
 			});
 	}
 
-	// pipline properties
+	// pipeline properties
 	OtVertexDescription* vertexDescription = nullptr;
 	RenderTargetType renderTargetType = RenderTargetType::rgba8d;
 	TargetChannel targetChannel = TargetChannel::rgba;
 	DepthTest depthTest = DepthTest::less;
 	Culling culling = Culling::cw;
-	BlendOperation blendOperation = BlendOperation::none;
 	bool fill = true;
+
+	BlendOperation colorBlendOperation = BlendOperation::none;
+	BlendOperation alphaBlendOperation = BlendOperation::none;
+	BlendFactor colorSrcFactor = BlendFactor::none;
+	BlendFactor colorDstFactor = BlendFactor::none;
+	BlendFactor alphaSrcFactor = BlendFactor::none;
+	BlendFactor alphaDstFactor = BlendFactor::none;
 
 	// get the raw pipeline object
 	friend class OtRenderPass;
@@ -210,20 +266,17 @@ private:
 				});
 
 			} else {
-				auto src = blendOperation == BlendOperation::alpha ? SDL_GPU_BLENDFACTOR_SRC_ALPHA : SDL_GPU_BLENDFACTOR_ONE;
-				auto dst = blendOperation == BlendOperation::alpha ? SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA : SDL_GPU_BLENDFACTOR_ONE;
-
 				targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{
 					.format = getTextureFormat(),
 					.blend_state = SDL_GPUColorTargetBlendState{
-						.src_color_blendfactor = src,
-						.dst_color_blendfactor = dst,
-						.color_blend_op = SDL_GPU_BLENDOP_ADD,
-						.src_alpha_blendfactor = src,
-						.dst_alpha_blendfactor = dst,
-						.alpha_blend_op = SDL_GPU_BLENDOP_ADD,
+						.src_color_blendfactor = getBlendFactor(colorSrcFactor),
+						.dst_color_blendfactor = getBlendFactor(colorDstFactor),
+						.color_blend_op = getBlendOperation(colorBlendOperation),
+						.src_alpha_blendfactor = getBlendFactor(alphaSrcFactor),
+						.dst_alpha_blendfactor = getBlendFactor(alphaDstFactor),
+						.alpha_blend_op = getBlendOperation(alphaBlendOperation),
 						.color_write_mask = getTargetChannel(),
-						.enable_blend = blendOperation != BlendOperation::none,
+						.enable_blend = colorBlendOperation != BlendOperation::none || alphaBlendOperation != BlendOperation::none,
 						.enable_color_write_mask = (targetChannel & TargetChannel::rgba) != TargetChannel::rgba
 					}
 				});
@@ -341,11 +394,15 @@ private:
 
 	SDL_GPUCompareOp getDepthTest() {
 		switch (depthTest) {
-			case DepthTest::none: return SDL_GPU_COMPAREOP_ALWAYS;
+			case DepthTest::none: return SDL_GPU_COMPAREOP_INVALID;
+			case DepthTest::never: return SDL_GPU_COMPAREOP_NEVER;
 			case DepthTest::less: return SDL_GPU_COMPAREOP_LESS;
+			case DepthTest::equal: return SDL_GPU_COMPAREOP_EQUAL;
 			case DepthTest::lessEqual: return SDL_GPU_COMPAREOP_LESS_OR_EQUAL;
 			case DepthTest::greater: return SDL_GPU_COMPAREOP_GREATER;
+			case DepthTest::notEqual: return SDL_GPU_COMPAREOP_NOT_EQUAL;
 			case DepthTest::greaterEqual: return SDL_GPU_COMPAREOP_GREATER_OR_EQUAL;
+			case DepthTest::always: return SDL_GPU_COMPAREOP_ALWAYS;
 		}
 	}
 
@@ -354,6 +411,36 @@ private:
 			case Culling::none: return SDL_GPU_CULLMODE_NONE;
 			case Culling::cw: return SDL_GPU_CULLMODE_BACK;
 			case Culling::ccw: return SDL_GPU_CULLMODE_FRONT;
+		}
+	}
+
+	SDL_GPUBlendOp getBlendOperation(BlendOperation operation) {
+		switch (operation) {
+			case BlendOperation::none: return SDL_GPU_BLENDOP_INVALID;
+			case BlendOperation::add: return SDL_GPU_BLENDOP_ADD;
+			case BlendOperation::subtract: return SDL_GPU_BLENDOP_SUBTRACT;
+			case BlendOperation::reverseSubtract: return SDL_GPU_BLENDOP_REVERSE_SUBTRACT;
+			case BlendOperation::min: return SDL_GPU_BLENDOP_MIN;
+			case BlendOperation::max: return SDL_GPU_BLENDOP_MAX;
+		}
+	}
+
+	SDL_GPUBlendFactor getBlendFactor(BlendFactor factor) {
+		switch (factor) {
+			case BlendFactor::none: return SDL_GPU_BLENDFACTOR_INVALID;
+			case BlendFactor::zero: return SDL_GPU_BLENDFACTOR_ZERO;
+			case BlendFactor::one: return SDL_GPU_BLENDFACTOR_ONE;
+			case BlendFactor::srcColor: return SDL_GPU_BLENDFACTOR_SRC_COLOR;
+			case BlendFactor::oneMinusSrcColor: return SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_COLOR;
+			case BlendFactor::dstColor: return SDL_GPU_BLENDFACTOR_DST_COLOR;
+			case BlendFactor::oneMinusDstColor: return SDL_GPU_BLENDFACTOR_ONE_MINUS_DST_COLOR;
+			case BlendFactor::srcAlpha: return SDL_GPU_BLENDFACTOR_SRC_ALPHA;
+			case BlendFactor::oneMinusSrcAlpha: return SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+			case BlendFactor::dstAlpha: return SDL_GPU_BLENDFACTOR_DST_ALPHA;
+			case BlendFactor::oneMinusDstAlpha: return SDL_GPU_BLENDFACTOR_ONE_MINUS_DST_ALPHA;
+			case BlendFactor::constantColor: return SDL_GPU_BLENDFACTOR_CONSTANT_COLOR;
+			case BlendFactor::oneMinusConstantColor: return SDL_GPU_BLENDFACTOR_ONE_MINUS_CONSTANT_COLOR;
+			case BlendFactor::alphaSaturate: return SDL_GPU_BLENDFACTOR_SRC_ALPHA_SATURATE;
 		}
 	}
 };

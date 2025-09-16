@@ -143,6 +143,7 @@ private:
 	friend class OtComputePass;
 	friend class OtFrameBuffer;
 	friend class OtGbuffer;
+	friend class OtRenderPass;
 
 	inline SDL_GPUTexture* getTexture() {
 		return isValid()

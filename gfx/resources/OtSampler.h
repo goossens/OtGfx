@@ -77,6 +77,7 @@ private:
 
 	// get the raw sampler object
 	friend class OtComputePass;
+	friend class OtRenderPass;
 
 	inline SDL_GPUSampler* getSampler() {
 		if (!sampler || requestedFilter != currentFilter || requestedAddressing != currentAddressing) {

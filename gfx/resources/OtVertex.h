@@ -93,6 +93,55 @@ struct OtVertex {
 	}
 };
 
+
+//
+//	OtVertexPosUvCol2D
+//
+
+struct OtVertexPosUvCol2D {
+	// vertex elements
+	glm::vec2 position;
+	glm::vec2 uv;
+	glm::vec4 color;
+
+	// constructors
+	OtVertexPosUvCol2D() = default;
+	inline OtVertexPosUvCol2D(const glm::vec2& p, const glm::vec2& u=glm::vec2(0.0f), const glm::vec4& c=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) : position(p), uv(u), color(c) {}
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{
+				.buffer_slot = 0,
+				.location = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+				.offset = offsetof(OtVertexPosUvCol2D, position),
+			},
+			{
+				.buffer_slot = 0,
+				.location = 1,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+				.offset = offsetof(OtVertexPosUvCol2D, uv),
+			},
+			{
+				.buffer_slot = 0,
+				.location = 2,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = offsetof(OtVertexPosUvCol2D, color),
+			}
+		};
+
+		static OtVertexDescription description{
+			.size = sizeof(OtVertexPosUvCol2D),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
+			.attributes = attributes
+		};
+
+		return &description;
+	}
+};
+
+
 //
 //	OtVertexPosColor
 //

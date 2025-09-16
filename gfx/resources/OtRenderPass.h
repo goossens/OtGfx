@@ -24,6 +24,7 @@
 #include "OtIndexBuffer.h"
 #include "OtMesh.h"
 #include "OtRenderPipeline.h"
+#include "OtSampler.h"
 #include "OtVertexBuffer.h"
 
 
@@ -77,6 +78,26 @@ public:
 	// bind a render pipeline
 	inline void bindPipeline(OtRenderPipeline& pipeline) {
 		SDL_BindGPUGraphicsPipeline(pass, pipeline.getPipeline());
+	}
+
+	// bind a vertex sampler
+	inline void bindVertexSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
+		SDL_GPUTextureSamplerBinding binding{
+			.texture = texture.getTexture(),
+			.sampler = sampler.getSampler()
+		};
+
+		SDL_BindGPUVertexSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
+	}
+
+	// bind a fragment sampler
+	inline void bindFragmentSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
+		SDL_GPUTextureSamplerBinding binding{
+			.texture = texture.getTexture(),
+			.sampler = sampler.getSampler()
+		};
+
+		SDL_BindGPUFragmentSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 	}
 
 	// set uniforms

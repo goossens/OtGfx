@@ -22,7 +22,6 @@ void main() {
 
 	vec2 uv = vec2(coord) / vec2(size);
 
-
 	vec4 bg = texture(inTexture, uv);
 	vec4 fg = texture(overlayTexture, uv);
 	float inv = 1.0f - fg.a;
