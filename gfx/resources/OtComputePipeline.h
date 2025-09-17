@@ -90,9 +90,7 @@ private:
 				.bytecode = (Uint8*) computeShaderCode,
 				.bytecode_size = computeShaderSize,
 				.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
-				.enable_debug = false,
 				.entrypoint = "main",
-				.name = "",
 				.props = 0
 			};
 
