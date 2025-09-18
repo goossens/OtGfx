@@ -310,7 +310,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 			}
 		}
 
-		brush.load(brushSize, brushSize, OtImage::Format::rgba8, pixels);
+		brush.load(brushSize, brushSize, OtTexture::Format::rgba8, pixels);
 	}
 
 	OtRenderPass pass;

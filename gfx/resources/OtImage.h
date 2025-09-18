@@ -28,6 +28,7 @@ public:
 	// image formats
 	enum class Format {
 		none = SDL_PIXELFORMAT_UNKNOWN,
+		r8 = SDL_PIXELFORMAT_INDEX8,
 		rgba8 = SDL_PIXELFORMAT_RGBA8888,
 		rgbaFloat32 = SDL_PIXELFORMAT_RGBA128_FLOAT
 	};
@@ -44,8 +45,8 @@ public:
 
 	// load image as RGBA
 	void load(const std::string& address, bool powerof2=false, bool square=false);
-	void load(int width, int height, Format format, void* pixels);
 	void load(void* data, size_t size);
+	void load(int width, int height, Format format, void* pixels);
 
 	// save the image to disk
 	void saveToPNG(const std::string& path);

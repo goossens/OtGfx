@@ -42,7 +42,8 @@ public:
 
 	// constructors
 	OtSampler() = default;
-	OtSampler(Filter filter, Addressing address) : requestedFilter(filter), requestedAddressing(address) {}
+	OtSampler(Filter filter, Addressing addressing) : requestedFilter(filter), requestedAddressingX(addressing), requestedAddressingY(addressing) {}
+	OtSampler(Filter filter, Addressing addressingX, Addressing addressingY) : requestedFilter(filter), requestedAddressingX(addressingX), requestedAddressingY(addressingY) {}
 
 	// clear the object
 	inline void clear() { sampler = nullptr; }
@@ -53,8 +54,16 @@ public:
 	// access options
 	inline void setFilter(Filter filter) { requestedFilter = filter; }
 	inline Filter getFilter() { return requestedFilter; };
-	inline void setAddressing(Addressing address) { requestedAddressing = address; }
-	inline Addressing getAddressing() { return requestedAddressing; };
+
+	inline void setAddressing(Addressing addressing) {
+		requestedAddressingX = addressing;
+		requestedAddressingY = addressing;
+	}
+
+	inline void setAddressingX(Addressing addressing) { requestedAddressingX = addressing; }
+	inline void setAddressingY(Addressing addressing) { requestedAddressingY = addressing; }
+	inline Addressing getAddressingX() { return requestedAddressingX; };
+	inline Addressing getAddressingY() { return requestedAddressingY; };
 
 private:
 	// sampler
@@ -62,9 +71,11 @@ private:
 
 	// properties
 	Filter requestedFilter = Filter::linear;
-	Addressing requestedAddressing = Addressing::repeat;
 	Filter currentFilter = Filter::none;
-	Addressing currentAddressing = Addressing::none;
+	Addressing requestedAddressingX = Addressing::repeat;
+	Addressing requestedAddressingY = Addressing::repeat;
+	Addressing currentAddressingX = Addressing::none;
+	Addressing currentAddressingY = Addressing::none;
 
 	// memory manage SDL resource
 	inline void assign(SDL_GPUSampler* newSampler) {
@@ -80,12 +91,16 @@ private:
 	friend class OtRenderPass;
 
 	inline SDL_GPUSampler* getSampler() {
-		if (!sampler || requestedFilter != currentFilter || requestedAddressing != currentAddressing) {
+		if (!sampler || requestedFilter != currentFilter || requestedAddressingX != currentAddressingX || requestedAddressingY != currentAddressingY) {
 			if (requestedFilter == Filter::none) {
 				OtLogFatal("Invalid filter type for sampler");
 			}
 
-			if (requestedAddressing == Addressing::none) {
+			if (requestedAddressingX == Addressing::none) {
+				OtLogFatal("Invalid addressing type for sampler");
+			}
+
+			if (requestedAddressingY == Addressing::none) {
 				OtLogFatal("Invalid addressing type for sampler");
 			}
 
@@ -94,19 +109,25 @@ private:
 					? SDL_GPU_FILTER_NEAREST
 					: SDL_GPU_FILTER_LINEAR;
 
-			SDL_GPUSamplerAddressMode addressMode =
-				(requestedAddressing == Addressing::repeat)
+			SDL_GPUSamplerAddressMode addressModeX =
+				(requestedAddressingX == Addressing::repeat)
 					? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
-					: (requestedAddressing == Addressing::mirror)
+					: (requestedAddressingX == Addressing::mirror)
 						? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
 						: SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
-			SDL_GPUSamplerCreateInfo info{
+			SDL_GPUSamplerAddressMode addressModeY =
+				(requestedAddressingY == Addressing::repeat)
+					? SDL_GPU_SAMPLERADDRESSMODE_REPEAT
+					: (requestedAddressingY == Addressing::mirror)
+						? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
+						: SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+
+						SDL_GPUSamplerCreateInfo info{
 				.min_filter = filter,
 				.mag_filter = filter,
-				.address_mode_u = addressMode,
-				.address_mode_v = addressMode,
-				.address_mode_w = addressMode,
+				.address_mode_u = addressModeX,
+				.address_mode_v = addressModeY,
 				.mip_lod_bias = 0,
 				.max_anisotropy = (requestedFilter == Filter::anisotropic) ? 8.0f : 0.0f,
 				.compare_op = SDL_GPU_COMPAREOP_ALWAYS,
@@ -124,7 +145,8 @@ private:
 
 			assign(sdlSampler);
 			currentFilter = requestedFilter;
-			currentAddressing = requestedAddressing;
+			currentAddressingX = requestedAddressingX;
+			currentAddressingY = requestedAddressingY;
 		}
 
 		return sampler.get();

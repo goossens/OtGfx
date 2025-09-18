@@ -85,6 +85,7 @@ void OtTexture::load(OtImage& image) {
 	};
 
 	formatMapping mappingTable[] = {
+		{ SDL_PIXELFORMAT_INDEX8, Format::r8, 1 },
 		{ SDL_PIXELFORMAT_ABGR8888, Format::rgba8, 4 },
 		{ SDL_PIXELFORMAT_RGBA128_FLOAT, Format::rgbaFloat32, 16 }
 	};
@@ -169,26 +170,6 @@ void OtTexture::load(const std::string& path, bool async) {
 //	OtTexture::load
 //
 
-void OtTexture::load(int w, int h, OtImage::Format f, void* pixels, bool async) {
-	if (async) {
-		// get image and schedule an asynchronous load to the GPU
-		asyncImage = std::make_shared<OtImage>();
-		asyncImage->load(w, h, f, pixels);
-		loadAsync();
-
-	} else {
-		// get the image
-		OtImage image;
-		image.load(w, h, f, pixels);
-		load(image);
-	}
-}
-
-
-//
-//	OtTexture::load
-//
-
 void OtTexture::load(void* data, size_t size, bool async) {
 	if (async) {
 		// get image and schedule an asynchronous load to the GPU
@@ -200,6 +181,41 @@ void OtTexture::load(void* data, size_t size, bool async) {
 		// get the image
 		OtImage image;
 		image.load(data, size);
+		load(image);
+	}
+}
+
+
+//
+//	OtTexture::load
+//
+
+void OtTexture::load(int w, int h, Format f, void* pixels, bool async) {
+	OtImage::Format fmt;
+
+	if (f == Format::r8) {
+		fmt = OtImage::Format::r8;
+
+	} else if (f == Format::rgba8) {
+		fmt = OtImage::Format::rgba8;
+
+	} else if (f == Format::rgbaFloat32) {
+		fmt = OtImage::Format::rgbaFloat32;
+
+	} else {
+		OtLogFatal("Unsupported pixel format");
+	}
+
+	if (async) {
+		// get image and schedule an asynchronous load to the GPU
+		asyncImage = std::make_shared<OtImage>();
+		asyncImage->load(w, h, fmt, pixels);
+		loadAsync();
+
+	} else {
+		// get the image
+		OtImage image;
+		image.load(w, h, fmt, pixels);
 		load(image);
 	}
 }

@@ -72,8 +72,8 @@ public:
 	// load texture
 	void load(OtImage& image);
 	void load(const std::string& address, bool async=false);
-	void load(int width, int height, OtImage::Format format, void* pixels, bool async=false);
 	void load(void* data, size_t size, bool async=false);
+	void load(int width, int height, Format format, void* pixels, bool async=false);
 
 	// return texture ID (for Dear ImGUI use)
 	inline ImTextureID getTextureID() {

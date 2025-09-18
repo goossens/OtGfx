@@ -10,6 +10,7 @@
 //
 
 #include <algorithm>
+#include <cstring>
 #include <fstream>
 
 #include "SDL3/SDL_iostream.h"
@@ -48,26 +49,6 @@ void OtImage::clear() {
 
 
 //
-//	OtImage::update
-//
-
-void OtImage::update(int width, int height, Format format) {
-	// create new image (if required)
-	auto fmt = static_cast<SDL_PixelFormat>(format);
-
-	if (!surface || surface->w != width || surface->h != height || surface->format != fmt) {
-		auto sdlSurface = SDL_CreateSurface(width, height, fmt);
-
-		if (!sdlSurface) {
-			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
-		}
-
-		assign(sdlSurface);
-	}
-}
-
-
-//
 //	isPowerOfTwo
 //
 
@@ -81,6 +62,25 @@ static bool isPowerOfTwo(int n) {
 	    return (n & (n - 1)) == 0;
 	}
 }
+
+
+//
+//	OtImage::update
+//
+
+void OtImage::update(int width, int height, Format format) {
+	// update surface (if required)
+	auto fmt = static_cast<SDL_PixelFormat>(format);
+
+	if (!surface || surface->w != width || surface->h != height || surface->format != fmt) {
+		auto sdlSurface = SDL_CreateSurface(width, height, fmt);
+
+		if (!sdlSurface) {
+			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
+		}
+	}
+}
+
 
 //
 //	OtImage::load
@@ -128,16 +128,15 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 //	OtImage::load
 //
 
-void OtImage::load(int width, int height, Format format, void* pixels) {
-	// load new image
-	auto fmt = static_cast<SDL_PixelFormat>(format);
+void OtImage::load(void* data, size_t size) {
+	// create the image
+	SDL_IOStream* io = SDL_IOFromMem(data, size);
 
-	auto sdlSurface = SDL_CreateSurfaceFrom(
-		width,
-		height,
-		fmt,
-		pixels,
-		SDL_BYTESPERPIXEL(fmt) * width);
+	if (!io) {
+		OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
+	}
+
+	auto sdlSurface = IMG_Load_IO(io, true);
 
 	if (!sdlSurface) {
 		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
@@ -152,18 +151,36 @@ void OtImage::load(int width, int height, Format format, void* pixels) {
 //	OtImage::load
 //
 
-void OtImage::load(void* data, size_t size) {
-	// create the image
-	SDL_IOStream* io = SDL_IOFromMem(data, size);
-
-	if (!io) {
-		OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
-	}
-
-	auto sdlSurface = IMG_Load_IO(io, true);
+void OtImage::load(int width, int height, Format format, void* pixels) {
+	// create new surface
+	auto sdlSurface = SDL_CreateSurface(width, height, static_cast<SDL_PixelFormat>(format));
 
 	if (!sdlSurface) {
-		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
+		OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
+	}
+
+	if (format == Format::r8) {
+		auto palette = SDL_CreateSurfacePalette(sdlSurface);
+
+		if (!palette) {
+			 SDL_DestroySurface(sdlSurface);
+			OtLogFatal("Error in SDL_CreateSurfacePalette: {}", SDL_GetError());
+		}
+
+		for (Uint8 i = 0; i < palette->ncolors; i++) {
+			palette->colors[i].r = i;
+			palette->colors[i].g = i;
+			palette->colors[i].b = i;
+		}
+	}
+
+	if (SDL_MUSTLOCK(sdlSurface)) {
+		SDL_LockSurface(sdlSurface);
+		std::memcpy(sdlSurface->pixels, pixels, sdlSurface->h * sdlSurface->pitch);
+		SDL_UnlockSurface(sdlSurface);
+
+	} else {
+		std::memcpy(sdlSurface->pixels, pixels, sdlSurface->h * sdlSurface->pitch);
 	}
 
 	assign(sdlSurface);
