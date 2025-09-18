@@ -48,6 +48,7 @@ target_link_libraries(gfx PUBLIC
 	glm
 	delaunator
 	manifold
+	nanovg
 	plutovg
 	entt
 	assimp
