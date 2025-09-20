@@ -77,41 +77,13 @@ bool OtTexture::update(int w, int h, Format f, Usage u) {
 //
 
 void OtTexture::load(OtImage& image) {
-	// format mapping table
-	struct formatMapping {
-		SDL_PixelFormat surface;
-		Format format;
-		int bpp;
-	};
-
-	formatMapping mappingTable[] = {
-		{ SDL_PIXELFORMAT_INDEX8, Format::r8, 1 },
-		{ SDL_PIXELFORMAT_ABGR8888, Format::rgba8, 4 },
-		{ SDL_PIXELFORMAT_RGBA128_FLOAT, Format::rgbaFloat32, 16 }
-	};
-
-	// find correct format
-	Format format = Format::none;
-	int bpp = -1;
-
-	for (auto& mapping : mappingTable) {
-		if (mapping.surface == image.getFormat()) {
-			format = mapping.format;
-			bpp = mapping.bpp;
-		}
-	}
-
-	if (format == Format::none) {
-		OtLogFatal("Unsupported image format: {}", image.getFormat());
-	}
-
 	// update the texture
-	update(image.getWidth(), image.getHeight(), format, Usage::sampler);
+	update(image.getWidth(), image.getHeight(), convertImageFormat(image.getFormat()), Usage::sampler);
 
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(width * height * bpp)
+		.size = static_cast<Uint32>(width * height * getBpp())
 	};
 
 	auto& gpu = OtGpu::instance();
@@ -218,6 +190,51 @@ void OtTexture::load(int w, int h, Format f, void* pixels, bool async) {
 		image.load(w, h, fmt, pixels);
 		load(image);
 	}
+}
+
+
+//
+//	OtTexture::update
+//
+
+void OtTexture::update(int x, int y, int w, int h, void* pixels) {
+	// create a transfer buffer
+	SDL_GPUTransferBufferCreateInfo bufferInfo{
+		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+		.size = static_cast<Uint32>(w * h * getBpp())
+	};
+
+	auto& gpu = OtGpu::instance();
+	SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
+
+	if (!transferBuffer) {
+		OtLogFatal("Error in SDL_CreateGPUTransferBuffer: {}", SDL_GetError());
+	}
+
+	// put image in transfer buffer
+	void* data = SDL_MapGPUTransferBuffer(gpu.device, transferBuffer, false);
+	std::memcpy(data, pixels, bufferInfo.size);
+	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
+
+	// upload image to GPU
+	SDL_GPUTextureTransferInfo transferInfo{
+		.offset = 0,
+		.transfer_buffer = transferBuffer
+	};
+
+	SDL_GPUTextureRegion region{
+		.texture = texture.get(),
+		.x = static_cast<Uint32>(x),
+		.y = static_cast<Uint32>(y),
+		.w = static_cast<Uint32>(w),
+		.h = static_cast<Uint32>(h),
+		.d = 1
+	};
+
+	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
+	SDL_UploadToGPUTexture(copyPass, &transferInfo, &region, false);
+	SDL_EndGPUCopyPass(copyPass);
+	SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);
 }
 
 

@@ -126,8 +126,8 @@ void OtCubeMap::loadJSON(const std::string& path, bool async) {
 			OtLogFatal("Image [{}] has incorrect height [{}]. Should be [{}]", paths[i], surface->h, size);
 		}
 
-		if (surface->format != SDL_PIXELFORMAT_RGBA8888) {
-			SDL_Surface *next = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA8888);
+		if (surface->format != SDL_PIXELFORMAT_RGBA32) {
+			SDL_Surface *next = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
 			SDL_DestroySurface(surface);
 			surface = next;
 		}

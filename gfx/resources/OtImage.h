@@ -29,7 +29,7 @@ public:
 	enum class Format {
 		none = SDL_PIXELFORMAT_UNKNOWN,
 		r8 = SDL_PIXELFORMAT_INDEX8,
-		rgba8 = SDL_PIXELFORMAT_RGBA8888,
+		rgba8 = SDL_PIXELFORMAT_RGBA32,
 		rgbaFloat32 = SDL_PIXELFORMAT_RGBA128_FLOAT
 	};
 
@@ -55,7 +55,7 @@ public:
 	inline bool isValid() { return surface != nullptr; }
 
 	// get information about image
-	inline int getFormat() { return surface->format; }
+	inline Format getFormat() { return static_cast<Format>(surface->format); }
 	inline int getWidth() { return surface->w; }
 	inline int getHeight() { return surface->h; }
 	inline void* getPixels() { return surface->pixels; }

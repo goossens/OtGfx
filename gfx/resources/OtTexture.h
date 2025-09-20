@@ -66,7 +66,7 @@ public:
 	// see if texture is valid
 	inline bool isValid() { return texture != nullptr; }
 
-	// update a texture (returns true if update was require, false if nothing needed to be done)
+	// update texture properties (returns true if update was required, false if nothing needed to be done)
 	bool update(int width, int height, Format format, Usage usage);
 
 	// load texture
@@ -74,6 +74,9 @@ public:
 	void load(const std::string& address, bool async=false);
 	void load(void* data, size_t size, bool async=false);
 	void load(int width, int height, Format format, void* pixels, bool async=false);
+
+	// update (part of) texture
+	void update(int x, int y, int width, int height, void* pixels);
 
 	// return texture ID (for Dear ImGUI use)
 	inline ImTextureID getTextureID() {
@@ -87,6 +90,20 @@ public:
 	inline int getHeight() { return height; }
 	inline Format getFormat() { return format; }
 	inline Usage getUsage() { return usage; }
+
+	inline int getBpp() {
+		switch (format) {
+			case Format::none: return 0;
+			case Format::r8: return 1;
+			case Format::rFloat32: return 4;
+			case Format::rgFloat16: return 4;
+			case Format::rgba8: return 4;
+			case Format::rgbaFloat16: return 8;
+			case Format::rgbaFloat32: return 16;
+			case Format::dFloat: return 4;
+			case Format::d24s8: return 4;
+		}
+	}
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -149,5 +166,15 @@ private:
 		return isValid()
 			? texture.get()
 			: OtGpu::instance().transparentDummyTexture;
+	}
+
+	// convert format
+	inline Format convertImageFormat(OtImage::Format fmt) {
+		switch (fmt) {
+			case OtImage::Format::none: return Format::none;
+			case OtImage::Format::r8: return Format::r8;
+			case OtImage::Format::rgba8: return Format::rgba8;
+			case OtImage::Format::rgbaFloat32: return Format::rgbaFloat32;
+		}
 	}
 };

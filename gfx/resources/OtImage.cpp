@@ -214,7 +214,7 @@ glm::vec4 OtImage::getPixelRgba(int x, int y) {
 	x = std::clamp(x, 0, surface->w - 1);
 	y = std::clamp(y, 0, surface->h - 1);
 
-	if (surface->format == SDL_PIXELFORMAT_RGBA8888) {
+	if (surface->format == SDL_PIXELFORMAT_RGBA32) {
 		auto value = &((uint8_t*) surface->pixels)[y * surface->w + x];
 		return glm::vec4(value[0] / 255.0f, value[1] / 255.0f, value[2] / 255.0f, value[3] / 255.0f);
 
