@@ -13,6 +13,7 @@ function(process package)
 	add_subdirectory(${package})
 endfunction()
 
+process(argparse)
 process(fmt)
 process(json)
 process(libuv)

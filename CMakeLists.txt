@@ -28,20 +28,30 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(deps)
 add_subdirectory(3rdparty)
-
 add_subdirectory(language)
 add_subdirectory(network)
-add_subdirectory(shaders)
-add_subdirectory(gfx)
+
+if(OT_INCLUDE_UI)
+	add_subdirectory(shaders)
+	add_subdirectory(gfx)
+	add_subdirectory(gui)
+endif()
 
 add_executable(example main.cpp)
 
 target_include_directories(example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/demos)
+target_link_libraries(example language network argparse)
 
-target_link_libraries(example
-	language
-	network
-	gfx)
+if(OT_INCLUDE_UI)
+	target_compile_definitions(example PRIVATE OT_INCLUDE_UI)
+	target_link_libraries(example shaders gfx gui)
+
+	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
+		if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)
+			target_link_options(example PRIVATE LINKER:-no_warn_duplicate_libraries)
+		endif()
+	endif()
+endif()
 
 target_compile_options(example PRIVATE
 	$<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang,GNU>:-Werror -Wall -Wpedantic -Wextra>

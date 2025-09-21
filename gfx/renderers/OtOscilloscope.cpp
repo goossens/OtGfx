@@ -314,7 +314,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	}
 
 	OtRenderPass pass;
-	pass.start(work);
+	pass.start(framebuffer);
 	pass.bindPipeline(pipeline);
 
 	// setup brush
@@ -397,7 +397,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	for (auto p = 0; p < 4; p++) {
 		// run horizontal blur
 		blur.setDirection(glm::vec2(1.0f, 0.0f));
-		blur.render(p == 0 ? work.getColorTexture() : blur2.getColorTexture(), blur1.getColorTexture());
+		blur.render(p == 0 ? framebuffer.getColorTexture() : blur2.getColorTexture(), blur1.getColorTexture());
 
 		// run vertical blur
 		blur.setDirection(glm::vec2(0.0f, 1.0f));
@@ -405,8 +405,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	}
 
 	// combine original rendering with glow
-	alphaOver.setOverlay(blur2.getColorTexture());
-	alphaOver.render(work.getColorTexture(), framebuffer.getColorTexture());
+	alphaOver.render(blur2.getColorTexture(), framebuffer.getColorTexture());
 }
 
 

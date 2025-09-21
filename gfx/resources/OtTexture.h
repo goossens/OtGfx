@@ -157,6 +157,7 @@ private:
 	void loadAsync();
 
 	// get the raw texture object
+	friend class OtBlitPass;
 	friend class OtComputePass;
 	friend class OtFrameBuffer;
 	friend class OtGbuffer;

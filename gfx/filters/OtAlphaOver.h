@@ -24,28 +24,11 @@
 
 class OtAlphaOver : public OtFilter {
 public:
-	// set properties
-	inline void setOverlay(OtTexture& overlay) { overlayTexture = overlay; }
-
-	// clear GPU resources
-	inline void clear() override {
-		overlayTexture.clear();
-		overlaySampler.clear();
-		OtFilter::clear();
-	}
-
 	// configure the compute pass
-	void configurePass(OtComputePass& pass) override {
+	void configurePass([[maybe_unused]] OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.setShader(OtAlphaOverComp, sizeof(OtAlphaOverComp));
 		}
-
-		pass.addInputSampler(overlaySampler, overlayTexture);
 	}
-
-private:
-	// properties
-	OtTexture overlayTexture;
-	OtSampler overlaySampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 };

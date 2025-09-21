@@ -1,0 +1,50 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+
+#pragma once
+
+
+//
+//	Include files
+//
+
+#include "glm/glm.hpp"
+
+#include "OtNeedleComp.h"
+#include "OtFilter.h"
+
+
+//
+//	OtNeedle
+//
+
+class OtNeedle : public OtFilter {
+public:
+	// set properties
+	inline void setTransform(const glm::mat4& t) { transform = t; }
+
+	// configure the compute pass
+	void configurePass(OtComputePass& pass) override {
+		// initialize pipeline (if required)
+		if (!pipeline.isValid()) {
+			pipeline.setShader(OtNeedleComp, sizeof(OtNeedleComp));
+		}
+
+		// set uniforms
+		struct Uniforms {
+			glm::mat4 transform;
+		} uniforms {
+			transform
+		};
+
+		pass.addUniforms(&uniforms, sizeof(uniforms));
+	}
+
+private:
+	// properties
+	glm::mat4 transform{1.0f};
+};

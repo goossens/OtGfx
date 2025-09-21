@@ -11,6 +11,10 @@ layout(local_size_x=16, local_size_y=16) in;
 layout(set=0, binding=0) uniform sampler2D inTexture;
 layout(set=1, binding=0, rgba8) uniform image2D outTexture;
 
+layout(std140, set=2, binding=0) uniform UBO {
+	mat4 transform;
+};
+
 void main() {
 	ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
 	ivec2 size = imageSize(outTexture);
@@ -20,6 +24,7 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
+	uv = (transform * vec4(uv, 0.0f, 1.0f)).xy;
 
 	vec4 bg = imageLoad(outTexture, coord);
 	vec4 fg = texture(inTexture, uv);

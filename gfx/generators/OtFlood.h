@@ -16,45 +16,37 @@
 
 #include "glm/glm.hpp"
 
-#include "OtCheckerBoardComp.h"
 #include "OtColor.h"
+#include "OtFloodComp.h"
 #include "OtGenerator.h"
 
 
 //
-//	OtCheckerBoard
+//	OtFlood
 //
 
-class OtCheckerBoard : public OtGenerator {
+class OtFlood : public OtGenerator {
 public:
 	// set the properties
-	inline void setRepeat(float r) { repeat = r; }
-	inline void setBlackColor(OtColor color) { blackColor = color; }
-	inline void setWhiteColor(OtColor color) { whiteColor = color; }
+	inline void setColor(OtColor c) { color = c; }
 
 	// configure the compute pass
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.setShader(OtCheckerBoardComp, sizeof(OtCheckerBoardComp));
+			pipeline.setShader(OtFloodComp, sizeof(OtFloodComp));
 		}
 
 		// set uniforms
 		struct Uniforms {
-			glm::vec4 blackColor;
-			glm::vec4 whiteColor;
-			int32_t repeat;
+			glm::vec4 color;
 		} uniforms{
-			blackColor,
-			whiteColor,
-			static_cast<int32_t>(repeat)};
+			color};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
 
 private:
 	// properties
-	OtColor blackColor{0.0f};
-	OtColor whiteColor{1.0f};
-	int repeat = 10;
+	OtColor color{0.0f};
 };
