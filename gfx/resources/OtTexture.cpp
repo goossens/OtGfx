@@ -78,7 +78,7 @@ bool OtTexture::update(int w, int h, Format f, Usage u) {
 
 void OtTexture::load(OtImage& image) {
 	// update the texture
-	update(image.getWidth(), image.getHeight(), convertImageFormat(image.getFormat()), Usage::sampler);
+	update(image.getWidth(), image.getHeight(), convertFromImageFormat(image.getFormat()), Usage::sampler);
 
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
@@ -100,14 +100,15 @@ void OtTexture::load(OtImage& image) {
 
 	// upload image to GPU
 	SDL_GPUTextureTransferInfo transferInfo{
+		.transfer_buffer = transferBuffer,
 		.offset = 0,
-		.transfer_buffer = transferBuffer
 	};
 
 	SDL_GPUTextureRegion region{
 		.texture = texture.get(),
 		.x = 0,
 		.y = 0,
+		.z = 0,
 		.w = static_cast<Uint32>(width),
 		.h = static_cast<Uint32>(height),
 		.d = 1
@@ -218,14 +219,15 @@ void OtTexture::update(int x, int y, int w, int h, void* pixels) {
 
 	// upload image to GPU
 	SDL_GPUTextureTransferInfo transferInfo{
-		.offset = 0,
-		.transfer_buffer = transferBuffer
+		.transfer_buffer = transferBuffer,
+		.offset = 0
 	};
 
 	SDL_GPUTextureRegion region{
 		.texture = texture.get(),
 		.x = static_cast<Uint32>(x),
 		.y = static_cast<Uint32>(y),
+		.z = 0,
 		.w = static_cast<Uint32>(w),
 		.h = static_cast<Uint32>(h),
 		.d = 1

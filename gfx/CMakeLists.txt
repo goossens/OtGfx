@@ -47,6 +47,7 @@ target_link_libraries(gfx PUBLIC
 	imguiwidgets
 	glm
 	delaunator
+	tess2
 	manifold
 	nanovg
 	plutovg

@@ -50,14 +50,15 @@ static SDL_GPUTexture* createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransfer
 
 	// transfer buffer to GPU
 	SDL_GPUTextureTransferInfo transferInfo {
-		.offset = 0,
-		.transfer_buffer = buffer
+		.transfer_buffer = buffer,
+		.offset = 0
 	};
 
 	SDL_GPUTextureRegion region {
 		.texture = texture,
 		.x = 0,
 		.y = 0,
+		.z = 0,
 		.w = 1,
 		.h = 1,
 		.d = 1

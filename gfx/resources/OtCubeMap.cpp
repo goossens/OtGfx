@@ -256,8 +256,8 @@ void OtCubeMap::createCubemapFromSides() {
 
 	for (size_t i = 0; i < 6; i++) {
 		SDL_GPUTextureTransferInfo transferInfo{
-			.offset = static_cast<Uint32>(bytesPerImage * i),
-			.transfer_buffer = transferBuffer
+			.transfer_buffer = transferBuffer,
+			.offset = static_cast<Uint32>(bytesPerImage * i)
 		};
 
 		SDL_GPUTextureRegion region{
@@ -265,6 +265,7 @@ void OtCubeMap::createCubemapFromSides() {
 			.layer = static_cast<Uint32>(i),
 			.x = 0,
 			.y = 0,
+			.z = 0,
 			.w = static_cast<Uint32>(size),
 			.h = static_cast<Uint32>(size),
 			.d = 1

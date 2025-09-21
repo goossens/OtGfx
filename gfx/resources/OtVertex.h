@@ -95,6 +95,47 @@ struct OtVertex {
 
 
 //
+//	OtVertexPosCol2D
+//
+
+struct OtVertexPosCol2D {
+	// vertex elements
+	glm::vec2 position;
+	glm::vec4 color;
+
+	// constructors
+	OtVertexPosCol2D() = default;
+	inline OtVertexPosCol2D(const glm::vec2& p, const glm::vec4& c=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) : position(p), color(c) {}
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{
+				.buffer_slot = 0,
+				.location = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+				.offset = offsetof(OtVertexPosCol2D, position),
+			},
+			{
+				.buffer_slot = 0,
+				.location = 1,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = offsetof(OtVertexPosCol2D, color),
+			}
+		};
+
+		static OtVertexDescription description{
+			.size = sizeof(OtVertexPosCol2D),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
+			.attributes = attributes
+		};
+
+		return &description;
+	}
+};
+
+
+//
 //	OtVertexPosUvCol2D
 //
 

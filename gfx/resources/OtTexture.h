@@ -53,7 +53,8 @@ public:
 		graphicsStorageRead = SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ,
 		computeStorageRead = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
 		computeStorageWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE,
-		computeStorageReadWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE
+		computeStorageReadWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE,
+		rwAll = sampler | colorTarget | computeStorageReadWrite
 	};
 
 	// constructors
@@ -104,6 +105,8 @@ public:
 			case Format::d24s8: return 4;
 		}
 	}
+
+	inline OtImage::Format getBestImageFormat() { return convertToImageFormat(); }
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -161,6 +164,7 @@ private:
 	friend class OtComputePass;
 	friend class OtFrameBuffer;
 	friend class OtGbuffer;
+	friend class OtReadBackBuffer;
 	friend class OtRenderPass;
 
 	inline SDL_GPUTexture* getTexture() {
@@ -169,13 +173,27 @@ private:
 			: OtGpu::instance().transparentDummyTexture;
 	}
 
-	// convert format
-	inline Format convertImageFormat(OtImage::Format fmt) {
+	// convert format types
+	inline Format convertFromImageFormat(OtImage::Format fmt) {
 		switch (fmt) {
 			case OtImage::Format::none: return Format::none;
 			case OtImage::Format::r8: return Format::r8;
 			case OtImage::Format::rgba8: return Format::rgba8;
 			case OtImage::Format::rgbaFloat32: return Format::rgbaFloat32;
+		}
+	}
+
+	inline OtImage::Format convertToImageFormat() {
+		switch (format) {
+			case Format::none: return OtImage::Format::none;
+			case Format::r8: return OtImage::Format::r8;
+			case Format::rFloat32: return OtImage::Format::none;
+			case Format::rgFloat16: return OtImage::Format::none;
+			case Format::rgba8: return OtImage::Format::rgba8;
+			case Format::rgbaFloat16: return OtImage::Format::none;
+			case Format::rgbaFloat32: return OtImage::Format::rgbaFloat32;
+			case Format::dFloat: return OtImage::Format::none;
+			case Format::d24s8: return OtImage::Format::none;
 		}
 	}
 };
