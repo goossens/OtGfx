@@ -137,6 +137,16 @@ void OtFramework::stop() {
 
 
 //
+//	OtFramework::canClose
+//
+
+bool OtFramework::canClose() {
+	// ask app if we can close outer window and quit
+	return app->onCanClose();
+}
+
+
+//
 //	OtFramework::canQuit
 //
 

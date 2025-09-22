@@ -36,6 +36,7 @@ if(OT_INCLUDE_UI)
 	add_subdirectory(gfx)
 	add_subdirectory(gui)
 	add_subdirectory(nodes)
+	add_subdirectory(ide)
 endif()
 
 add_executable(example main.cpp)
@@ -45,7 +46,7 @@ target_link_libraries(example language network argparse)
 
 if(OT_INCLUDE_UI)
 	target_compile_definitions(example PRIVATE OT_INCLUDE_UI)
-	target_link_libraries(example shaders gfx gui nodes)
+	target_link_libraries(example shaders gfx gui nodes ide)
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
 		if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)

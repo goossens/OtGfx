@@ -5,25 +5,18 @@
 //	For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#pragma once
+//
+//	Include files
+//
+
+#include "OtJsonEditor.h"
 
 
 //
-//	Common include files
+//	OtJsonEditor::OtJsonEditor
 //
 
-#include "imgui.h"
-
-
-//
-//	OtDemo
-//
-
-class OtDemo {
-public:
-	// destructor
-	virtual ~OtDemo() {}
-
-	// method to be implemented by each demo
-	virtual void run() = 0;
-};
+OtJsonEditor::OtJsonEditor() {
+	editor.SetLanguage(TextEditor::Language::Json());
+	diff.SetLanguage(TextEditor::Language::Json());
+}

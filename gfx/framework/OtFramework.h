@@ -33,6 +33,7 @@ public:
 	void stop();
 
 	// see if we can safely quit the program
+	bool canClose();
 	bool canQuit();
 
 	// set anti-aliasing

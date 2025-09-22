@@ -225,7 +225,7 @@ void OtFramework::eventsSDL() {
 			}
 
 		} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(gpu.window)) {
-			if (canQuit()) {
+			if (canClose()) {
 				stop();
 			}
 		}
