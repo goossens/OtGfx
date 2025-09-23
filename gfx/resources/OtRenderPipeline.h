@@ -233,36 +233,28 @@ private:
 			std::vector<SDL_GPUColorTargetDescription> targetDescriptions;
 
 			if (renderTargetType == RenderTargetType::gBuffer) {
+				SDL_GPUColorTargetBlendState blendState;
+				blendState.enable_blend = false;
+				blendState.enable_color_write_mask = false;
+
 				targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{
 					.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
-					.blend_state = SDL_GPUColorTargetBlendState{
-						.enable_blend = false,
-						.enable_color_write_mask = false
-					}
+					.blend_state = blendState
 				});
 
 				targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{
 					.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-					.blend_state = SDL_GPUColorTargetBlendState{
-						.enable_blend = false,
-						.enable_color_write_mask = false
-					}
+					.blend_state = blendState
 				});
 
 				targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{
 					.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-					.blend_state = SDL_GPUColorTargetBlendState{
-						.enable_blend = false,
-						.enable_color_write_mask = false
-					}
+					.blend_state = blendState
 				});
 
 				targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{
 					.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-					.blend_state = SDL_GPUColorTargetBlendState{
-						.enable_blend = false,
-						.enable_color_write_mask = false
-					}
+					.blend_state = blendState
 				});
 
 			} else {
@@ -277,7 +269,9 @@ private:
 						.alpha_blend_op = getBlendOperation(alphaBlendOperation),
 						.color_write_mask = getTargetChannel(),
 						.enable_blend = colorBlendOperation != BlendOperation::none || alphaBlendOperation != BlendOperation::none,
-						.enable_color_write_mask = (targetChannel & TargetChannel::rgba) != TargetChannel::rgba
+						.enable_color_write_mask = (targetChannel & TargetChannel::rgba) != TargetChannel::rgba,
+						.padding1 = 0,
+						.padding2 = 0
 					}
 				});
 			}
@@ -300,24 +294,39 @@ private:
 					.depth_bias_clamp = 0.0f,
 					.depth_bias_slope_factor = 0.0f,
 					.enable_depth_bias = false,
-					.enable_depth_clip = false
+					.enable_depth_clip = false,
+					.padding1 = 0,
+					.padding2 = 0
 				},
 				.multisample_state = SDL_GPUMultisampleState{
 					.sample_count = SDL_GPU_SAMPLECOUNT_1,
 					.sample_mask = 0,
-					.enable_mask = false
+					.enable_mask = false,
+					.padding1 = 0,
+					.padding2 = 0,
+					.padding3 = 0
 				},
 				.depth_stencil_state = SDL_GPUDepthStencilState{
 					.compare_op = getDepthTest(),
+					.back_stencil_state = SDL_GPUStencilOpState{},
+					.front_stencil_state = SDL_GPUStencilOpState{},
+					.compare_mask = 0,
+					.write_mask = 0,
 					.enable_depth_test = (depthTest != DepthTest::none),
 					.enable_depth_write = (targetChannel & TargetChannel::z) != 0,
-					.enable_stencil_test = false
+					.enable_stencil_test = false,
+					.padding1 = 0,
+					.padding2 = 0,
+					.padding3 = 0
 				},
 				.target_info = SDL_GPUGraphicsPipelineTargetInfo{
 					.color_target_descriptions = targetDescriptions.data(),
 					.num_color_targets = static_cast<Uint32>(targetDescriptions.size()),
 					.depth_stencil_format = getDepthStencilFormat(),
-					.has_depth_stencil_target = hasDepthStencilFormat()
+					.has_depth_stencil_target = hasDepthStencilFormat(),
+					.padding1 = 0,
+					.padding2 = 0,
+					.padding3 = 0
 				},
 				.props = 0
 			};
@@ -346,6 +355,8 @@ private:
 			case RenderTargetType::rgba32d: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
 			case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		}
+
+		return SDL_GPU_TEXTUREFORMAT_INVALID;
 	}
 
 	bool hasDepthStencilFormat() {
@@ -357,6 +368,8 @@ private:
 			case RenderTargetType::rgba32d: return true;
 			case RenderTargetType::gBuffer: return true;
 		}
+
+		return false;
 	}
 
 	SDL_GPUTextureFormat getDepthStencilFormat() {
@@ -368,6 +381,8 @@ private:
 			case RenderTargetType::rgba32d: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 			case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		}
+
+		return SDL_GPU_TEXTUREFORMAT_INVALID;
 	}
 
 	SDL_GPUColorComponentFlags getTargetChannel() {
@@ -404,6 +419,8 @@ private:
 			case DepthTest::greaterEqual: return SDL_GPU_COMPAREOP_GREATER_OR_EQUAL;
 			case DepthTest::always: return SDL_GPU_COMPAREOP_ALWAYS;
 		}
+
+		return SDL_GPU_COMPAREOP_INVALID;
 	}
 
 	SDL_GPUCullMode getCullingMode() {
@@ -412,6 +429,8 @@ private:
 			case Culling::cw: return SDL_GPU_CULLMODE_BACK;
 			case Culling::ccw: return SDL_GPU_CULLMODE_FRONT;
 		}
+
+		return SDL_GPU_CULLMODE_NONE;
 	}
 
 	SDL_GPUBlendOp getBlendOperation(BlendOperation operation) {
@@ -423,6 +442,8 @@ private:
 			case BlendOperation::min: return SDL_GPU_BLENDOP_MIN;
 			case BlendOperation::max: return SDL_GPU_BLENDOP_MAX;
 		}
+
+		return SDL_GPU_BLENDOP_INVALID;
 	}
 
 	SDL_GPUBlendFactor getBlendFactor(BlendFactor factor) {
@@ -442,5 +463,7 @@ private:
 			case BlendFactor::oneMinusConstantColor: return SDL_GPU_BLENDFACTOR_ONE_MINUS_CONSTANT_COLOR;
 			case BlendFactor::alphaSaturate: return SDL_GPU_BLENDFACTOR_SRC_ALPHA_SATURATE;
 		}
+
+		return SDL_GPU_BLENDFACTOR_INVALID;
 	}
 };

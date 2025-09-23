@@ -123,18 +123,23 @@ private:
 						? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
 						: SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
-						SDL_GPUSamplerCreateInfo info{
+			SDL_GPUSamplerCreateInfo info{
 				.min_filter = filter,
 				.mag_filter = filter,
+				.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
 				.address_mode_u = addressModeX,
 				.address_mode_v = addressModeY,
+				.address_mode_w = addressModeX,
 				.mip_lod_bias = 0,
 				.max_anisotropy = (requestedFilter == Filter::anisotropic) ? 8.0f : 0.0f,
 				.compare_op = SDL_GPU_COMPAREOP_ALWAYS,
 				.min_lod = 0,
 				.max_lod = 0,
 				.enable_anisotropy = (requestedFilter == Filter::anisotropic) != 0,
-				.enable_compare = false
+				.enable_compare = false,
+				.padding1 = 0,
+				.padding2 = 0,
+				.props = 0
 			};
 
 			auto sdlSampler =SDL_CreateGPUSampler(OtGpu::instance().device, &info);

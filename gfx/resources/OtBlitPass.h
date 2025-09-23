@@ -50,9 +50,13 @@ public:
 			.source = srcRegion,
 			.destination = dstRegion,
 			.load_op = SDL_GPU_LOADOP_LOAD,
+			.clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f},
 			.flip_mode = SDL_FLIP_NONE,
 			.filter = SDL_GPU_FILTER_NEAREST,
-			.cycle = false
+			.cycle = false,
+			.padding1 = 0,
+			.padding2 = 0,
+			.padding3 = 0
 		};
 
 		SDL_BlitGPUTexture(OtGpu::instance().pipelineCommandBuffer, &info);

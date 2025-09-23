@@ -236,7 +236,8 @@ void OtCubeMap::createCubemapFromSides() {
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(bytesPerImage * 6)
+		.size = static_cast<Uint32>(bytesPerImage * 6),
+		.props = 0
 	};
 
 	auto& gpu = OtGpu::instance();
@@ -257,11 +258,14 @@ void OtCubeMap::createCubemapFromSides() {
 	for (size_t i = 0; i < 6; i++) {
 		SDL_GPUTextureTransferInfo transferInfo{
 			.transfer_buffer = transferBuffer,
-			.offset = static_cast<Uint32>(bytesPerImage * i)
+			.offset = static_cast<Uint32>(bytesPerImage * i),
+		.pixels_per_row = 0,
+		.rows_per_layer = 0
 		};
 
 		SDL_GPUTextureRegion region{
 			.texture = cubemap.get(),
+			.mip_level = 0,
 			.layer = static_cast<Uint32>(i),
 			.x = 0,
 			.y = 0,

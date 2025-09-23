@@ -72,7 +72,7 @@ void OtDialClass::render() {
 			auto& backgroundTexture = background->getTexture();
 			auto w = backgroundTexture.getWidth();
 			auto h = backgroundTexture.getHeight();
-			output.update(w, h, OtTexture::Format::rgba8, OtTexture::Usage::computeStorageReadWrite);
+			output.update(w, h, OtTexture::Format::rgba8, OtTexture::Usage::rwAll);
 
 			// render background
 			OtBlitPass::blit(background->getTexture(), output);

@@ -52,34 +52,34 @@ struct OtVertex {
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
 			{
-				.buffer_slot = 0,
 				.location = 0,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, position),
+				.offset = offsetof(OtVertex, position)
 			},
 			{
-				.buffer_slot = 0,
 				.location = 1,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, normal),
+				.offset = offsetof(OtVertex, normal)
 			},
 			{
-				.buffer_slot = 0,
 				.location = 2,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, tangent),
+				.offset = offsetof(OtVertex, tangent)
 			},
 			{
-				.buffer_slot = 0,
 				.location = 3,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, bitangent),
+				.offset = offsetof(OtVertex, bitangent)
 			},
 			{
-				.buffer_slot = 0,
 				.location = 4,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertex, uv),
+				.offset = offsetof(OtVertex, uv)
 			}
 		};
 
@@ -111,14 +111,14 @@ struct OtVertexPosCol2D {
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
 			{
-				.buffer_slot = 0,
 				.location = 0,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
 				.offset = offsetof(OtVertexPosCol2D, position),
 			},
 			{
-				.buffer_slot = 0,
 				.location = 1,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
 				.offset = offsetof(OtVertexPosCol2D, color),
 			}
@@ -153,20 +153,20 @@ struct OtVertexPosUvCol2D {
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
 			{
-				.buffer_slot = 0,
 				.location = 0,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
 				.offset = offsetof(OtVertexPosUvCol2D, position),
 			},
 			{
-				.buffer_slot = 0,
 				.location = 1,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
 				.offset = offsetof(OtVertexPosUvCol2D, uv),
 			},
 			{
-				.buffer_slot = 0,
 				.location = 2,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
 				.offset = offsetof(OtVertexPosUvCol2D, color),
 			}
@@ -201,14 +201,14 @@ struct OtVertexPosColor {
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
 			{
-				.buffer_slot = 0,
 				.location = 0,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
 				.offset = offsetof(OtVertexPosColor, position),
 			},
 			{
-				.buffer_slot = 0,
 				.location = 1,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
 				.offset = offsetof(OtVertexPosColor, color),
 			}
@@ -242,14 +242,14 @@ struct OtVertexBones {
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
 			{
-				.buffer_slot = 0,
 				.location = 0,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
 				.offset = offsetof(OtVertexBones, indices),
 			},
 			{
-				.buffer_slot = 0,
 				.location = 1,
+				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
 				.offset = offsetof(OtVertexBones, weights),
 			}

@@ -716,4 +716,5 @@ void OtMap::renderImage(OtFrameBuffer& framebuffer, int size, std::function<glm:
 	pass.bindPipeline(pipeline);
 	pass.setVertexUniforms(0, &uniforms, sizeof(uniforms));
 	pass.render(vb, ib);
+	pass.end();
 }

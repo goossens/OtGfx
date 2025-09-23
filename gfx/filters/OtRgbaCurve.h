@@ -37,6 +37,14 @@ public:
 		alpha
 	};
 
+	// constructor
+	OtRgbaCurve() {
+		// initialize default LUT
+		for (int i = 0; i < 256; i++) {
+			lut[i] = static_cast<float>(i) / 255.0f;
+		}
+	}
+
 	// set properties
 	inline void setMode(Mode value) { mode = value; }
 	inline void setLUT(std::array<float, 256>& value) { lut = value; lutDirty = true; }
@@ -55,10 +63,6 @@ public:
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
 			pipeline.setShader(OtRgbaCurveComp, sizeof(OtRgbaCurveComp));
-
-			for (int i = 0; i < 256; i++) {
-				lut[i] = static_cast<float>(i) / 255.0f;
-			}
 		}
 
 		// set uniforms
@@ -70,6 +74,7 @@ public:
 		} uniforms {
 			.blackLevel = blackLevel,
 			.whiteLevel = whiteLevel,
+			.lut = {},
 			.mode =static_cast<int32_t>(mode)
 		};
 

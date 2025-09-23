@@ -48,7 +48,8 @@ public:
 			.bytecode = (Uint8*) code,
 			.bytecode_size = size,
 			.entrypoint = "main",
-			.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage)
+			.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage),
+			.props = 0
 		};
 
 		auto graphicsShader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(

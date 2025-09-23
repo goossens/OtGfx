@@ -13,4 +13,6 @@ set(IMGUIFD_SOURCES
 add_library(shadercross STATIC ${IMGUIFD_SOURCES})
 
 target_include_directories(shadercross PUBLIC ${shadercross_SOURCE_DIR}/include)
-target_link_libraries(shadercross SDL3-static spirv-cross-core)
+target_link_libraries(shadercross SDL3-static spirv-cross-c spirv-cross-core)
+
+set_target_properties(shadercross PROPERTIES FOLDER deps)

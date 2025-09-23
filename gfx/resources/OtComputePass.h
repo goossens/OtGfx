@@ -51,14 +51,17 @@ public:
 	// add an output texture
 	inline void addOutputTexture(OtTexture& texture) {
 		if ((texture.getUsage() & (OtTexture::Usage::computeStorageWrite | OtTexture::Usage::computeStorageReadWrite)) == 0) {
-			OtLogFatal("Can't add texture without [write] usage to compute pass");
+			OtLogFatal("Can't add output texture to compute pass without [write] usage");
 		}
 
 		SDL_GPUStorageTextureReadWriteBinding binding{
 			.texture = texture.getTexture(),
 			.mip_level = 0,
 			.layer = 0,
-			.cycle = false
+			.cycle = false,
+			.padding1 = 0,
+			.padding2 = 0,
+			.padding3 = 0
 		};
 
 		textures.emplace_back(binding);
@@ -70,7 +73,10 @@ public:
 			.texture = cubemap.getTexture(),
 			.mip_level = 0,
 			.layer = 0,
-			.cycle = false
+			.cycle = false,
+			.padding1 = 0,
+			.padding2 = 0,
+			.padding3 = 0
 		};
 
 		textures.emplace_back(binding);
@@ -105,13 +111,17 @@ public:
 		for (size_t i = 0; i < uniforms.size(); i++) {
 			SDL_PushGPUComputeUniformData(
 				OtGpu::instance().pipelineCommandBuffer,
-				i,
+				static_cast<Uint32>(i),
 				uniforms[i].data(),
 				static_cast<Uint32>(uniforms[i].size()));
 		}
 
 		// run the pipeline
-		SDL_DispatchGPUCompute(pass, groupCountX, groupCountY, groupCountZ);
+		SDL_DispatchGPUCompute(
+			pass,
+			static_cast<Uint32>(groupCountX),
+			static_cast<Uint32>(groupCountY),
+			static_cast<Uint32>(groupCountZ));
 
 		// cleanup
 		SDL_EndGPUComputePass(pass);

@@ -33,8 +33,7 @@ public:
 	// execute the node by generating a new version of the output
 	inline void onExecute() override {
 		// ensure output texture has correct setup
-		auto usage = OtTexture::Usage(OtTexture::Usage::sampler | OtTexture::Usage::computeStorageReadWrite);
-		texture.update(width, height, OtTexture::Format::rgba8, usage);
+		texture.update(width, height, OtTexture::Format::rgba8, OtTexture::Usage::rwAll);
 
 		// run the generator
 		onGenerate(texture);

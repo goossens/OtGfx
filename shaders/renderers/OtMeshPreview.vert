@@ -15,7 +15,7 @@ layout (location = 4) in vec2 aUv;
 layout (location = 0) out vec3 vPosition;
 layout (location = 1) out vec3 vNormal;
 
-layout(std140, set=2, binding=0) uniform UBO {
+layout(std140, set=1, binding=0) uniform UBO {
 	mat4 modelViewProj;
 	mat4 model;
 };

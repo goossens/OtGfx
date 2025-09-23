@@ -89,8 +89,8 @@ private:
 			SDL_ShaderCross_SPIRV_Info info{
 				.bytecode = (Uint8*) computeShaderCode,
 				.bytecode_size = computeShaderSize,
-				.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
 				.entrypoint = "main",
+				.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
 				.props = 0
 			};
 

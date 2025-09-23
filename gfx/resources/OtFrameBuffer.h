@@ -94,7 +94,7 @@ public:
 				depthTexture.update(
 					w, h,
 					depthTextureType,
-					OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler));
+					OtTexture::Usage(OtTexture::Usage::depthStencilTarget | OtTexture::Usage::sampler));
 			}
 
 			// remember dimensions

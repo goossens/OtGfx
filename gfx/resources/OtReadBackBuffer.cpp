@@ -44,7 +44,8 @@ OtImage& OtReadBackBuffer::readback(OtTexture& texture, int x, int y, int w, int
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD,
-		.size = static_cast<Uint32>(texture.getBpp() * w * h)
+		.size = static_cast<Uint32>(texture.getBpp() * w * h),
+		.props = 0
 	};
 
 	// transfer GPU texture back to CPU

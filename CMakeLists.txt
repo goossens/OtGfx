@@ -39,37 +39,44 @@ if(OT_INCLUDE_UI)
 	add_subdirectory(ide)
 endif()
 
-add_executable(example main.cpp)
+add_executable(ot main.cpp)
 
-target_include_directories(example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/demos)
-target_link_libraries(example language network argparse)
+target_include_directories(ot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/demos)
+target_link_libraries(ot language network argparse)
 
 if(OT_INCLUDE_UI)
-	target_compile_definitions(example PRIVATE OT_INCLUDE_UI)
-	target_link_libraries(example shaders gfx gui nodes ide)
+	target_compile_definitions(ot PRIVATE OT_INCLUDE_UI)
+	target_link_libraries(ot shaders gfx gui nodes ide)
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
 		if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)
-			target_link_options(example PRIVATE LINKER:-no_warn_duplicate_libraries)
+			target_link_options(ot PRIVATE LINKER:-no_warn_duplicate_libraries)
 		endif()
 	endif()
 endif()
 
-target_compile_options(example PRIVATE
+target_compile_options(ot PRIVATE
 	$<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang,GNU>:-Werror -Wall -Wpedantic -Wextra>
 	$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/W4 /WX>)
 
 if(APPLE)
-	target_link_options(example PRIVATE LINKER:-no_warn_duplicate_libraries)
+	target_link_options(ot PRIVATE LINKER:-no_warn_duplicate_libraries)
 endif()
 
 
-add_custom_command(TARGET example POST_BUILD COMMAND $<$<CONFIG:release>:${CMAKE_STRIP}> ARGS ${CMAKE_BINARY_DIR}/Release/example)
+add_custom_command(TARGET ot POST_BUILD COMMAND $<$<CONFIG:release>:${CMAKE_STRIP}> ARGS ${CMAKE_BINARY_DIR}/Release/ot)
 
 if(CMAKE_GENERATOR STREQUAL Xcode)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0")
+	set_target_properties(ot PROPERTIES OUTPUT_NAME "ObjectTalk")
+	set_target_properties(ot PROPERTIES MACOSX_BUNDLE ON)
+	set_target_properties(ot PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/resources/info.plist)
+	set_target_properties(ot PROPERTIES XCODE_GENERATE_SCHEME ON)
+	set_target_properties(ot PROPERTIES XCODE_ATTRIBUTE_EXECUTABLE_NAME "ot")
+	set_target_properties(ot PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.goosje.ot")
+	set_source_files_properties(${CMAKE_SOURCE_DIR}/resources/icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 endif()
 
 if(MSVC)
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT example)
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ot)
 endif()

@@ -69,8 +69,8 @@ void OtWorkspace::onSetup() {
 		if (OtPath::isDirectory(examples)) {
 			OtPath::changeDirectory(examples);
 
-		} else if (OtText::contains(exec, "/build/xcode/Debug/ObjectTalk.app/Contents/MacOS/ot")) {
-			OtPath::changeDirectory(OtPath::join(OtText::left(exec, exec.size() - 51), "examples"));
+//		} else if (OtText::contains(exec, "/build/xcode/Debug/ObjectTalk.app/Contents/MacOS/ot")) {
+//			OtPath::changeDirectory(OtPath::join(OtText::left(exec, exec.size() - 51), "examples"));
 
 		} else {
 			auto path = OtPath::getDocumentsDirectory();
@@ -260,7 +260,7 @@ bool OtWorkspace::onCanQuit() {
 			}
 		}
 
-		// nothing stops us now from quiting
+		// nothing stops us now from quitting
 		return true;
 	}
 }

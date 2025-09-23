@@ -11,7 +11,7 @@ layout (location = 1) in vec4 aColor;
 
 layout (location = 0) out vec4 vColor;
 
-layout(std140, set=2, binding=0) uniform UBO {
+layout(std140, set=1, binding=0) uniform UBO {
 	mat4 transform;
 };
 

@@ -38,8 +38,7 @@ public:
 		if (inputTexture.isValid()) {
 			// ensure output is the correct size and format
 			auto format = getOutputFormat() == OtTexture::Format::none ? inputTexture.getFormat() : getOutputFormat();
-			auto usage = OtTexture::Usage(OtTexture::Usage::sampler | OtTexture::Usage::computeStorageReadWrite);
-			outputTexture.update(inputTexture.getWidth(), inputTexture.getHeight(), format, usage);
+			outputTexture.update(inputTexture.getWidth(), inputTexture.getHeight(), format, OtTexture::Usage::rwAll);
 
 			// run filter
 			onFilter(inputTexture, outputTexture);

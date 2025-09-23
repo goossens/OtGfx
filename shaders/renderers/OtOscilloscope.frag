@@ -11,12 +11,12 @@ layout (location = 1) in vec4 vColor;
 
 layout (location = 0) out vec4 fragColor;
 
-layout(std140, set=2, binding=0) uniform UBO {
+layout(set=2, binding=0) uniform sampler2D brush;
+
+layout(std140, set=3, binding=0) uniform UBO {
 	float brightness;
 	float alpha;
 };
-
-layout(set=0, binding=0) uniform sampler2D brush;
 
 void main() {
 	fragColor = vColor * texture(brush, vUv) * vec4(brightness, brightness, brightness, alpha);

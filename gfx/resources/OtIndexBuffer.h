@@ -13,6 +13,8 @@
 //
 
 #include <cstdint>
+#include <cstring>
+#include <memory>
 
 #include "SDL3/SDL_gpu.h"
 

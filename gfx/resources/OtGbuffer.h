@@ -55,13 +55,14 @@ public:
 			// create new textures
 			auto w32 = static_cast<Uint32>(w);
 			auto h32 = static_cast<Uint32>(h);
-			auto usage = OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler);
+			auto colorUsage = OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler);
+			auto depthUsage = OtTexture::Usage(OtTexture::Usage::depthStencilTarget | OtTexture::Usage::sampler);
 
-			albedoTexture.update(w32, h32, OtTexture::Format::rgbaFloat16, usage);
-			normalTexture.update(w32, h32, OtTexture::Format::rgba8, usage);
-			pbrTexture.update(w32, h32, OtTexture::Format::rgba8, usage);
-			emissiveTexture.update(w32, h32, OtTexture::Format::rgba8, usage);
-			depthTexture.update(w32, h32, OtTexture::Format::dFloat, usage);
+			albedoTexture.update(w32, h32, OtTexture::Format::rgbaFloat16, colorUsage);
+			normalTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);
+			pbrTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);
+			emissiveTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);
+			depthTexture.update(w32, h32, OtTexture::Format::dFloat, depthUsage);
 
 			// create/update render target information
 			colorTargetInfo[0].texture = albedoTexture.getTexture();

@@ -137,11 +137,18 @@ void OtFramework::endFrameIMGUI() {
 		// setup Dear ImGui render target
 		SDL_GPUColorTargetInfo targetInfo{
 			.texture = gpu.swapchainTexture,
-			.load_op = SDL_GPU_LOADOP_CLEAR,
-			.store_op = SDL_GPU_STOREOP_STORE,
 			.mip_level = 0,
 			.layer_or_depth_plane = 0,
-			.cycle = false
+			.clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f},
+			.load_op = SDL_GPU_LOADOP_CLEAR,
+			.store_op = SDL_GPU_STOREOP_STORE,
+			.resolve_texture = nullptr,
+			.resolve_mip_level = 0,
+			.resolve_layer = 0,
+			.cycle = false,
+			.cycle_resolve_texture = false,
+			.padding1 = 0,
+			.padding2 = 0
 		};
 
 		// run Dear ImGui render pass

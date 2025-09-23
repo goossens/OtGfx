@@ -13,3 +13,10 @@ set(SPIRV_CROSS_CLI OFF CACHE BOOL "" FORCE)
 
 FetchContent_Populate(spirvcross QUIET GIT_REPOSITORY "https://github.com/KhronosGroup/SPIRV-Cross" GIT_TAG "vulkan-sdk-1.4.321.0")
 add_subdirectory(${spirvcross_SOURCE_DIR} ${spirvcross_BINARY_DIR} EXCLUDE_FROM_ALL)
+
+set_target_properties(spirv-cross-c PROPERTIES FOLDER deps/spirvcross)
+set_target_properties(spirv-cross-core PROPERTIES FOLDER deps/spirvcross)
+set_target_properties(spirv-cross-glsl PROPERTIES FOLDER deps/spirvcross)
+set_target_properties(spirv-cross-msl PROPERTIES FOLDER deps/spirvcross)
+set_target_properties(spirv-cross-reflect PROPERTIES FOLDER deps/spirvcross)
+set_target_properties(spirv-cross-util PROPERTIES FOLDER deps/spirvcross)

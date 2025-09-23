@@ -11,7 +11,7 @@ layout (location = 1) in vec3 vNormal;
 
 layout (location = 0) out vec4 fragColor;
 
-layout(std140, set=2, binding=0) uniform UBO {
+layout(std140, set=3, binding=0) uniform UBO {
 	vec3 viewPosition;
 	vec3 lightPosition;
 	vec3 objectColor;

@@ -33,11 +33,10 @@ OtMeshPreview::OtMeshPreview() {
 	// configure pipelines
 	fillPipeline.setShaders(OtMeshPreviewVert, sizeof(OtMeshPreviewVert), OtMeshPreviewFrag, sizeof(OtMeshPreviewFrag));
 	fillPipeline.setVertexDescription(OtVertex::getDescription());
-	fillPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
 
 	linePipeline.setShaders(OtMeshPreviewVert, sizeof(OtMeshPreviewVert), OtMeshPreviewFrag, sizeof(OtMeshPreviewFrag));
 	linePipeline.setVertexDescription(OtVertex::getDescription());
-	linePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
+	linePipeline.setCulling(OtRenderPipeline::Culling::none);
 	linePipeline.setFill(false);
 }
 
@@ -81,7 +80,7 @@ void OtMeshPreview::render(int width, int height, OtMesh& mesh, Context& context
 		glm::mat4 model;
 
 	} vertexUniforms {
-		camera.viewProjectionMatrix,
+		camera.viewProjectionMatrix * model,
 		model
 	};
 

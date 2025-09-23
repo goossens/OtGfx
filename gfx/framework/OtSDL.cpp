@@ -51,11 +51,15 @@ static SDL_GPUTexture* createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransfer
 	// transfer buffer to GPU
 	SDL_GPUTextureTransferInfo transferInfo {
 		.transfer_buffer = buffer,
-		.offset = 0
+		.offset = 0,
+		.pixels_per_row = 0,
+		.rows_per_layer = 0
 	};
 
 	SDL_GPUTextureRegion region {
 		.texture = texture,
+		.mip_level = 0,
+		.layer = 0,
 		.x = 0,
 		.y = 0,
 		.z = 0,
@@ -130,14 +134,19 @@ void OtFramework::initSDL() {
 		OtLogFatal("Error in SDL_SetWindowAspectRatio: {}", SDL_GetError());
 	}
 
+	SDL_SetHint(SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE, "0");
+
 	// create GPU device
 #if OT_DEBUG
 	static constexpr bool debug = true;
 #else
-	static constexpr bool debug = true;
+	static constexpr bool debug = false;
 #endif
 
-gpu.device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, debug, nullptr);
+	gpu.device = SDL_CreateGPUDevice(
+		SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
+		debug,
+		nullptr);
 
 	if (gpu.device == nullptr) {
 		OtLogFatal("Error in SDL_CreateGPUDevice: {}", SDL_GetError());
@@ -168,7 +177,8 @@ void OtFramework::startSetupSDL() {
 	// create a transfer buffer to create the dummy textures
 	SDL_GPUTransferBufferCreateInfo bufferInfo {
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = sizeof(Uint32)
+		.size = sizeof(Uint32),
+		.props = 0
 	};
 
 	auto& gpu = OtGpu::instance();
@@ -224,7 +234,7 @@ void OtFramework::eventsSDL() {
 				stop();
 			}
 
-		} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(gpu.window)) {
+		} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
 			if (canClose()) {
 				stop();
 			}

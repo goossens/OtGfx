@@ -54,7 +54,10 @@ public:
 		computeStorageRead = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
 		computeStorageWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE,
 		computeStorageReadWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE,
-		rwAll = sampler | colorTarget | computeStorageReadWrite
+
+		rwRenderAll = sampler | colorTarget,
+		rwComputeAll = computeStorageRead | computeStorageWrite | computeStorageReadWrite,
+		rwAll = rwRenderAll | rwComputeAll
 	};
 
 	// constructors
@@ -104,6 +107,8 @@ public:
 			case Format::dFloat: return 4;
 			case Format::d24s8: return 4;
 		}
+
+		return 0;
 	}
 
 	inline OtImage::Format getBestImageFormat() { return convertToImageFormat(); }
@@ -181,6 +186,8 @@ private:
 			case OtImage::Format::rgba8: return Format::rgba8;
 			case OtImage::Format::rgbaFloat32: return Format::rgbaFloat32;
 		}
+
+		return Format::none;
 	}
 
 	inline OtImage::Format convertToImageFormat() {
@@ -195,5 +202,7 @@ private:
 			case Format::dFloat: return OtImage::Format::none;
 			case Format::d24s8: return OtImage::Format::none;
 		}
+
+		return OtImage::Format::none;
 	}
 };

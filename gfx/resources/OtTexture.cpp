@@ -83,7 +83,8 @@ void OtTexture::load(OtImage& image) {
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(width * height * getBpp())
+		.size = static_cast<Uint32>(width * height * getBpp()),
+		.props = 0
 	};
 
 	auto& gpu = OtGpu::instance();
@@ -102,10 +103,14 @@ void OtTexture::load(OtImage& image) {
 	SDL_GPUTextureTransferInfo transferInfo{
 		.transfer_buffer = transferBuffer,
 		.offset = 0,
+		.pixels_per_row = 0,
+		.rows_per_layer = 0
 	};
 
 	SDL_GPUTextureRegion region{
 		.texture = texture.get(),
+		.mip_level = 0,
+		.layer = 0,
 		.x = 0,
 		.y = 0,
 		.z = 0,
@@ -202,7 +207,8 @@ void OtTexture::update(int x, int y, int w, int h, void* pixels) {
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(w * h * getBpp())
+		.size = static_cast<Uint32>(w * h * getBpp()),
+		.props = 0
 	};
 
 	auto& gpu = OtGpu::instance();
@@ -220,11 +226,15 @@ void OtTexture::update(int x, int y, int w, int h, void* pixels) {
 	// upload image to GPU
 	SDL_GPUTextureTransferInfo transferInfo{
 		.transfer_buffer = transferBuffer,
-		.offset = 0
+		.offset = 0,
+		.pixels_per_row = 0,
+		.rows_per_layer = 0
 	};
 
 	SDL_GPUTextureRegion region{
 		.texture = texture.get(),
+		.mip_level = 0,
+		.layer = 0,
 		.x = static_cast<Uint32>(x),
 		.y = static_cast<Uint32>(y),
 		.z = 0,

@@ -14,8 +14,6 @@
 
 #include "OtFilter.h"
 #include "OtAlphaOverComp.h"
-#include "OtSampler.h"
-#include "OtTexture.h"
 
 
 //

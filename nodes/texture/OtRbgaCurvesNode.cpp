@@ -55,17 +55,17 @@ public:
 		ImGui::PopID();
 
 		ImVec2 size{itemWidth, getCustomRenderingWidth()};
-		const char* curveSelector = "";
+		const char* modeSelector = "";
 
 		switch (mode) {
-			case OtRgbaCurve::Mode::rgb: curveSelector = "RGB"; break;
-			case OtRgbaCurve::Mode::red: curveSelector = "Red"; break;
-			case OtRgbaCurve::Mode::green: curveSelector = "Green"; break;
-			case OtRgbaCurve::Mode::blue: curveSelector = "Blue"; break;
-			case OtRgbaCurve::Mode::alpha: curveSelector = "Alpha"; break;
+			case OtRgbaCurve::Mode::rgb: modeSelector = "RGB"; break;
+			case OtRgbaCurve::Mode::red: modeSelector = "Red"; break;
+			case OtRgbaCurve::Mode::green: modeSelector = "Green"; break;
+			case OtRgbaCurve::Mode::blue: modeSelector = "Blue"; break;
+			case OtRgbaCurve::Mode::alpha: modeSelector = "Alpha"; break;
 		}
 
-		changed |= ImGui::Curve(curveSelector, size, curvePoints, lut.data(), &lutSelection);
+		changed |= ImGui::Curve(modeSelector, size, curvePoints, lut.data(), &lutSelection);
 
 		if (changed) {
 			oldState = old;
@@ -85,7 +85,6 @@ public:
 
 	// (de)serialize node
 	inline void customSerialize(nlohmann::json* data, std::string* /* basedir */) override {
-
 		(*data)["mode"] = mode;
 		(*data)["lut"] = lut;
 	}
