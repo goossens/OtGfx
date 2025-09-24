@@ -225,18 +225,45 @@ void OtFramework::eventsSDL() {
 	while (SDL_PollEvent(&event)) {
 		eventIMGUI(event);
 
-		if (event.type == SDL_EVENT_WINDOW_RESIZED) {
-			gpu.width = event.window.data1;
-			gpu.height = event.window.data2;
+		switch (event.type) {
+			case SDL_EVENT_WINDOW_RESIZED:
+				gpu.width = event.window.data1;
+				gpu.height = event.window.data2;
+				break;
 
-		} else if (event.type == SDL_EVENT_QUIT) {
-			if (canQuit()) {
-				stop();
-			}
+			case SDL_EVENT_QUIT:
+				if (canQuit()) {
+					stop();
+				}
 
-		} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
-			if (canClose()) {
-				stop();
+				break;
+
+			case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+				if (canQuit()) {
+					stop();
+				}
+
+				break;
+
+			case SDL_EVENT_KEY_DOWN: {
+#if __APPLE__
+				static SDL_Keymod modifier = SDL_KMOD_GUI;
+#else
+				static SDL_Keymod modifier = SDL_KMOD_CTRL;
+#endif
+
+				if ((event.key.mod & modifier) && event.key.key == SDLK_Q) {
+					if (canQuit()) {
+						stop();
+					}
+
+				} else if ((event.key.mod & modifier) && event.key.key == SDLK_W) {
+					if (canClose()) {
+						stop();
+					}
+				}
+
+				break;
 			}
 		}
 	}
