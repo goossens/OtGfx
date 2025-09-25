@@ -57,7 +57,7 @@ private:
 
 	// map component
 	OtMap map;
-	OtFrameBuffer framebuffer{OtTexture::Format::r8};
+	OtFrameBuffer framebuffer{OtTexture::Format::rgba8};
 	OtTexture texture;
 	int version = 1;
 };

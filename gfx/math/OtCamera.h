@@ -86,9 +86,9 @@ public:
 	// properties
 	int width = 0;
 	int height = 0;
-	glm::vec3 position = glm::vec3(0.0f);
-	glm::mat4 viewMatrix = glm::mat4(0.0f);
-	glm::mat4 projectionMatrix = glm::mat4(0.0f);
-	glm::mat4 viewProjectionMatrix = glm::mat4(0.0f);
+	glm::vec3 position{0.0f};
+	glm::mat4 viewMatrix{0.0f};
+	glm::mat4 projectionMatrix{0.0f};
+	glm::mat4 viewProjectionMatrix{0.0f};
 	OtFrustum frustum;
 };

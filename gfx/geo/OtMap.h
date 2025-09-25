@@ -25,9 +25,6 @@
 #include "OtImage.h"
 #include "OtRenderPipeline.h"
 
-#include "OtMapFrag.h"
-#include "OtMapVert.h"
-
 
 //
 //	OtMap
@@ -58,6 +55,9 @@ public:
 		tropicalRainForest,
 		tropicalSeasonalForest
 	};
+
+	// constructor
+	OtMap();
 
 	// clear the map
 	void clear();
@@ -147,7 +147,7 @@ private:
 	int version = 0;
 
 	// rendering support
-	OtRenderPipeline pipeline{OtMapVert, sizeof(OtMapVert), OtMapFrag, sizeof(OtMapFrag)};
+	OtRenderPipeline pipeline{};
 
 	// private functions to generate map
 	void generateRegions();
@@ -163,7 +163,7 @@ private:
 	void assignBiome();
 
 	// utility functions
-	void renderImage(OtFrameBuffer& framebuffer, int size, std::function<glm::vec4(float elevation)> callback);
+	void renderTexture(OtFrameBuffer& framebuffer, int size, std::function<glm::vec4(float elevation)> callback);
 
 	inline void addRegion(float x, float y) { map->regions.emplace_back(map->regions.size(), glm::vec2(x, y)); }
 

@@ -29,6 +29,24 @@
 #include "OtVertex.h"
 #include "OtVertexBuffer.h"
 
+#include "OtMapFrag.h"
+#include "OtMapVert.h"
+
+
+//
+//	OtMap::OtMap
+//
+
+OtMap::OtMap() {
+	// configure rendering pipeline
+	pipeline.setShaders(OtMapVert, sizeof(OtMapVert), OtMapFrag, sizeof(OtMapFrag));
+	pipeline.setVertexDescription(OtVertexPosCol2D::getDescription());
+	pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
+	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
+	pipeline.setDepthTest(OtRenderPipeline::DepthTest::none);
+	pipeline.setCulling(OtRenderPipeline::Culling::none);
+}
+
 
 //
 //	OtMap::clear
@@ -151,7 +169,7 @@ void OtMap::render(OtImage& image, int size, bool biome) {
 //
 
 void OtMap::renderHeightMap(OtFrameBuffer& framebuffer, int size) {
-	renderImage(framebuffer, size, [](float elevation) {
+	renderTexture(framebuffer, size, [](float elevation) {
 		return glm::vec4(std::max(elevation, 0.0f), 0.0f, 0.0f, 1.0f);
 	});
 }
@@ -668,10 +686,10 @@ void OtMap::assignBiome() {
 
 
 //
-//	OtMap::renderImage
+//	OtMap::renderTexture
 //
 
-void OtMap::renderImage(OtFrameBuffer& framebuffer, int size, std::function<glm::vec4(float elevation)> callback) {
+void OtMap::renderTexture(OtFrameBuffer& framebuffer, int size, std::function<glm::vec4(float elevation)> callback) {
 	framebuffer.update(size, size);
 
 	// create vertex buffers
@@ -713,6 +731,7 @@ void OtMap::renderImage(OtFrameBuffer& framebuffer, int size, std::function<glm:
 
 	// render map
 	OtRenderPass pass;
+	pass.start(framebuffer);
 	pass.bindPipeline(pipeline);
 	pass.setVertexUniforms(0, &uniforms, sizeof(uniforms));
 	pass.render(vb, ib);

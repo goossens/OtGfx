@@ -91,7 +91,7 @@ void OtMeshPreview::render(int width, int height, OtMesh& mesh, Context& context
 		glm::vec4 lightColor;
 
 	} fragmentUniforms {
-		glm::vec4(0.0f, 0.0f, 0.8f, 0.0f),
+		glm::vec4(0.0f, 0.0f, 1.5f, 0.0f),
 		glm::vec4(1.0f, 1.0f, 2.0f, 0.0f),
 		glm::vec4(context.meshColor, 0.0f),
 		glm::vec4(context.lightColor, 0.0f)

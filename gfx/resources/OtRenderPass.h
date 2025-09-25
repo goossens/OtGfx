@@ -17,6 +17,9 @@
 #include "glm/glm.hpp"
 #include "SDL3/SDL.h"
 
+#include "OtAssert.h"
+#include "OtLog.h"
+
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
 #include "OtGeometry.h"
@@ -34,9 +37,16 @@
 
 class OtRenderPass {
 public:
+	// destructor
+	~OtRenderPass() {
+		OtAssert(!open);
+	}
+
 	// start a render pass
 	inline void start(OtFrameBuffer& framebuffer) {
-		// sanity check
+		// sanity checks
+		OtAssert(!open);
+
 		if (!framebuffer.isValid()) {
 			OtLogFatal("Can't use invalid framebuffer in render pass");
 		}
@@ -53,10 +63,14 @@ public:
 		if (!pass) {
 			OtLogFatal("Error in SDL_BeginGPURenderPass: {}", SDL_GetError());
 		}
+
+		open = true;
 	}
 
 	inline void start(OtGbuffer& gbuffer) {
-		// sanity check
+		// sanity checks
+		OtAssert(!open);
+
 		if (!gbuffer.isValid()) {
 			OtLogFatal("Can't use invalid gbuffer in render pass");
 		}
@@ -73,15 +87,20 @@ public:
 		if (!pass) {
 			OtLogFatal("Error in SDL_BeginGPURenderPass: {}", SDL_GetError());
 		}
+
+		open = true;
 	}
 
 	// bind a render pipeline
 	inline void bindPipeline(OtRenderPipeline& pipeline) {
+		OtAssert(open);
 		SDL_BindGPUGraphicsPipeline(pass, pipeline.getPipeline());
 	}
 
 	// bind a vertex sampler
 	inline void bindVertexSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
+		OtAssert(open);
+
 		SDL_GPUTextureSamplerBinding binding{
 			.texture = texture.getTexture(),
 			.sampler = sampler.getSampler()
@@ -92,6 +111,8 @@ public:
 
 	// bind a fragment sampler
 	inline void bindFragmentSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
+		OtAssert(open);
+
 		SDL_GPUTextureSamplerBinding binding{
 			.texture = texture.getTexture(),
 			.sampler = sampler.getSampler()
@@ -102,6 +123,8 @@ public:
 
 	// set uniforms
 	inline void setVertexUniforms(size_t slot, const void* data, size_t size) {
+		OtAssert(open);
+
 		SDL_PushGPUVertexUniformData(
 			OtGpu::instance().pipelineCommandBuffer,
 			static_cast<Uint32>(slot),
@@ -110,6 +133,8 @@ public:
 	}
 
 	inline void setFragmentUniforms(size_t slot, const void* data, size_t size) {
+		OtAssert(open);
+
 		SDL_PushGPUFragmentUniformData(
 			OtGpu::instance().pipelineCommandBuffer,
 			static_cast<Uint32>(slot),
@@ -119,6 +144,8 @@ public:
 
 	// render triangles
 	inline void render(OtVertexBuffer& buffer) {
+		OtAssert(open);
+
 		// bind the vertex buffer to the pass
 		SDL_GPUBufferBinding bufferBindings{
 			.buffer = buffer.getBuffer(),
@@ -132,6 +159,8 @@ public:
 	}
 
 	inline void render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer) {
+		OtAssert(open);
+
 		// bind the vertex buffer to the pass
 		SDL_GPUBufferBinding vertexBufferBindings{
 			.buffer = vertexBuffer.getBuffer(),
@@ -161,10 +190,15 @@ public:
 
 	// end a render pass
 	inline void end() {
+		OtAssert(open);
 		SDL_EndGPURenderPass(pass);
+		open = false;
 	}
 
 	private:
 	// the GPU resource
 	SDL_GPURenderPass* pass;
+
+	// state
+	bool open = false;
 };

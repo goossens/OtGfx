@@ -33,6 +33,7 @@ OtOscilloscope::OtOscilloscope() {
 	pipeline.setShaders(OtOscilloscopeVert, sizeof(OtOscilloscopeVert), OtOscilloscopeFrag, sizeof(OtOscilloscopeFrag));
 	pipeline.setVertexDescription(OtVertexPosUvCol2D::getDescription());
 	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
+	pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
 
 	pipeline.setColorBlend(
 		OtRenderPipeline::BlendOperation::add,

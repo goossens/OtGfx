@@ -34,12 +34,11 @@
 #include "OtMeasure.h"
 #include "OtStderrMultiplexer.h"
 
-// #include "OtAnimator.h"
-// #include "OtAssetManager.h"
+#include "OtAnimationModule.h"
+#include "OtAssetManager.h"
 #include "OtFramework.h"
 #include "OtFrameworkAtExit.h"
 #include "OtMessageBus.h"
-// #include "OtPass.h"
 
 
 //
@@ -63,7 +62,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 	initIMGUI();
 
 	// start the asset manager
-	// OtAssetManager::start();
+	OtAssetManager::start();
 
 	// listen for stop events on the message bus
 	OtMessageBus::listen([this](const std::string& message) {
@@ -92,7 +91,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		OtMessageBus::process();
 
 		// run all animations
-		// OtAnimator::update();
+		OtAnimationClass::update();
 
 		// handle libuv events
 		// this is done at this point so asynchronous callbacks
@@ -119,7 +118,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 	OtFrameworkAtExit::run();
 
 	// stop the asset manager
-	// OtAssetManager::stop();
+	OtAssetManager::stop();
 
 	// terminate libraries
 	endIMGUI();

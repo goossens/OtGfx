@@ -51,13 +51,6 @@ public:
 	inline void setBlackLevel(OtColor value) { blackLevel = value; }
 	inline void setWhiteLevel(OtColor value) { whiteLevel = value; }
 
-	// prepare the lookup table (if required)
-	void beforePass() override {
-		if (lutDirty) {
-			lutDirty = false;
-		}
-	}
-
 	// configure the compute pass
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)

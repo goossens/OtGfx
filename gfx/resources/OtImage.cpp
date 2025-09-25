@@ -78,6 +78,8 @@ void OtImage::update(int width, int height, Format format) {
 		if (!sdlSurface) {
 			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
 		}
+		
+		assign(sdlSurface);
 	}
 }
 
@@ -167,7 +169,7 @@ void OtImage::load(int width, int height, Format format, void* pixels) {
 			OtLogFatal("Error in SDL_CreateSurfacePalette: {}", SDL_GetError());
 		}
 
-		for (Uint8 i = 0; i < palette->ncolors; i++) {
+		for (int i = 0; i < palette->ncolors; i++) {
 			palette->colors[i].r = i;
 			palette->colors[i].g = i;
 			palette->colors[i].b = i;

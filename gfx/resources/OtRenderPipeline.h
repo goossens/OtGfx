@@ -39,7 +39,7 @@ public:
 		gBuffer
 	};
 
-	enum TargetChannel {
+	enum TargetChannels {
 		none = 0,
 		r = 1 << 0,
 		g = 1 << 1,
@@ -115,7 +115,7 @@ public:
 
 	inline void setVertexDescription(OtVertexDescription* description) { vertexDescription = description; }
 	inline void setRenderTargetType(RenderTargetType value) { renderTargetType = value; }
-	inline void setTargetChannel(TargetChannel value) { targetChannel = value; }
+	inline void setTargetChannels(TargetChannels value) { targetChannels = value; }
 	inline void setDepthTest(DepthTest value) { depthTest = value; }
 	inline void setCulling(Culling value) { culling = value; }
 	inline void setFill(bool mode) { fill = mode; }
@@ -152,7 +152,7 @@ public:
 
 		vertexDescription = nullptr;
 		renderTargetType = RenderTargetType::rgba8d;
-		targetChannel = TargetChannel::rgba;
+		targetChannels = TargetChannels::rgbaz;
 		depthTest = DepthTest::less;
 		culling = Culling::cw;
 		fill = true;
@@ -190,7 +190,7 @@ private:
 	// pipeline properties
 	OtVertexDescription* vertexDescription = nullptr;
 	RenderTargetType renderTargetType = RenderTargetType::rgba8d;
-	TargetChannel targetChannel = TargetChannel::rgba;
+	TargetChannels targetChannels = TargetChannels::rgbaz;
 	DepthTest depthTest = DepthTest::less;
 	Culling culling = Culling::cw;
 	bool fill = true;
@@ -269,7 +269,7 @@ private:
 						.alpha_blend_op = getBlendOperation(alphaBlendOperation),
 						.color_write_mask = getTargetChannel(),
 						.enable_blend = colorBlendOperation != BlendOperation::none || alphaBlendOperation != BlendOperation::none,
-						.enable_color_write_mask = (targetChannel & TargetChannel::rgba) != TargetChannel::rgba,
+						.enable_color_write_mask = (targetChannels & TargetChannels::rgba) != TargetChannels::rgba,
 						.padding1 = 0,
 						.padding2 = 0
 					}
@@ -313,7 +313,7 @@ private:
 					.compare_mask = 0,
 					.write_mask = 0,
 					.enable_depth_test = (depthTest != DepthTest::none),
-					.enable_depth_write = (targetChannel & TargetChannel::z) != 0,
+					.enable_depth_write = (targetChannels & TargetChannels::z) != 0,
 					.enable_stencil_test = false,
 					.padding1 = 0,
 					.padding2 = 0,
@@ -388,19 +388,19 @@ private:
 	SDL_GPUColorComponentFlags getTargetChannel() {
 		SDL_GPUColorComponentFlags flags = 0;
 
-		if (targetChannel & TargetChannel::r) {
+		if (targetChannels & TargetChannels::r) {
 			flags |= SDL_GPU_COLORCOMPONENT_R;
 		}
 
-		if (targetChannel & TargetChannel::g) {
+		if (targetChannels & TargetChannels::g) {
 			flags |= SDL_GPU_COLORCOMPONENT_G;
 		}
 
-		if (targetChannel & TargetChannel::b) {
+		if (targetChannels & TargetChannels::b) {
 			flags |= SDL_GPU_COLORCOMPONENT_B;
 		}
 
-		if (targetChannel & TargetChannel::a) {
+		if (targetChannels & TargetChannels::a) {
 			flags |= SDL_GPU_COLORCOMPONENT_A;
 		}
 

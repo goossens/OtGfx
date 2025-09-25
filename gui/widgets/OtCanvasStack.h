@@ -83,7 +83,7 @@ private:
 	Canvas* findCanvas(int id);
 
 	// GPU resource
-	OtFrameBuffer framebuffer{OtTexture::Format::rgba8};
+	OtFrameBuffer framebuffer{OtTexture::Format::rgbaFloat32};
 	OtFlood flood;
 	OtAlphaOver alphaOver;
 };
