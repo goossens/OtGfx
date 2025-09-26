@@ -36,6 +36,7 @@ if(OT_INCLUDE_UI)
 	add_subdirectory(gfx)
 	add_subdirectory(gui)
 	add_subdirectory(nodes)
+	add_subdirectory(physics)
 	add_subdirectory(ide)
 endif()
 
@@ -46,7 +47,7 @@ target_link_libraries(ot language network argparse)
 
 if(OT_INCLUDE_UI)
 	target_compile_definitions(ot PRIVATE OT_INCLUDE_UI)
-	target_link_libraries(ot shaders gfx gui nodes ide)
+	target_link_libraries(ot shaders gfx gui nodes physics ide)
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
 		if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)
