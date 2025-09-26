@@ -78,7 +78,7 @@ void OtImage::update(int width, int height, Format format) {
 		if (!sdlSurface) {
 			OtLogFatal("Error in SDL_CreateSurface: {}", SDL_GetError());
 		}
-		
+
 		assign(sdlSurface);
 	}
 }
@@ -217,12 +217,20 @@ glm::vec4 OtImage::getPixelRgba(int x, int y) {
 	y = std::clamp(y, 0, surface->h - 1);
 
 	if (surface->format == SDL_PIXELFORMAT_RGBA32) {
-		auto value = &((uint8_t*) surface->pixels)[y * surface->w + x];
-		return glm::vec4(value[0] / 255.0f, value[1] / 255.0f, value[2] / 255.0f, value[3] / 255.0f);
+		auto p = static_cast<uint8_t*>(surface->pixels);
+		p += surface->pitch * y + x * 4;
+
+		return glm::vec4(
+			static_cast<float>(p[0]) / 255.0f,
+			static_cast<float>(p[1]) / 255.0f,
+			static_cast<float>(p[2]) / 255.0f,
+			static_cast<float>(p[3]) / 255.0f);
 
 	} else if (surface->format == SDL_PIXELFORMAT_RGBA128_FLOAT) {
-		auto value = &((float*) surface->pixels)[y * surface->w + x];
-		return glm::vec4(value[0], value[1], value[2], value[3]);
+		auto p = static_cast<uint8_t*>(surface->pixels);
+		p += surface->pitch * y + x * 16;
+		auto f = (float*) p;
+		return glm::vec4(f[0], f[1], f[2], f[3]);
 
 	} else {
 		OtLogFatal("Internal error: invalid pixel format");

@@ -11,7 +11,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <list>
+#include <limits>
 #include <memory>
 #include <stack>
 
@@ -21,30 +23,52 @@
 #include "OtNoise.h"
 #include "OtNumbers.h"
 
-#include "OtCanvas.h"
 #include "OtImageCanvas.h"
-#include "OtIndexBuffer.h"
 #include "OtMap.h"
-#include "OtRenderPass.h"
-#include "OtVertex.h"
-#include "OtVertexBuffer.h"
-
-#include "OtMapFrag.h"
-#include "OtMapVert.h"
 
 
 //
-//	OtMap::OtMap
+//	Local 2D bounding box type
 //
 
-OtMap::OtMap() {
-	// configure rendering pipeline
-	pipeline.setShaders(OtMapVert, sizeof(OtMapVert), OtMapFrag, sizeof(OtMapFrag));
-	pipeline.setVertexDescription(OtVertexPosCol2D::getDescription());
-	pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
-	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
-	pipeline.setDepthTest(OtRenderPipeline::DepthTest::none);
-	pipeline.setCulling(OtRenderPipeline::Culling::none);
+struct Bbox {
+	inline void add(int x, int y) {
+		minX = std::min(minX, x);
+		minY = std::min(minY, y);
+		maxX = std::max(maxX, x);
+		maxY = std::max(maxY, y);
+	}
+
+	inline void clamp(int l, int r, int t, int b) {
+		minX = std::clamp(minX, l, r);
+		maxX = std::clamp(maxX, l, r);
+		minY = std::clamp(minY, t, b);
+		maxY = std::clamp(maxY, t, b);
+	}
+
+	int minX = std::numeric_limits<int>::max();
+	int minY = std::numeric_limits<int>::max();
+	int maxX = std::numeric_limits<int>::lowest();
+	int maxY = std::numeric_limits<int>::lowest();
+};
+
+
+//
+//	barycentric
+//
+
+glm::vec3 barycentric(glm::vec2& a, glm::vec2& b, glm::vec2& c, glm::vec2& p) {
+	auto v0 = b - a;
+	auto v1 = c - a;
+	auto v2 = p - a;
+
+	float D = v0.x * v1.y - v1.x * v0.y;
+
+	float v = (v2.x * v1.y - v1.x * v2.y) / D;
+	float w = (v0.x * v2.y - v2.x * v0.y) / D;
+	float u = 1.0f - v - w;
+
+	return glm::vec3(u, v, w);
 }
 
 
@@ -89,7 +113,7 @@ void OtMap::update(int seed, int size, float ruggedness) {
 //	OtMap::render
 //
 
-void OtMap::render(OtImage& image, int size, bool biome) {
+void OtMap::render(OtImage& image, int size, RenderType type) {
 	static const char* colors[] = {
 		"#000000",
 		"#44447a",
@@ -113,53 +137,80 @@ void OtMap::render(OtImage& image, int size, bool biome) {
 		"#559944"
 	};
 
-	// render the map
-	OtImageCanvas canvas(size, size);
-	auto scale = static_cast<float>(size) / static_cast<float>(map->size);
-	canvas.scale(scale, scale);
+	// see if we need to render a heightmap
+	if (type == RenderType::heightMap) {
+		// create heightmap
+		OtHeightMap heightmap;
+		renderHeightMap(heightmap, size);
 
-	for (auto& region : map->regions) {
-		if (biome) {
-			auto color = colors[static_cast<size_t>(region.biome)];
-			canvas.strokeColor(color);
-			canvas.fillColor(color);
+		float minElevation, maxElevation;
+		heightmap.getMinMaxHeights(minElevation, maxElevation);
+		float range = maxElevation - minElevation;
 
-		} else {
-			if (region.ocean) {
-				auto red = 0.25f * (1.0f + region.elevation);
-				auto green = 0.25f * (1.0f + region.elevation);
-				auto blue = 0.5f * (1.0f + region.elevation);
-				canvas.strokeColor(red, green, blue, 1.0f);
-				canvas.fillColor(red, green, blue, 1.0f);
+		// get image ready
+		image.update(size, size, OtImage::Format::rgbaFloat32);
+		auto p = static_cast<float*>(image.getPixels());
 
-			} else if (region.water) {
+		for (int y = 0; y < size; y++) {
+			for (int x = 0; x < size; x++) {
+				auto elevation = heightmap.getHeight(x, y);
+				*p++ = (elevation - minElevation) / range;
+				*p++ = 0.0f;
+				*p++ = 0.0f;
+				*p++ = 1.0f;
+			}
+		}
+
+	} else {
+		// render the map
+		OtImageCanvas canvas(size, size);
+		auto scale = static_cast<float>(size) / static_cast<float>(map->size);
+		canvas.scale(scale, scale);
+
+		for (auto& region : map->regions) {
+			if (type == RenderType::biomes) {
 				auto color = colors[static_cast<size_t>(region.biome)];
 				canvas.strokeColor(color);
 				canvas.fillColor(color);
 
 			} else {
-				auto white = (1.0f - region.temperature) * (1.0f - region.temperature);
-				auto moisture = 1.0f - ((1.0f - region.moisture) * (1.0f - region.moisture));
-				auto red = white + (0.85f - 0.39f * moisture) * (1.0f - white);
-				auto green = white + (0.73f - 0.18f * moisture) * (1.0f - white);
-				auto blue = white + (0.55f - 0.18f * moisture) * (1.0f - white);
-				canvas.strokeColor(red, green, blue, 1.0f);
-				canvas.fillColor(red, green, blue, 1.0f);
+				if (region.ocean) {
+					auto red = 0.25f * (1.0f + region.elevation);
+					auto green = 0.25f * (1.0f + region.elevation);
+					auto blue = 0.5f * (1.0f + region.elevation);
+					canvas.strokeColor(red, green, blue, 1.0f);
+					canvas.fillColor(red, green, blue, 1.0f);
+
+				} else if (region.water) {
+					auto color = colors[static_cast<size_t>(region.biome)];
+					canvas.strokeColor(color);
+					canvas.fillColor(color);
+
+				} else {
+					auto white = (1.0f - region.temperature) * (1.0f - region.temperature);
+					auto moisture = 1.0f - ((1.0f - region.moisture) * (1.0f - region.moisture));
+					auto red = white + (0.85f - 0.39f * moisture) * (1.0f - white);
+					auto green = white + (0.73f - 0.18f * moisture) * (1.0f - white);
+					auto blue = white + (0.55f - 0.18f * moisture) * (1.0f - white);
+					canvas.strokeColor(red, green, blue, 1.0f);
+					canvas.fillColor(red, green, blue, 1.0f);
+				}
 			}
+
+			canvas.beginPath();
+			canvas.moveTo(map->corners[region.corners[0]].position.x, map->corners[region.corners[0]].position.y);
+
+			for (size_t i = 1; i < region.corners.size(); i++) {
+				canvas.lineTo(map->corners[region.corners[i]].position.x, map->corners[region.corners[i]].position.y);
+			}
+
+			canvas.closePath();
+			canvas.strokeAndFill();
 		}
 
-		canvas.beginPath();
-		canvas.moveTo(map->corners[region.corners[0]].position.x, map->corners[region.corners[0]].position.y);
-
-		for (size_t i = 1; i < region.corners.size(); i++) {
-			canvas.lineTo(map->corners[region.corners[i]].position.x, map->corners[region.corners[i]].position.y);
-		}
-
-		canvas.closePath();
-		canvas.strokeAndFill();
+		canvas.render(image);
 	}
 
-	canvas.render(image);
 	image.incrementVersion();
 }
 
@@ -168,10 +219,65 @@ void OtMap::render(OtImage& image, int size, bool biome) {
 //	OtMap::renderHeightMap
 //
 
-void OtMap::renderHeightMap(OtFrameBuffer& framebuffer, int size) {
-	renderTexture(framebuffer, size, [](float elevation) {
-		return glm::vec4(std::max(elevation, 0.0f), 0.0f, 0.0f, 1.0f);
-	});
+void OtMap::renderHeightMap(OtHeightMap& heightmap, int size) {
+	// create vertex buffers
+	struct Vertex {
+		Vertex(glm::vec2 p, float e) : position(p), elevation(e) {}
+		glm::vec2 position;
+		float elevation;
+	};
+
+	std::vector<Vertex> vertices;
+	auto scale = static_cast<float>(size) / static_cast<float>(map->size);
+
+	for (auto& corner : map->corners) {
+		vertices.emplace_back(corner.position * scale, corner.elevation);
+	}
+
+	// create index buffer
+	std::vector<size_t> indices;
+
+	for (auto& region : map->regions) {
+		auto center = vertices.size();
+		vertices.emplace_back(region.center * scale, region.elevation);
+		auto corners = region.corners.size();
+
+		for (size_t i = 0; i < corners; i++) {
+			indices.emplace_back(center);
+			indices.emplace_back(region.corners[i]);
+			indices.emplace_back(region.corners[(i + 1) % corners]);
+		}
+	}
+
+	// resize heightmap (if required)
+	heightmap.update(size, size);
+
+	// render all triangles
+	for (size_t i = 0; i < indices.size(); i += 3) {
+		auto& v1 = vertices[indices[i]];
+		auto& v2 = vertices[indices[i + 1]];
+		auto& v3 = vertices[indices[i + 2]];
+
+		// determine bounding box
+		Bbox bbox;
+		bbox.add(static_cast<int>(v1.position.x), static_cast<int>(v1.position.y));
+		bbox.add(static_cast<int>(v2.position.x), static_cast<int>(v2.position.y));
+		bbox.add(static_cast<int>(v3.position.x), static_cast<int>(v3.position.y));
+		bbox.clamp(0, size - 1, 0, size - 1);
+
+		// render pixels
+		for (int y = bbox.minY; y <= bbox.maxY; y++) {
+			for (int x = bbox.minX; x <= bbox.maxX; x++) {
+				auto pixelCenter = glm::vec2(x + 0.5f, y + 0.5f);
+				auto bc = barycentric(v1.position, v2.position, v3.position, pixelCenter);
+
+				if (bc.x > 0.0f && bc.y >= 0.0f && bc.z >= 0.0f && !std::isnan(bc.x)) {
+					auto elevation = bc.x * v1.elevation + bc.y * v2.elevation + bc.z * v3.elevation;
+					heightmap.setHeight(x, y, elevation);
+				}
+			}
+		}
+	}
 }
 
 
@@ -682,58 +788,4 @@ void OtMap::assignBiome() {
 			}
 		}
 	}
-}
-
-
-//
-//	OtMap::renderTexture
-//
-
-void OtMap::renderTexture(OtFrameBuffer& framebuffer, int size, std::function<glm::vec4(float elevation)> callback) {
-	framebuffer.update(size, size);
-
-	// create vertex buffers
-	std::vector<OtVertexPosCol2D> vertices;
-	auto scale = static_cast<float>(size) / static_cast<float>(map->size);
-
-	for (auto& corner : map->corners) {
-		vertices.emplace_back(corner.position * scale, callback(corner.elevation));
-	}
-
-	OtVertexBuffer vb;
-	vb.set(vertices.data(), vertices.size(), OtVertexPosCol2D::getDescription());
-
-	// create index buffer
-	std::vector<uint32_t> indices;
-
-	for (auto& region : map->regions) {
-		auto center = vertices.size();
-		vertices.emplace_back(region.center * scale, callback(region.elevation));
-		auto corners = region.corners.size();
-
-		for (size_t i = 0; i < corners; i++) {
-			indices.emplace_back(static_cast<uint32_t>(center));
-			indices.emplace_back(static_cast<uint32_t>(region.corners[i]));
-			indices.emplace_back(static_cast<uint32_t>(region.corners[(i + 1) % corners]));
-		}
-	}
-
-	OtIndexBuffer ib;
-	ib.set(indices.data(), indices.size());
-
-	// determine uniforms
-	struct Uniforms {
-		glm::mat4 transform;
-
-	} uniforms {
-		glm::ortho(0.0f, static_cast<float>(size), static_cast<float>(size), 0.0f)
-	};
-
-	// render map
-	OtRenderPass pass;
-	pass.start(framebuffer);
-	pass.bindPipeline(pipeline);
-	pass.setVertexUniforms(0, &uniforms, sizeof(uniforms));
-	pass.render(vb, ib);
-	pass.end();
 }

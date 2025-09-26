@@ -1,0 +1,316 @@
+{
+	"links": [
+		{
+			"from": 468368962,
+			"id": 3016368026,
+			"to": 1430325844
+		},
+		{
+			"from": 3146696924,
+			"id": 2235841270,
+			"to": 3402575417
+		},
+		{
+			"from": 591397593,
+			"id": 303502022,
+			"to": 1852624315
+		},
+		{
+			"from": 800095462,
+			"id": 2232884649,
+			"to": 797304172
+		},
+		{
+			"from": 468368962,
+			"id": 1889031874,
+			"to": 801060736
+		},
+		{
+			"from": 468368962,
+			"id": 576811603,
+			"to": 3177096165
+		},
+		{
+			"from": 2865025510,
+			"id": 4002341040,
+			"to": 1557016206
+		},
+		{
+			"from": 2865025510,
+			"id": 3720703396,
+			"to": 3545046684
+		},
+		{
+			"from": 2058357043,
+			"id": 3667428162,
+			"to": 3644423933
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 1579014303,
+			"inputs": [
+				{
+					"id": 3359103614,
+					"name": "Size",
+					"type": "int",
+					"value": 80
+				},
+				{
+					"id": 3612237621,
+					"name": "Seed",
+					"type": "int",
+					"value": 99
+				},
+				{
+					"id": 1799471862,
+					"name": "Ruggedness",
+					"type": "float",
+					"value": 0.4000000059604645
+				}
+			],
+			"outputs": [
+				{
+					"id": 468368962,
+					"name": "Map",
+					"type": "map"
+				}
+			],
+			"title": "Map Generator",
+			"type": "Map Generator",
+			"x": 40.0,
+			"y": 487.0
+		},
+		{
+			"id": 335545404,
+			"inputs": [
+				{
+					"id": 1430325844,
+					"name": "Map",
+					"type": "map"
+				},
+				{
+					"id": 1030008575,
+					"name": "Size",
+					"type": "int",
+					"value": 1024
+				}
+			],
+			"outputs": [
+				{
+					"id": 3146696924,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"renderType": 1,
+			"title": "Map to Image",
+			"type": "Map to Image",
+			"x": 328.0,
+			"y": 9.0
+		},
+		{
+			"id": 3197117613,
+			"inputs": [
+				{
+					"id": 3402575417,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"outputs": [],
+			"title": "Coastline Distance",
+			"type": "Image Probe",
+			"x": 766.0,
+			"y": 5.0
+		},
+		{
+			"id": 2189420124,
+			"inputs": [
+				{
+					"id": 3177096165,
+					"name": "Map",
+					"type": "map"
+				},
+				{
+					"id": 3043457080,
+					"name": "Size",
+					"type": "int",
+					"value": 512
+				}
+			],
+			"outputs": [
+				{
+					"id": 2865025510,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"renderType": 2,
+			"title": "Map to Image",
+			"type": "Map to Image",
+			"x": 319.0,
+			"y": 566.0
+		},
+		{
+			"id": 2359960004,
+			"inputs": [
+				{
+					"id": 3545046684,
+					"name": "Input",
+					"type": "image"
+				}
+			],
+			"outputs": [
+				{
+					"id": 591397593,
+					"name": "Output",
+					"type": "geometry"
+				}
+			],
+			"title": "Terrain Builder",
+			"type": "Terrain Builder",
+			"x": 623.0,
+			"y": 568.0
+		},
+		{
+			"id": 364438754,
+			"inputs": [
+				{
+					"id": 1852624315,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 642812204,
+					"name": "Translate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 4199914809,
+					"name": "Rotate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 330560579,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						10.0,
+						1.5,
+						10.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 2058357043,
+					"name": "Output",
+					"type": "geometry"
+				}
+			],
+			"title": "Geometry Transform",
+			"type": "Geometry Transform",
+			"x": 814.0,
+			"y": 543.0
+		},
+		{
+			"id": 1962373291,
+			"inputs": [
+				{
+					"id": 801060736,
+					"name": "Map",
+					"type": "map"
+				},
+				{
+					"id": 2481129995,
+					"name": "Size",
+					"type": "int",
+					"value": 1024
+				}
+			],
+			"outputs": [
+				{
+					"id": 800095462,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"renderType": 0,
+			"title": "Map to Image",
+			"type": "Map to Image",
+			"x": 325.0,
+			"y": 205.0
+		},
+		{
+			"id": 1154274012,
+			"inputs": [
+				{
+					"id": 797304172,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"outputs": [],
+			"title": "Biomes",
+			"type": "Image Probe",
+			"x": 1023.0,
+			"y": 32.0
+		},
+		{
+			"id": 2401587037,
+			"inputs": [
+				{
+					"id": 1557016206,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"outputs": [],
+			"title": "Height Map",
+			"type": "Image Probe",
+			"x": 598.0,
+			"y": 274.0
+		},
+		{
+			"azimuth": -17.039552688598633,
+			"elevation": 21.041301727294922,
+			"id": 1546965795,
+			"inputs": [
+				{
+					"id": 3644423933,
+					"name": "Geometry",
+					"type": "geometry"
+				}
+			],
+			"lightColor": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"meshColor": [
+				1.0,
+				0.8500000238418579,
+				0.0
+			],
+			"outputs": [],
+			"title": "Geometry Probe",
+			"type": "Geometry Probe",
+			"wireframe": false,
+			"x": 1166.0,
+			"y": 305.0,
+			"zoom": 1.3976020812988281
+		}
+	]
+}

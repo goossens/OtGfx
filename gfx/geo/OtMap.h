@@ -21,9 +21,8 @@
 
 #include "glm/glm.hpp"
 
-#include "OtFrameBuffer.h"
+#include "OtHeightMap.h"
 #include "OtImage.h"
-#include "OtRenderPipeline.h"
 
 
 //
@@ -56,8 +55,20 @@ public:
 		tropicalSeasonalForest
 	};
 
-	// constructor
-	OtMap();
+	// render types
+	enum class RenderType {
+		biomes,
+		distanceToWater,
+		heightMap
+	};
+
+	static constexpr const char* renderTypes[] = {
+		"Biomes",
+		"Distance To Water",
+		"Height Map"
+	};
+
+	static constexpr size_t renderTypeCount = sizeof(renderTypes) / sizeof(*renderTypes);
 
 	// clear the map
 	void clear();
@@ -69,10 +80,10 @@ public:
 	void update(int seed, int size, float ruggedness);
 
 	// render to image
-	void render(OtImage& image, int size, bool biome);
+	void render(OtImage& image, int size, RenderType type);
 
 	// render map to framebuffer
-	void renderHeightMap(OtFrameBuffer& framebuffer, int size);
+	void renderHeightMap(OtHeightMap& heightmap, int size);
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -146,9 +157,6 @@ private:
 	std::shared_ptr<Map> map;
 	int version = 0;
 
-	// rendering support
-	OtRenderPipeline pipeline{};
-
 	// private functions to generate map
 	void generateRegions();
 	void generateCorners();
@@ -163,8 +171,6 @@ private:
 	void assignBiome();
 
 	// utility functions
-	void renderTexture(OtFrameBuffer& framebuffer, int size, std::function<glm::vec4(float elevation)> callback);
-
 	inline void addRegion(float x, float y) { map->regions.emplace_back(map->regions.size(), glm::vec2(x, y)); }
 
 	inline void addGhostRegion(float x, float y) {

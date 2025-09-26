@@ -97,8 +97,10 @@ public:
 			}
 		}
 
-		// now we need to update all normals
+		// now we need to update all normals, tangents and the AABB
 		mesh.generateNormals();
+		mesh.generateTangents();
+		mesh.generateAABB();
 
 		// update geometry version number
 		geometry.incrementVersion();

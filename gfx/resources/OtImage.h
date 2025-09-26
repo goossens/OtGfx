@@ -63,7 +63,7 @@ public:
 
 	// get pixel values
 	glm::vec4 getPixelRgba(int x, int y);
-	inline float getPixelGray(int x, int y) { return getPixelRgba(x, y).x; }
+	inline float getPixelGray(int x, int y) { return getPixelRgba(x, y).r; }
 
 	glm::vec4 sampleValueRgba(float u, float v);
 	float sampleValueGray(float u, float v);

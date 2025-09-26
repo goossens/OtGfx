@@ -75,6 +75,8 @@ public:
 				}
 			}
 
+			// now we need to update all tangents and the AABB
+			mesh.generateTangents();
 			mesh.generateAABB();
 
 		} else {
