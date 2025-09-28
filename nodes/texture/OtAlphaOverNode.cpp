@@ -28,16 +28,14 @@ public:
 		addInputPin("Overlay", overlayTexture);
 	}
 
-	// temporary hack to let this filter run on old Intel-based Macs
-	// as those don't support simultaneous read/write on rgba8 textures
-	inline OtTexture::Format getOutputFormat() override { return OtTexture::Format::rgbaFloat32; }
-
 	// run filter
 	inline void onFilter(OtTexture& input, OtTexture& output) override {
-		OtBlitPass::blit(input, output);
-
 		if (overlayTexture.isValid()) {
-			alphaOver.render(overlayTexture, output);
+			alphaOver.setOverlay(overlayTexture);
+			alphaOver.render(input, output);
+
+		} else {
+			OtBlitPass::blit(input, output);
 		}
 	}
 

@@ -36,5 +36,5 @@ void main() {
 	vec3 satColor  = mix(intensity, brtColor, saturation);
 	vec3 conColor  = mix(AvgLumin, satColor, contrast);
 
-    imageStore(outTexture, coord, vec4(conColor, color.a));
+	imageStore(outTexture, coord, vec4(conColor, color.a));
 }

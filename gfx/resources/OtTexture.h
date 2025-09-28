@@ -35,12 +35,12 @@ public:
 	enum class Format {
 		none = SDL_GPU_TEXTUREFORMAT_INVALID,
 		r8 = SDL_GPU_TEXTUREFORMAT_R8_UNORM,
-		rFloat32 = SDL_GPU_TEXTUREFORMAT_R32_FLOAT,
-		rgFloat16 = SDL_GPU_TEXTUREFORMAT_R16G16_FLOAT,
+		r32 = SDL_GPU_TEXTUREFORMAT_R32_FLOAT,
+		rg16 = SDL_GPU_TEXTUREFORMAT_R16G16_FLOAT,
 		rgba8 = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-		rgbaFloat16 = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
-		rgbaFloat32 = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT,
-		dFloat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
+		rgba16 = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
+		rgba32 = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT,
+		d32 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
 		d24s8 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
 	};
 
@@ -57,7 +57,8 @@ public:
 
 		rwRenderAll = sampler | colorTarget,
 		rwComputeAll = computeStorageRead | computeStorageWrite | computeStorageReadWrite,
-		rwAll = rwRenderAll | rwComputeAll
+		rwAll = rwRenderAll | rwComputeAll,
+		rwDefault = rwRenderAll | computeStorageWrite
 	};
 
 	// constructors
@@ -99,12 +100,12 @@ public:
 		switch (format) {
 			case Format::none: return 0;
 			case Format::r8: return 1;
-			case Format::rFloat32: return 4;
-			case Format::rgFloat16: return 4;
+			case Format::r32: return 4;
+			case Format::rg16: return 4;
 			case Format::rgba8: return 4;
-			case Format::rgbaFloat16: return 8;
-			case Format::rgbaFloat32: return 16;
-			case Format::dFloat: return 4;
+			case Format::rgba16: return 8;
+			case Format::rgba32: return 16;
+			case Format::d32: return 4;
 			case Format::d24s8: return 4;
 		}
 
@@ -184,7 +185,7 @@ private:
 			case OtImage::Format::none: return Format::none;
 			case OtImage::Format::r8: return Format::r8;
 			case OtImage::Format::rgba8: return Format::rgba8;
-			case OtImage::Format::rgbaFloat32: return Format::rgbaFloat32;
+			case OtImage::Format::rgba32: return Format::rgba32;
 		}
 
 		return Format::none;
@@ -194,12 +195,12 @@ private:
 		switch (format) {
 			case Format::none: return OtImage::Format::none;
 			case Format::r8: return OtImage::Format::r8;
-			case Format::rFloat32: return OtImage::Format::none;
-			case Format::rgFloat16: return OtImage::Format::none;
+			case Format::r32: return OtImage::Format::none;
+			case Format::rg16: return OtImage::Format::none;
 			case Format::rgba8: return OtImage::Format::rgba8;
-			case Format::rgbaFloat16: return OtImage::Format::none;
-			case Format::rgbaFloat32: return OtImage::Format::rgbaFloat32;
-			case Format::dFloat: return OtImage::Format::none;
+			case Format::rgba16: return OtImage::Format::none;
+			case Format::rgba32: return OtImage::Format::rgba32;
+			case Format::d32: return OtImage::Format::none;
 			case Format::d24s8: return OtImage::Format::none;
 		}
 

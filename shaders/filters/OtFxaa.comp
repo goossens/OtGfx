@@ -62,5 +62,5 @@ void main() {
 
 	float lumaB = dot(rgbB, luma);
 
-    imageStore(outTexture, coord, ((lumaB < lumaMin) || (lumaB > lumaMax)) ? vec4(rgbA, 1.0f) : vec4(rgbB, 1.0f));
+	imageStore(outTexture, coord, ((lumaB < lumaMin) || (lumaB > lumaMax)) ? vec4(rgbA, 1.0f) : vec4(rgbB, 1.0f));
 }

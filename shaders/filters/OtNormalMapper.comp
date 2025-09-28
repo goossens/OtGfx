@@ -43,5 +43,5 @@ void main() {
 		(bl + (2.0f * bc) + br) - (tl + (2.0f * tc) + tr),
 		1.0 / normalStrength));
 
-    imageStore(outTexture, coord, vec4(normal * 0.5f + 0.5f, includeHeight ? cc : 1.0f));
+	imageStore(outTexture, coord, vec4(normal * 0.5f + 0.5f, includeHeight ? cc : 1.0f));
 }

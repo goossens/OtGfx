@@ -24,6 +24,12 @@
 
 class OtBlur : public OtFilter {
 public:
+	// constructor
+	OtBlur() {
+		// switch to linear sampling for input texture
+		sampler.setFilter(OtSampler::Filter::linear);
+	}
+
 	// set properties
 	inline void setDirection(const glm::vec2& value) { direction = value; }
 	inline void setBrightness(float value) { brightness = value; }
@@ -38,11 +44,11 @@ public:
 
 		// set uniforms
 		struct Uniforms {
-			glm::vec4 direction;
+			glm::vec2 offset;
 			float brightness;
 			float transparency;
 		} uniforms {
-			glm::vec4{direction, 0.0f, 0.0f},
+			direction * sourcePixelSize,
 			brightness,
 			transparency
 		};

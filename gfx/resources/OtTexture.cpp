@@ -177,8 +177,8 @@ void OtTexture::load(int w, int h, Format f, void* pixels, bool async) {
 	} else if (f == Format::rgba8) {
 		fmt = OtImage::Format::rgba8;
 
-	} else if (f == Format::rgbaFloat32) {
-		fmt = OtImage::Format::rgbaFloat32;
+	} else if (f == Format::rgba32) {
+		fmt = OtImage::Format::rgba32;
 
 	} else {
 		OtLogFatal("Unsupported pixel format");

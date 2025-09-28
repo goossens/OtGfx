@@ -72,10 +72,7 @@ void OtDialClass::render() {
 			auto& backgroundTexture = background->getTexture();
 			auto w = backgroundTexture.getWidth();
 			auto h = backgroundTexture.getHeight();
-			output.update(w, h, OtTexture::Format::rgbaFloat32, OtTexture::Usage::rwAll);
-
-			// render background
-			OtBlitPass::blit(background->getTexture(), output);
+			output.update(w, h, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
 
 			// render needle (if required)
 			if (needle.isReady()) {
@@ -91,11 +88,15 @@ void OtDialClass::render() {
 
 				// render the needle
 				needleFilter.setTransform(transform);
-				needleFilter.render(needle->getTexture(), output);
-			}
+				needleFilter.setNeedle(needle->getTexture());
+				needleFilter.render(background->getTexture(), output);
 
-			// reset flag
-			redraw = false;
+				// reset flag
+				redraw = false;
+
+			} else {
+				OtBlitPass::blit(background->getTexture(), output);
+			}
 		}
 
 		auto size = ImVec2(output.getWidth() * scale, output.getHeight() * scale);

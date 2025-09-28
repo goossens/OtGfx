@@ -40,5 +40,5 @@ void main() {
 	sum += (1.0f / 32.0f) * texture(inTexture, uv + vec2(+pixelSize.x, -pixelSize.y)).rgb;
 	sum += (1.0f / 32.0f) * texture(inTexture, uv + vec2(-pixelSize.x, -pixelSize.y)).rgb;
 
-    imageStore(outTexture, coord, vec4(sum, 1.0f));
+	imageStore(outTexture, coord, vec4(sum, 1.0f));
 }

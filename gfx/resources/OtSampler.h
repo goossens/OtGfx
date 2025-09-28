@@ -46,7 +46,15 @@ public:
 	OtSampler(Filter filter, Addressing addressingX, Addressing addressingY) : requestedFilter(filter), requestedAddressingX(addressingX), requestedAddressingY(addressingY) {}
 
 	// clear the object
-	inline void clear() { sampler = nullptr; }
+	inline void clear() {
+		sampler = nullptr;
+		requestedFilter = Filter::linear;
+		currentFilter = Filter::none;
+		requestedAddressingX = Addressing::repeat;
+		requestedAddressingY = Addressing::repeat;
+		currentAddressingX = Addressing::none;
+		currentAddressingY = Addressing::none;
+	}
 
 	// see if sampler is valid
 	inline bool isValid() { return sampler != nullptr; }
@@ -126,16 +134,16 @@ private:
 			SDL_GPUSamplerCreateInfo info{
 				.min_filter = filter,
 				.mag_filter = filter,
-				.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+				.mipmap_mode = requestedFilter == Filter::nearest ? SDL_GPU_SAMPLERMIPMAPMODE_NEAREST : SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
 				.address_mode_u = addressModeX,
 				.address_mode_v = addressModeY,
 				.address_mode_w = addressModeX,
 				.mip_lod_bias = 0,
-				.max_anisotropy = (requestedFilter == Filter::anisotropic) ? 8.0f : 0.0f,
-				.compare_op = SDL_GPU_COMPAREOP_ALWAYS,
-				.min_lod = 0,
-				.max_lod = 0,
-				.enable_anisotropy = (requestedFilter == Filter::anisotropic) != 0,
+				.max_anisotropy = requestedFilter == Filter::anisotropic ? 4.0f : 0.0f,
+				.compare_op = SDL_GPU_COMPAREOP_INVALID,
+				.min_lod = 0.0f,
+				.max_lod = 200.0f,
+				.enable_anisotropy = requestedFilter == Filter::anisotropic,
 				.enable_compare = false,
 				.padding1 = 0,
 				.padding2 = 0,

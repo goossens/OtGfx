@@ -55,5 +55,5 @@ void main() {
 		color = vec4(color.r, color.g, color.b, lut[int(color.a * 255.0f)]);
 	}
 
-    imageStore(outTexture, coord, vec4((color.rgb - blackLevel.rgb) / (whiteLevel.rgb - blackLevel.rgb), color.a));
+	imageStore(outTexture, coord, vec4((color.rgb - blackLevel.rgb) / (whiteLevel.rgb - blackLevel.rgb), color.a));
 }

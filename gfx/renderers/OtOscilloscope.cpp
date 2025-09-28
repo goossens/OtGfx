@@ -16,9 +16,9 @@
 #include "OtLog.h"
 #include "OtNumbers.h"
 
-#include "OtRenderPass.h"
 #include "OtSimplexFont.h"
 #include "OtOscilloscope.h"
+#include "OtRenderPass.h"
 #include "OtVertex.h"
 
 #include "OtOscilloscopeVert.h"
@@ -293,8 +293,8 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 
 	// update framebuffers
 	work.update(width, height);
-	blur1.update(width / 3, height / 3);
-	blur2.update(width / 3, height / 3);
+	blur1.update(width / 3, height / 3, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
+	blur2.update(width / 3, height / 3, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
 
 	// create brush (if required)
 	if (!brush.isValid()) {
@@ -315,7 +315,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	}
 
 	OtRenderPass pass;
-	pass.start(framebuffer);
+	pass.start(work);
 	pass.bindPipeline(pipeline);
 
 	// setup brush
@@ -375,11 +375,9 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 
 			// set fragment uniforms
 			struct FragmentUniforms {
-				float brightness;
 				float alpha;
 
 			} fragmentUniforms {
-				brightness,
 				alpha
 			};
 
@@ -398,15 +396,17 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	for (auto p = 0; p < 4; p++) {
 		// run horizontal blur
 		blur.setDirection(glm::vec2(1.0f, 0.0f));
-		blur.render(p == 0 ? framebuffer.getColorTexture() : blur2.getColorTexture(), blur1.getColorTexture());
+		blur.render(p == 0 ? work.getColorTexture() : blur2, blur1);
 
 		// run vertical blur
 		blur.setDirection(glm::vec2(0.0f, 1.0f));
-		blur.render(blur1.getColorTexture(), blur2.getColorTexture());
+		blur.render(blur1, blur2);
 	}
 
 	// combine original rendering with glow
-	alphaOver.render(blur2.getColorTexture(), framebuffer.getColorTexture());
+	addOver.setOverlay(blur2);
+	addOver.setOverlayBrightness(1.25f + ((brightness - 1.0f) / 2.0f));
+	addOver.render(work.getColorTexture(), framebuffer.getColorTexture());
 }
 
 

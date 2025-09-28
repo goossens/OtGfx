@@ -87,7 +87,7 @@ public:
 				colorTexture.update(
 					w, h,
 					colorTextureType,
-					OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler));
+					OtTexture::OtTexture::Usage::rwDefault);
 			}
 
 			if (depthTextureType != OtTexture::Format::none) {

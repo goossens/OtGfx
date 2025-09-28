@@ -148,7 +148,7 @@ void OtMap::render(OtImage& image, int size, RenderType type) {
 		float range = maxElevation - minElevation;
 
 		// get image ready
-		image.update(size, size, OtImage::Format::rgbaFloat32);
+		image.update(size, size, OtImage::Format::rgba32);
 		auto p = static_cast<float*>(image.getPixels());
 
 		for (int y = 0; y < size; y++) {

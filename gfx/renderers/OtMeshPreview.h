@@ -48,7 +48,7 @@ private:
 	static constexpr float maxZoomPerSecond = 0.2f;
 
 	// rendering variables
-	OtFrameBuffer framebuffer{OtTexture::Format::rgba8, OtTexture::Format::dFloat};
+	OtFrameBuffer framebuffer{OtTexture::Format::rgba8, OtTexture::Format::d32};
 	OtRenderPipeline fillPipeline;
 	OtRenderPipeline linePipeline;
 };

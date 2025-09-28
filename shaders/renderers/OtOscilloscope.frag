@@ -14,10 +14,9 @@ layout (location = 0) out vec4 fragColor;
 layout(set=2, binding=0) uniform sampler2D brush;
 
 layout(std140, set=3, binding=0) uniform UBO {
-	float brightness;
 	float alpha;
 };
 
 void main() {
-	fragColor = vColor * texture(brush, vUv) * vec4(brightness, brightness, brightness, alpha);
+	fragColor = vColor * texture(brush, vUv) * vec4(1.0f, 1.0f, 1.0f, alpha);
 }

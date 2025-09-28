@@ -25,5 +25,5 @@ void main() {
 	vec3 color = texture(inTexture, uv).rgb;
 	color += texture(bloomTexture, uv).rgb;
 
-    imageStore(outTexture, coord, vec4(color, 1.0f));
+	imageStore(outTexture, coord, vec4(color, 1.0f));
 }

@@ -12,7 +12,7 @@ layout(set=0, binding=0) uniform sampler2D inTexture;
 layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
-    vec4 direction;
+    vec2 offset;
 	float brightness;
 	float transparency;
 };
@@ -26,19 +26,17 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
-	vec2 pixelSize = vec2(1.0f) / vec2(size);
 
 	vec4 color;
-	vec2 offset = direction.xy * pixelSize;
-	color  = texture(inTexture, uv - 4.0f * offset) * 0.05f;
-	color += texture(inTexture, uv - 3.0f * offset) * 0.09f;
-	color += texture(inTexture, uv - 2.0f * offset) * 0.12f;
-	color += texture(inTexture, uv - 1.0f * offset) * 0.15f;
-	color += texture(inTexture, uv + 0.0f * offset) * 0.16f;
-	color += texture(inTexture, uv + 1.0f * offset) * 0.15f;
-	color += texture(inTexture, uv + 2.0f * offset) * 0.12f;
-	color += texture(inTexture, uv + 3.0f * offset) * 0.09f;
-	color += texture(inTexture, uv + 4.0f * offset) * 0.05f;
+	color  = texture(inTexture, uv - offset * 4.0f) * 0.05f;
+	color += texture(inTexture, uv - offset * 3.0f) * 0.09f;
+	color += texture(inTexture, uv - offset * 2.0f) * 0.12f;
+	color += texture(inTexture, uv - offset * 1.0f) * 0.15f;
+	color += texture(inTexture, uv + offset * 0.0f) * 0.16f;
+	color += texture(inTexture, uv + offset * 1.0f) * 0.15f;
+	color += texture(inTexture, uv + offset * 2.0f) * 0.12f;
+	color += texture(inTexture, uv + offset * 3.0f) * 0.09f;
+	color += texture(inTexture, uv + offset * 4.0f) * 0.05f;
 
-    imageStore(outTexture, coord, color * vec4(brightness, brightness, brightness, transparency));
+	imageStore(outTexture, coord, color * vec4(brightness, brightness, brightness, transparency));
 }

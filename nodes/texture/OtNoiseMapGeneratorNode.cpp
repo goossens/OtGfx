@@ -71,7 +71,7 @@ public:
 	// running the noise generator
 	inline void onExecute() override {
 		// ensure output texture has the right configuration
-		texture.update(width, height, OtTexture::Format::rFloat32, OtTexture::Usage::rwAll);
+		texture.update(width, height, OtTexture::Format::r32, OtTexture::Usage::rwDefault);
 
 		// run the generator
 		fbm.setFrequency(frequency);

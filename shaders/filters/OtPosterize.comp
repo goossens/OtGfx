@@ -34,5 +34,5 @@ void main() {
 	float level = (abs(greyscale - lower) <= abs(upper - greyscale)) ? lower : upper;
 	float adjustment = level / greyscale;
 
-    imageStore(outTexture, coord, vec4(color.rgb * adjustment, color.a));
+	imageStore(outTexture, coord, vec4(color.rgb * adjustment, color.a));
 }

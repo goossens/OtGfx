@@ -25,6 +25,7 @@
 class OtNeedle : public OtFilter {
 public:
 	// set properties
+	inline void setNeedle(OtTexture value) { needleTexture = value; }
 	inline void setTransform(const glm::mat4& t) { transform = t; }
 
 	// configure the compute pass
@@ -33,6 +34,9 @@ public:
 		if (!pipeline.isValid()) {
 			pipeline.setShader(OtNeedleComp, sizeof(OtNeedleComp));
 		}
+
+		// add overlay texture
+		pass.addInputSampler(needleSampler, needleTexture);
 
 		// set uniforms
 		struct Uniforms {
@@ -47,4 +51,6 @@ public:
 private:
 	// properties
 	glm::mat4 transform{1.0f};
+	OtTexture needleTexture;
+	OtSampler needleSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 };

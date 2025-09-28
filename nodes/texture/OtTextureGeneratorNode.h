@@ -33,7 +33,7 @@ public:
 	// execute the node by generating a new version of the output
 	inline void onExecute() override {
 		// ensure output texture has correct setup
-		texture.update(width, height, OtTexture::Format::rgba8, OtTexture::Usage::rwAll);
+		texture.update(width, height, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
 
 		// run the generator
 		onGenerate(texture);

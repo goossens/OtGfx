@@ -36,5 +36,5 @@ void main() {
 		sum += -1.0 * texture(inTexture, uv + vec2( 1.0f,  0.0f) * pixelSize * offset).rgb;
 	}
 
-    imageStore(outTexture, coord, vec4(sum / 2.0f, 1.0f));
+	imageStore(outTexture, coord, vec4(sum / 2.0f, 1.0f));
 }

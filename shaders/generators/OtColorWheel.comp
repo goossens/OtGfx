@@ -40,5 +40,5 @@ void main() {
 	float angle = stableAtan2(xy.x, xy.y);
 
 	vec3 color = (distance > 1.0f) ? vec3(0.0f) : colorPalette(distance, angle);
-    imageStore(outTexture, coord, vec4(color, 1.0f));
+	imageStore(outTexture, coord, vec4(color, 1.0f));
 }

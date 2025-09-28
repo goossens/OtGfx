@@ -52,5 +52,5 @@ void main() {
 		a *= persistence;
 	}
 
-    imageStore(outTexture, coord, vec4(sum, 0.0f, 0.0f, 1.0f));
+	imageStore(outTexture, coord, vec4(sum, 0.0f, 0.0f, 1.0f));
 }

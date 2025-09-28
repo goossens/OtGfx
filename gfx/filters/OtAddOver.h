@@ -12,42 +12,35 @@
 //	Include files
 //
 
-#include "glm/glm.hpp"
-
 #include "OtFilter.h"
-#include "OtGaussianComp.h"
+#include "OtAddOverComp.h"
 
 
 //
-//	OtGaussian
+//	OtAddOver
 //
 
-class OtGaussian : public OtFilter {
+class OtAddOver : public OtFilter {
 public:
-	// constructor
-	OtGaussian() {
-		// switch to linear sampling for input texture
-		sampler.setFilter(OtSampler::Filter::linear);
-	}
-
 	// set properties
-	inline void setRadius(float value) { radius = value; }
-	inline void setDirection(const glm::vec2& value) { direction = value; }
+	inline void setOverlay(OtTexture overlay) { overlayTexture = overlay; }
+	inline void setOverlayBrightness(float value) { brightness = value; }
 
 	// configure the compute pass
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.setShader(OtGaussianComp, sizeof(OtGaussianComp));
+			pipeline.setShader(OtAddOverComp, sizeof(OtAddOverComp));
 		}
+
+		// add overlay texture
+		pass.addInputSampler(overlaySampler, overlayTexture);
 
 		// set uniforms
 		struct Uniforms {
-			glm::vec2 direction;
-			glm::vec2 pixelSize;
+			float brightness;
 		} uniforms {
-			direction * radius,
-			sourcePixelSize
+			brightness
 		};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
@@ -55,6 +48,7 @@ public:
 
 private:
 	// properties
-	float radius = 1.0f;
-	glm::vec2 direction{1.0f};
+	OtTexture overlayTexture;
+	OtSampler overlaySampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	float brightness = 1.0f;
 };

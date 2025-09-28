@@ -25,5 +25,5 @@ void main() {
 	}
 
 	vec2 uv = vec2(coord) / vec2(size);
-    imageStore(outTexture, coord, texture(inTexture, uv) * vec4(brightness, brightness, brightness, transparency));
+	imageStore(outTexture, coord, texture(inTexture, uv) * vec4(brightness, brightness, brightness, transparency));
 }

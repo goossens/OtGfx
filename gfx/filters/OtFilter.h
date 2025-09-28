@@ -39,11 +39,15 @@ public:
 	virtual void configurePass([[maybe_unused]] OtComputePass& pass) {}
 
 	// let filter transform texture to output
-	void render(OtTexture& origin, OtTexture& destination) {
+	void render(OtTexture& source, OtTexture& destination) {
 		// start a compute pass and setup the input and output textures
 		OtComputePass pass;
-		pass.addInputSampler(sampler, origin);
+		pass.addInputSampler(sampler, source);
 		pass.addOutputTexture(destination);
+
+		// determine pixel size
+		sourcePixelSize = 1.0f / glm::vec2(source.getWidth(), source.getHeight());
+		destinationPixelSize = 1.0f / glm::vec2(destination.getWidth(), destination.getHeight());
 
 		// ask derived class to configure the compute pass
 		// e.g. create compute pipeline, add input samplers and/or set uniforms
@@ -63,4 +67,6 @@ protected:
 
 	// work variables
 	OtSampler sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	glm::vec2 sourcePixelSize;
+	glm::vec2 destinationPixelSize;
 };

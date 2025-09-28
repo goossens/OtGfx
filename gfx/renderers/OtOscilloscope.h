@@ -18,7 +18,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "OtAlphaOver.h"
+#include "OtAddOver.h"
 #include "OtBlur.h"
 #include "OtFrameBuffer.h"
 #include "OtRenderPipeline.h"
@@ -98,12 +98,12 @@ private:
 
 	// filters
 	OtBlur blur;
-	OtAlphaOver alphaOver;
+	OtAddOver addOver;
 
 	// GPU resources
 	OtFrameBuffer work{OtTexture::Format::rgba8};
-	OtFrameBuffer blur1{OtTexture::Format::rgba8};
-	OtFrameBuffer blur2{OtTexture::Format::rgba8};
+	OtTexture blur1;
+	OtTexture blur2;
 
 	OtTexture brush;
 	static constexpr int brushSize = 64;
