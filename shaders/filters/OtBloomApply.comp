@@ -20,7 +20,7 @@ void main() {
 		return;
 	}
 
-	vec2 uv = vec2(coord) / vec2(size);
+	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 
 	vec3 color = texture(inTexture, uv).rgb;
 	color += texture(bloomTexture, uv).rgb;

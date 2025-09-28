@@ -23,7 +23,7 @@ void main() {
 		return;
 	}
 
-	vec2 uv = vec2(coord) / vec2(size);
+	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 	vec2 halfPixel = vec2(1.0f) / vec2(size) / 2.0f;
 
 	vec4 sum = (4.0f / 16.0f) * texture(inTexture, uv);

@@ -19,7 +19,7 @@ void main() {
 		return;
 	}
 
-	vec2 uv = vec2(coord) / vec2(size);
+	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 	vec2 uv2 = vec2(fract(uv + 0.5f));
 
 	float dist = distance(uv2, vec2(0.5f, 0.5f));

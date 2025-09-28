@@ -19,7 +19,7 @@ void main() {
 		return;
 	}
 
-	vec2 uv = vec2(coord) / vec2(size);
+	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 	vec2 pixelSize = vec2(1.0f) / vec2(size);
 	vec2 halfPixel = pixelSize * 0.5f;
 

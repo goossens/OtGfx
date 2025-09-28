@@ -24,7 +24,7 @@ void main() {
 		return;
 	}
 
-	vec2 uv = vec2(coord) / vec2(size);
+	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 	uv = (transform * vec4(uv, 0.0f, 1.0f)).xy;
 
 	vec4 bg = texture(inTexture, uv);
