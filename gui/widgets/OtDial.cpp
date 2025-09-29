@@ -70,9 +70,9 @@ void OtDialClass::render() {
 		if (redraw) {
 			// determine framebuffer dimensions
 			auto& backgroundTexture = background->getTexture();
-			auto w = backgroundTexture.getWidth();
-			auto h = backgroundTexture.getHeight();
-			output.update(w, h, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
+			auto bw = backgroundTexture.getWidth();
+			auto bh = backgroundTexture.getHeight();
+			output.update(bw, bh, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
 
 			// render needle (if required)
 			if (needle.isReady()) {
@@ -80,13 +80,20 @@ void OtDialClass::render() {
 				auto ratio = (value - minValue) / (maxValue - minValue);
 				auto rotation = minRotation + ratio * (maxRotation - minRotation);
 
-				// determine transformation
-				glm::mat4 transform{1.0f};
-				transform = glm::translate(transform, glm::vec3(bx, by, 0.0f));
-				transform = glm::rotate(transform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	 			transform = glm::translate(transform, glm::vec3(-nx, -ny, 0.0f));
+				// convert coordinates to UV space
+				auto& needleTexture = background->getTexture();
+				auto ndcBx = bx / bw;
+				auto ndcBy = by / bh;
+				auto ndcNx = nx / needleTexture.getWidth();
+				auto ndcNy = ny / needleTexture.getHeight();
 
-				// render the needle
+				// determine needle transformation
+				glm::mat4 transform{1.0f};
+	 			transform = glm::translate(transform, glm::vec3(ndcNx, ndcNy, 0.0f));
+				transform = glm::rotate(transform, glm::radians(-rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+				transform = glm::translate(transform, glm::vec3(-ndcBx, -ndcBy, 0.0f));
+
+				// render the dial with the needle
 				needleFilter.setTransform(transform);
 				needleFilter.setNeedle(needle->getTexture());
 				needleFilter.render(background->getTexture(), output);
