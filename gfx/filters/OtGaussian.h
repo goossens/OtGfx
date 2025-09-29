@@ -43,11 +43,11 @@ public:
 
 		// set uniforms
 		struct Uniforms {
-			glm::vec2 direction;
 			glm::vec2 pixelSize;
+			glm::vec2 direction;
 		} uniforms {
-			direction * radius,
-			sourcePixelSize
+			sourcePixelSize,
+			direction * radius
 		};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));

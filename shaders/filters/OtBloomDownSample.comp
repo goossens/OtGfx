@@ -11,6 +11,10 @@ layout(local_size_x=16, local_size_y=16, local_size_z=1) in;
 layout(set=0, binding=0) uniform sampler2D inTexture;
 layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
+layout(std140, set=2, binding=0) uniform UBO {
+	vec2 pixelSize;
+};
+
 void main() {
 	ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
 	ivec2 size = imageSize(outTexture);
@@ -20,7 +24,6 @@ void main() {
 	}
 
 	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
-	vec2 pixelSize = vec2(1.0f) / vec2(size);
 	vec2 halfPixel = pixelSize * 0.5f;
 
 	vec3 sum = (4.0f / 32.0f) * texture(inTexture, uv).rgb;

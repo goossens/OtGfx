@@ -39,9 +39,11 @@ public:
 
 		// set uniforms
 		struct Uniforms {
+			glm::vec2 pixelSize;
 			float normalStrength;
 			int32_t includeHeightFlag;
 		} uniforms {
+			sourcePixelSize,
 			normalStrength,
 			static_cast<int32_t>(includeHeightFlag)
 		};
