@@ -12,7 +12,7 @@
 #include <vector>
 #include <utility>
 
-#include "OtAlphaOver.h"
+#include "OtCompositingAlphaOver.h"
 #include "OtBlitPass.h"
 #include "OtTexture.h"
 
@@ -90,7 +90,7 @@ protected:
 	OtTexture output;
 
 	// processing resources
-	OtAlphaOver alphaover;
+	OtCompositingAlphaOver alphaover;
 	int version = 1;
 };
 

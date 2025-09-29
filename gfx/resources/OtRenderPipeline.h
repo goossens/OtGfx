@@ -121,12 +121,8 @@ public:
 	inline void setFill(bool mode) { fill = mode; }
 
 	inline void setBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
-		colorBlendOperation = operation;
-		colorSrcFactor = src;
-		colorDstFactor = dst;
-		alphaBlendOperation = operation;
-		alphaSrcFactor = src;
-		alphaDstFactor = dst;
+		setColorBlend(operation, src, dst);
+		setAlphaBlend(operation, src, dst);
 	}
 
 	inline void setColorBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
@@ -210,12 +206,7 @@ private:
 		if (!pipeline) {
 			// ensure shaders are provided
 			if (!vertexShaderCode || !vertexShaderSize || !vertexShaderCode || !vertexShaderSize) {
-				OtLogFatal("Graphics pipeline is missing shaders");
-			}
-
-			// ensure vertex description is provided
-			if (!vertexDescription) {
-				OtLogFatal("Graphics pipeline is missing vertex description");
+				OtLogFatal("Render pipeline is missing shaders");
 			}
 
 			// create shaders
@@ -223,12 +214,18 @@ private:
 			OtRenderShader fragmentShader{fragmentShaderCode, fragmentShaderSize, OtRenderShader::Stage::fragment};
 
 			// setup information
-			SDL_GPUVertexBufferDescription vertexBufferDescription{
-				.slot = 0,
-				.pitch = static_cast<Uint32>(vertexDescription->size),
-				.input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
-				.instance_step_rate = 0
-			};
+			SDL_GPUVertexInputState vertexInputState{};
+			SDL_GPUVertexBufferDescription vertexBufferDescription{};
+
+			if (vertexDescription) {
+				vertexBufferDescription.pitch = static_cast<Uint32>(vertexDescription->size);
+				vertexBufferDescription.input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX;
+
+				vertexInputState.vertex_buffer_descriptions = &vertexBufferDescription;
+				vertexInputState.num_vertex_buffers = 1;
+				vertexInputState.vertex_attributes = vertexDescription->attributes;
+				vertexInputState.num_vertex_attributes = static_cast<Uint32>(vertexDescription->members);
+			}
 
 			std::vector<SDL_GPUColorTargetDescription> targetDescriptions;
 
@@ -279,12 +276,7 @@ private:
 			SDL_GPUGraphicsPipelineCreateInfo createInfo{
 				.vertex_shader = vertexShader.getShader(),
 				.fragment_shader = fragmentShader.getShader(),
-				.vertex_input_state = SDL_GPUVertexInputState{
-					.vertex_buffer_descriptions = &vertexBufferDescription,
-					.num_vertex_buffers = 1,
-					.vertex_attributes = vertexDescription->attributes,
-					.num_vertex_attributes = static_cast<Uint32>(vertexDescription->members)
-				},
+				.vertex_input_state = vertexInputState,
 				.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
 				.rasterizer_state = SDL_GPURasterizerState{
 					.fill_mode = fill ? SDL_GPU_FILLMODE_FILL : SDL_GPU_FILLMODE_LINE,

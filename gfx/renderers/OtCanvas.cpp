@@ -206,6 +206,7 @@ void OtCanvas::render(OtFrameBuffer& framebuffer, float scale, std::function<voi
 
 	// setup rendering pass
 	OtRenderPass pass;
+	pass.start(framebuffer);
 	// pass.setClear(framebuffer.hasColorTexture(), framebuffer.hasStencilTexture(), glm::vec4(0.0f));
 	// pass.setViewMode(OtPass::sequential);
 	// pass.setFrameBuffer(framebuffer);
@@ -244,6 +245,7 @@ void OtCanvas::render(OtFrameBuffer& framebuffer, float scale, std::function<voi
 	}
 
 	nvgEndFrame(context);
+	pass.end();
 }
 
 

@@ -291,8 +291,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 		vertexBuffers.resize(decaySteps);
 	}
 
-	// update framebuffers
-	work.update(width, height);
+	// update blur textures
 	blur1.update(width / 3, height / 3, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
 	blur2.update(width / 3, height / 3, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
 
@@ -315,7 +314,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	}
 
 	OtRenderPass pass;
-	pass.start(work);
+	pass.start(framebuffer);
 	pass.bindPipeline(pipeline);
 
 	// setup brush
@@ -396,7 +395,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	for (auto p = 0; p < 4; p++) {
 		// run horizontal blur
 		blur.setDirection(glm::vec2(1.0f, 0.0f));
-		blur.render(p == 0 ? work.getColorTexture() : blur2, blur1);
+		blur.render(p == 0 ? framebuffer.getColorTexture() : blur2, blur1);
 
 		// run vertical blur
 		blur.setDirection(glm::vec2(0.0f, 1.0f));
@@ -404,9 +403,8 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	}
 
 	// combine original rendering with glow
-	addOver.setOverlay(blur2);
-	addOver.setOverlayBrightness(1.25f + ((brightness - 1.0f) / 2.0f));
-	addOver.render(work.getColorTexture(), framebuffer.getColorTexture());
+	compositor.setBrightness(1.25f + ((brightness - 1.0f) / 2.0f));
+	compositor.render(blur2, framebuffer.getColorTexture());
 }
 
 

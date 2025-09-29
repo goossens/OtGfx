@@ -14,8 +14,8 @@
 
 #include <vector>
 
-#include "OtAlphaOver.h"
 #include "OtCanvasModule.h"
+#include "OtCompositingAlphaOver.h"
 #include "OtFlood.h"
 #include "OtFrameBuffer.h"
 #include "OtUi.h"
@@ -85,5 +85,5 @@ private:
 	// GPU resource
 	OtFrameBuffer framebuffer{OtTexture::Format::rgba8};
 	OtFlood flood;
-	OtAlphaOver alphaOver;
+	OtCompositingAlphaOver alphaOver;
 };

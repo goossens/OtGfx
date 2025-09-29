@@ -18,8 +18,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "OtAddOver.h"
 #include "OtBlur.h"
+#include "OtCompositingAdd.h"
 #include "OtFrameBuffer.h"
 #include "OtRenderPipeline.h"
 #include "OtTexture.h"
@@ -98,10 +98,9 @@ private:
 
 	// filters
 	OtBlur blur;
-	OtAddOver addOver;
+	OtCompositingAdd compositor;
 
 	// GPU resources
-	OtFrameBuffer work{OtTexture::Format::rgba8};
 	OtTexture blur1;
 	OtTexture blur2;
 

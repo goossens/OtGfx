@@ -28,6 +28,7 @@
 #include "OtMesh.h"
 #include "OtRenderPipeline.h"
 #include "OtSampler.h"
+#include "OtTexture.h"
 #include "OtVertexBuffer.h"
 
 
@@ -43,6 +44,26 @@ public:
 	}
 
 	// start a render pass
+	inline void start(OtTexture& texture) {
+		// sanity checks
+		OtAssert(!open);
+
+		if (!texture.isValid()) {
+			OtLogFatal("Can't use invalid texture in render pass");
+		}
+
+		// start rendering pass
+		SDL_GPUColorTargetInfo info{};
+		info.texture = texture.getTexture();
+		pass = SDL_BeginGPURenderPass(OtGpu::instance().pipelineCommandBuffer, &info, 1, nullptr);
+
+		if (!pass) {
+			OtLogFatal("Error in SDL_BeginGPURenderPass: {}", SDL_GetError());
+		}
+
+		open = true;
+	}
+
 	inline void start(OtFrameBuffer& framebuffer) {
 		// sanity checks
 		OtAssert(!open);
@@ -142,7 +163,12 @@ public:
 			static_cast<Uint32>(size));
 	}
 
-	// render triangles
+	// execute a rendering command
+	inline void render(size_t vertices, size_t instances=1) {
+		OtAssert(open);
+		SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(vertices), static_cast<Uint32>(instances), 0, 0);
+	}
+
 	inline void render(OtVertexBuffer& buffer) {
 		OtAssert(open);
 

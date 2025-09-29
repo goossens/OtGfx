@@ -114,6 +114,12 @@ public:
 
 	inline OtImage::Format getBestImageFormat() { return convertToImageFormat(); }
 
+	inline bool canBeSampled() { return (usage & Usage::sampler) != 0; }
+	inline bool isColorTarget() { return (usage & Usage::colorTarget) != 0; }
+	inline bool isDepthStencilTarget() { return (usage & Usage::depthStencilTarget) != 0; }
+	inline bool canComputeRead() { return (usage & Usage::computeStorageRead) != 0; }
+	inline bool canComputeWrite() { return (usage & Usage::computeStorageWrite) != 0; }
+
 	// version management
 	inline void setVersion(int v) { version = v; }
 	inline int getVersion() { return version; }
