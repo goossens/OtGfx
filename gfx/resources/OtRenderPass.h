@@ -44,7 +44,7 @@ public:
 	}
 
 	// start a render pass
-	inline void start(OtTexture& texture) {
+	inline void start(OtTexture& texture, bool clear) {
 		// sanity checks
 		OtAssert(!open);
 
@@ -55,6 +55,12 @@ public:
 		// start rendering pass
 		SDL_GPUColorTargetInfo info{};
 		info.texture = texture.getTexture();
+
+		if (clear) {
+			info.load_op = SDL_GPU_LOADOP_CLEAR;
+			info.clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
+		}
+
 		pass = SDL_BeginGPURenderPass(OtGpu::instance().pipelineCommandBuffer, &info, 1, nullptr);
 
 		if (!pass) {

@@ -20,7 +20,6 @@
 
 #include "OtBlur.h"
 #include "OtCompositingAdd.h"
-#include "OtFrameBuffer.h"
 #include "OtRenderPipeline.h"
 #include "OtTexture.h"
 #include "OtVertexBuffer.h"
@@ -54,8 +53,8 @@ public:
 	void drawSevenSegment(float x, float y, float size, const std::string& text, float lineWidth, glm::vec4& color);
 	void drawText(float x, float y, float size, const std::string& text, float lineWidth, glm::vec4& color);
 
-	// render to a specified framebuffer
-	void render(OtFrameBuffer& framebuffer);
+	// render to a specified texture
+	void render(OtTexture& texture);
 
 private:
 	// properties

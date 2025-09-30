@@ -50,10 +50,11 @@ public:
 		sampler = SDL_GPU_TEXTUREUSAGE_SAMPLER,
 		colorTarget = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET,
 		depthStencilTarget = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
-		graphicsStorageRead = SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ,
 		computeStorageRead = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
 		computeStorageWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE,
 		computeStorageReadWrite = SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE,
+
+		readAll = sampler | computeStorageRead,
 
 		rwRenderAll = sampler | colorTarget,
 		rwComputeAll = computeStorageRead | computeStorageWrite | computeStorageReadWrite,
@@ -90,7 +91,7 @@ public:
 			: ImTextureID_Invalid;
 	}
 
-	// get texture properties
+	// access texture properties
 	inline int getWidth() { return width; }
 	inline int getHeight() { return height; }
 	inline Format getFormat() { return format; }

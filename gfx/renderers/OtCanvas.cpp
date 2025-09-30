@@ -285,7 +285,7 @@ int OtCanvas::renderCreateTexture(int type, int w, int h, int imageFlags, const 
 		texture.load(w, h, format, (void*) data);
 
 	} else {
-		texture.update(w, h, format, OtTexture::Usage::sampler);
+		texture.update(w, h, format, OtTexture::Usage::readAll);
 	}
 
 	// update the sampler

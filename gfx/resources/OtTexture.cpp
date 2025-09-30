@@ -78,7 +78,7 @@ bool OtTexture::update(int w, int h, Format f, Usage u) {
 
 void OtTexture::load(OtImage& image) {
 	// update the texture
-	update(image.getWidth(), image.getHeight(), convertFromImageFormat(image.getFormat()), Usage::sampler);
+	update(image.getWidth(), image.getHeight(), convertFromImageFormat(image.getFormat()), Usage::readAll);
 
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{

@@ -17,8 +17,8 @@
 
 #include "glm/glm.hpp"
 
-#include "OtFrameBuffer.h"
 #include "OtOscilloscope.h"
+#include "OtTexture.h"
 #include "OtUi.h"
 
 #include "OtWidget.h"
@@ -117,9 +117,9 @@ private:
 	OtUi::Alignment horizontalAlign = OtUi::Alignment::left;
 	OtUi::Alignment verticalAlign = OtUi::Alignment::top;
 
-	// oscilloscope to render display
+	// oscilloscope to render vector display
 	OtOscilloscope scope;
-	OtFrameBuffer framebuffer{OtTexture::Format::rgba8};
+	OtTexture texture;
 
 	// style variables
 	struct Style {

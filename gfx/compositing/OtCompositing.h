@@ -63,7 +63,7 @@ public:
 
 		// configure pass
 		OtRenderPass pass;
-		pass.start(destination);
+		pass.start(destination, false);
 		pass.bindPipeline(pipeline);
 		pass.bindFragmentSampler(0, sampler, source);
 

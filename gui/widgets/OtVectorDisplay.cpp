@@ -566,9 +566,9 @@ void OtVectorDisplayClass::render() {
 		scale = std::min(available.x / width, available.y / height);
 	}
 
-	// calculate size of scope
+	// calculate size of vector display
 	ImVec2 size(width * scale, height * scale);
-	framebuffer.update(static_cast<int>(size.x), static_cast<int>(size.y));
+	texture.update(static_cast<int>(size.x), static_cast<int>(size.y), OtTexture::Format::rgba8, OtTexture::Usage::rwRenderAll);
 
 	// render all shapes
 	for (auto& shape : shapes) {
@@ -616,9 +616,9 @@ void OtVectorDisplayClass::render() {
 	}
 
 	// render scope frame, align it and put it on the screen
-	scope.render(framebuffer);
+	scope.render(texture);
 	OtUi::align(size, horizontalAlign, verticalAlign);
-	ImGui::Image(framebuffer.getColorTextureID(), size);
+	ImGui::Image(texture.getTextureID(), size);
 }
 
 

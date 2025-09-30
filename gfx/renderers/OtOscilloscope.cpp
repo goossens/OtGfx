@@ -34,6 +34,8 @@ OtOscilloscope::OtOscilloscope() {
 	pipeline.setVertexDescription(OtVertexPosUvCol2D::getDescription());
 	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
 	pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
+	pipeline.setDepthTest(OtRenderPipeline::DepthTest::none);
+	pipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	pipeline.setColorBlend(
 		OtRenderPipeline::BlendOperation::add,
@@ -281,10 +283,10 @@ void OtOscilloscope::drawText(float x, float y, float size, const std::string& t
 //	OtOscilloscope::render
 //
 
-void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
+void OtOscilloscope::render(OtTexture& texture) {
 	// get dimensions
-	width = framebuffer.getWidth();
-	height = framebuffer.getHeight();
+	width = texture.getWidth();
+	height = texture.getHeight();
 
 	// update vertex buffers (if required)
 	if (vertexBuffers.size() != decaySteps) {
@@ -314,7 +316,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	}
 
 	OtRenderPass pass;
-	pass.start(framebuffer);
+	pass.start(texture, true);
 	pass.bindPipeline(pipeline);
 
 	// setup brush
@@ -395,7 +397,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 	for (auto p = 0; p < 4; p++) {
 		// run horizontal blur
 		blur.setDirection(glm::vec2(1.0f, 0.0f));
-		blur.render(p == 0 ? framebuffer.getColorTexture() : blur2, blur1);
+		blur.render(p == 0 ? texture : blur2, blur1);
 
 		// run vertical blur
 		blur.setDirection(glm::vec2(0.0f, 1.0f));
@@ -404,7 +406,7 @@ void OtOscilloscope::render(OtFrameBuffer& framebuffer) {
 
 	// combine original rendering with glow
 	compositor.setBrightness(1.25f + ((brightness - 1.0f) / 2.0f));
-	compositor.render(blur2, framebuffer.getColorTexture());
+	compositor.render(blur2, texture);
 }
 
 
