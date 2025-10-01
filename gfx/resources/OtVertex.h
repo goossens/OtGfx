@@ -136,18 +136,17 @@ struct OtVertexPosCol2D {
 
 
 //
-//	OtVertexPosUvCol2D
+//	OtVertexPosUv2D
 //
 
-struct OtVertexPosUvCol2D {
+struct OtVertexPosUv2D {
 	// vertex elements
 	glm::vec2 position;
 	glm::vec2 uv;
-	glm::vec4 color;
 
 	// constructors
-	OtVertexPosUvCol2D() = default;
-	inline OtVertexPosUvCol2D(const glm::vec2& p, const glm::vec2& u=glm::vec2(0.0f), const glm::vec4& c=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) : position(p), uv(u), color(c) {}
+	OtVertexPosUv2D() = default;
+	inline OtVertexPosUv2D(const glm::vec2& p, const glm::vec2& u=glm::vec2(0.0f)) : position(p), uv(u) {}
 
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
@@ -156,24 +155,18 @@ struct OtVertexPosUvCol2D {
 				.location = 0,
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosUvCol2D, position),
+				.offset = offsetof(OtVertexPosUv2D, position),
 			},
 			{
 				.location = 1,
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosUvCol2D, uv),
-			},
-			{
-				.location = 2,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = offsetof(OtVertexPosUvCol2D, color),
+				.offset = offsetof(OtVertexPosUv2D, uv),
 			}
 		};
 
 		static OtVertexDescription description{
-			.size = sizeof(OtVertexPosUvCol2D),
+			.size = sizeof(OtVertexPosUv2D),
 			.members = sizeof(attributes) / sizeof(attributes[0]),
 			.attributes = attributes
 		};
@@ -216,6 +209,54 @@ struct OtVertexPosColor {
 
 		static OtVertexDescription description{
 			.size = sizeof(OtVertexPosColor),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
+			.attributes = attributes
+		};
+
+		return &description;
+	}
+};
+
+
+//
+//	OtVertexPosUvCol2D
+//
+
+struct OtVertexPosUvCol2D {
+	// vertex elements
+	glm::vec2 position;
+	glm::vec2 uv;
+	glm::vec4 color;
+
+	// constructors
+	OtVertexPosUvCol2D() = default;
+	inline OtVertexPosUvCol2D(const glm::vec2& p, const glm::vec2& u=glm::vec2(0.0f), const glm::vec4& c=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) : position(p), uv(u), color(c) {}
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{
+				.location = 0,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+				.offset = offsetof(OtVertexPosUvCol2D, position),
+			},
+			{
+				.location = 1,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+				.offset = offsetof(OtVertexPosUvCol2D, uv),
+			},
+			{
+				.location = 2,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = offsetof(OtVertexPosUvCol2D, color),
+			}
+		};
+
+		static OtVertexDescription description{
+			.size = sizeof(OtVertexPosUvCol2D),
 			.members = sizeof(attributes) / sizeof(attributes[0]),
 			.attributes = attributes
 		};

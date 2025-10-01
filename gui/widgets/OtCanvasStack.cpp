@@ -148,12 +148,10 @@ void OtCanvasStackClass::render() {
 		}
 	}
 
-	ImVec2 size{float(w), float(h)};
-	auto texture = framebuffer.getColorTexture();
-
 	ImGui::PushID(this);
+	ImVec2 size{float(w), float(h)};
 	OtUi::align(size, horizontalAlign, verticalAlign);
-	ImGui::Image(texture.getTextureID(), size);
+	ImGui::Image(canvases[0].framebuffer.getColorTexture().getTextureID(), size);
 	ImGui::PopID();
 }
 

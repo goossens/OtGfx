@@ -190,7 +190,7 @@ public:
 		SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(buffer.getCount()), 1, 0, 0);
 	}
 
-	inline void render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer) {
+	inline void render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset=0, size_t count=0) {
 		OtAssert(open);
 
 		// bind the vertex buffer to the pass
@@ -208,7 +208,9 @@ public:
 		SDL_BindGPUIndexBuffer(pass, &indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
 
 		// render the triangles
-		SDL_DrawGPUIndexedPrimitives(pass, static_cast<Uint32>(indexBuffer.getCount()), 1, 0, 0, 0);
+		Uint32 numIndices = static_cast<Uint32>(count == 0 ? indexBuffer.getCount() : count);
+		Uint32 firstIndex = static_cast<Uint32>(offset);
+		SDL_DrawGPUIndexedPrimitives(pass, numIndices, 1, firstIndex, 0, 0);
 	}
 
 	inline void render(OtMesh& mesh) {

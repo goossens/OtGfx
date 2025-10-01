@@ -73,7 +73,7 @@ private:
 		// properties
 		int id;
 		OtObject canvas;
-		OtFrameBuffer framebuffer{OtTexture::Format::rgba8, OtTexture::Format::d24s8};
+		OtFrameBuffer framebuffer{OtTexture::Format::rgba8, OtTexture::Format::d32s8};
 	};
 
 	std::vector<Canvas> canvases;

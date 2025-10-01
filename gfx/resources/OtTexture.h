@@ -41,7 +41,7 @@ public:
 		rgba16 = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
 		rgba32 = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT,
 		d32 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
-		d24s8 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
+		d32s8 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
 	};
 
 	// texture usage
@@ -107,7 +107,7 @@ public:
 			case Format::rgba16: return 8;
 			case Format::rgba32: return 16;
 			case Format::d32: return 4;
-			case Format::d24s8: return 4;
+			case Format::d32s8: return 4;
 		}
 
 		return 0;
@@ -142,7 +142,7 @@ public:
 
 	// see if texture has stencil component
 	inline bool hasStencil() {
-		return (usage & depthStencilTarget) != 0 && format == Format::d24s8;
+		return (usage & depthStencilTarget) != 0 && format == Format::d32s8;
 	}
 
 private:
@@ -208,7 +208,7 @@ private:
 			case Format::rgba16: return OtImage::Format::none;
 			case Format::rgba32: return OtImage::Format::rgba32;
 			case Format::d32: return OtImage::Format::none;
-			case Format::d24s8: return OtImage::Format::none;
+			case Format::d32s8: return OtImage::Format::none;
 		}
 
 		return OtImage::Format::none;

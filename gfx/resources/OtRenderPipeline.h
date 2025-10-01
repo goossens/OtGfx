@@ -12,6 +12,7 @@
 //	Include files
 //
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -34,8 +35,9 @@ public:
 		r8,
 		rgba8,
 		rgba32,
-		rgba8d,
-		rgba32d,
+		rgba8d32,
+		rgba8d24s8,
+		rgba32d32,
 		gBuffer
 	};
 
@@ -51,7 +53,7 @@ public:
 		rgbaz = (r | g | b | a | z)
 	};
 
-	enum class DepthTest {
+	enum class CompareOperation {
 		none,
 		never,
 		less,
@@ -95,6 +97,18 @@ public:
 		alphaSaturate
 	};
 
+	enum class StencilOperation {
+		none,
+		keep,
+		zero,
+		replace,
+		incrementAndClamp,
+		decrementAndClamp,
+		invert,
+		incrementAndWrap,
+		decrementAndWrap
+	};
+
 	// constructor
 	OtRenderPipeline() = default;
 
@@ -116,9 +130,29 @@ public:
 	inline void setVertexDescription(OtVertexDescription* description) { vertexDescription = description; }
 	inline void setRenderTargetType(RenderTargetType value) { renderTargetType = value; }
 	inline void setTargetChannels(TargetChannels value) { targetChannels = value; }
-	inline void setDepthTest(DepthTest value) { depthTest = value; }
+	inline void setDepthTest(CompareOperation value) { depthTest = value; }
 	inline void setCulling(Culling value) { culling = value; }
 	inline void setFill(bool mode) { fill = mode; }
+
+	inline void setStencil(
+		uint8_t compareMask, uint8_t writeMask,
+		CompareOperation frontCompare, StencilOperation frontPass, StencilOperation frontFail, StencilOperation frontDepthFail,
+		CompareOperation backCompare, StencilOperation backPass, StencilOperation backFail, StencilOperation backDepthFail) {
+
+		useStencil = true;
+		stencilCompareMask = compareMask;
+		stencilWriteMask = writeMask;
+
+		stencilFrontCompare = frontCompare;
+		stencilFrontPassOperation = frontPass;
+		stencilFrontFailOperation = frontFail;
+		stencilFrontDepthFailOperation = frontDepthFail;
+
+		stencilBackCompare = backCompare;
+		stencilBackPassOperation = backPass;
+		stencilBackFailOperation = backFail;
+		stencilBackDepthFailOperation = backDepthFail;
+	}
 
 	inline void setBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
 		setColorBlend(operation, src, dst);
@@ -147,11 +181,25 @@ public:
 		pipeline = nullptr;
 
 		vertexDescription = nullptr;
-		renderTargetType = RenderTargetType::rgba8d;
+		renderTargetType = RenderTargetType::rgba8d32;
 		targetChannels = TargetChannels::rgbaz;
-		depthTest = DepthTest::less;
+		depthTest = CompareOperation::less;
 		culling = Culling::cw;
 		fill = true;
+
+		useStencil = false;
+		stencilCompareMask = 0;
+		stencilWriteMask = 0;
+
+		stencilFrontCompare = CompareOperation::none;
+		stencilFrontPassOperation = StencilOperation::none;
+		stencilFrontFailOperation = StencilOperation::none;
+		stencilFrontDepthFailOperation = StencilOperation::none;
+
+		stencilBackCompare = CompareOperation::none;
+		stencilBackPassOperation = StencilOperation::none;
+		stencilBackFailOperation = StencilOperation::none;
+		stencilBackDepthFailOperation = StencilOperation::none;
 
 		colorBlendOperation = BlendOperation::none;
 		alphaBlendOperation = BlendOperation::none;
@@ -185,11 +233,25 @@ private:
 
 	// pipeline properties
 	OtVertexDescription* vertexDescription = nullptr;
-	RenderTargetType renderTargetType = RenderTargetType::rgba8d;
+	RenderTargetType renderTargetType = RenderTargetType::rgba8d32;
 	TargetChannels targetChannels = TargetChannels::rgbaz;
-	DepthTest depthTest = DepthTest::less;
+	CompareOperation depthTest = CompareOperation::less;
 	Culling culling = Culling::cw;
 	bool fill = true;
+
+	bool useStencil = false;
+	uint8_t stencilCompareMask = 0;
+	uint8_t stencilWriteMask = 0;
+
+	CompareOperation stencilFrontCompare = CompareOperation::none;
+	StencilOperation stencilFrontPassOperation = StencilOperation::none;
+	StencilOperation stencilFrontFailOperation = StencilOperation::none;
+	StencilOperation stencilFrontDepthFailOperation = StencilOperation::none;
+
+	CompareOperation stencilBackCompare = CompareOperation::none;
+	StencilOperation stencilBackPassOperation = StencilOperation::none;
+	StencilOperation stencilBackFailOperation = StencilOperation::none;
+	StencilOperation stencilBackDepthFailOperation = StencilOperation::none;
 
 	BlendOperation colorBlendOperation = BlendOperation::none;
 	BlendOperation alphaBlendOperation = BlendOperation::none;
@@ -299,14 +361,24 @@ private:
 					.padding3 = 0
 				},
 				.depth_stencil_state = SDL_GPUDepthStencilState{
-					.compare_op = getDepthTest(),
-					.back_stencil_state = SDL_GPUStencilOpState{},
-					.front_stencil_state = SDL_GPUStencilOpState{},
-					.compare_mask = 0,
-					.write_mask = 0,
-					.enable_depth_test = (depthTest != DepthTest::none),
+					.compare_op = getCompareOperation(depthTest),
+					.back_stencil_state = SDL_GPUStencilOpState{
+						.fail_op = getStencelOperation(stencilBackFailOperation),
+						.pass_op = getStencelOperation(stencilBackPassOperation),
+						.depth_fail_op = getStencelOperation(stencilBackDepthFailOperation),
+						.compare_op = getCompareOperation(stencilBackCompare)
+					},
+					.front_stencil_state = SDL_GPUStencilOpState{
+						.fail_op = getStencelOperation(stencilFrontFailOperation),
+						.pass_op = getStencelOperation(stencilFrontPassOperation),
+						.depth_fail_op = getStencelOperation(stencilFrontDepthFailOperation),
+						.compare_op = getCompareOperation(stencilFrontCompare)
+					},
+					.compare_mask = static_cast<Uint8>(stencilCompareMask),
+					.write_mask = static_cast<Uint8>(stencilCompareMask),
+					.enable_depth_test = (depthTest != CompareOperation::none),
 					.enable_depth_write = (targetChannels & TargetChannels::z) != 0,
-					.enable_stencil_test = false,
+					.enable_stencil_test = useStencil,
 					.padding1 = 0,
 					.padding2 = 0,
 					.padding3 = 0
@@ -343,8 +415,9 @@ private:
 			case RenderTargetType::r8: return SDL_GPU_TEXTUREFORMAT_R8_UNORM;
 			case RenderTargetType::rgba8: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
 			case RenderTargetType::rgba32: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
-			case RenderTargetType::rgba8d: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-			case RenderTargetType::rgba32d: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
+			case RenderTargetType::rgba8d32: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+			case RenderTargetType::rgba32d32: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
+			case RenderTargetType::rgba8d24s8: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
 			case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		}
 
@@ -356,8 +429,9 @@ private:
 			case RenderTargetType::r8: return false;
 			case RenderTargetType::rgba8: return false;
 			case RenderTargetType::rgba32: return false;
-			case RenderTargetType::rgba8d: return true;
-			case RenderTargetType::rgba32d: return true;
+			case RenderTargetType::rgba8d32: return true;
+			case RenderTargetType::rgba32d32: return true;
+			case RenderTargetType::rgba8d24s8: return true;
 			case RenderTargetType::gBuffer: return true;
 		}
 
@@ -369,8 +443,9 @@ private:
 			case RenderTargetType::r8: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rgba8: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rgba32: return SDL_GPU_TEXTUREFORMAT_INVALID;
-			case RenderTargetType::rgba8d: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
-			case RenderTargetType::rgba32d: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+			case RenderTargetType::rgba8d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+			case RenderTargetType::rgba32d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+			case RenderTargetType::rgba8d24s8: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT;
 			case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		}
 
@@ -399,17 +474,17 @@ private:
 		return flags;
 	}
 
-	SDL_GPUCompareOp getDepthTest() {
-		switch (depthTest) {
-			case DepthTest::none: return SDL_GPU_COMPAREOP_INVALID;
-			case DepthTest::never: return SDL_GPU_COMPAREOP_NEVER;
-			case DepthTest::less: return SDL_GPU_COMPAREOP_LESS;
-			case DepthTest::equal: return SDL_GPU_COMPAREOP_EQUAL;
-			case DepthTest::lessEqual: return SDL_GPU_COMPAREOP_LESS_OR_EQUAL;
-			case DepthTest::greater: return SDL_GPU_COMPAREOP_GREATER;
-			case DepthTest::notEqual: return SDL_GPU_COMPAREOP_NOT_EQUAL;
-			case DepthTest::greaterEqual: return SDL_GPU_COMPAREOP_GREATER_OR_EQUAL;
-			case DepthTest::always: return SDL_GPU_COMPAREOP_ALWAYS;
+	SDL_GPUCompareOp getCompareOperation(CompareOperation operation) {
+		switch (operation) {
+			case CompareOperation::none: return SDL_GPU_COMPAREOP_INVALID;
+			case CompareOperation::never: return SDL_GPU_COMPAREOP_NEVER;
+			case CompareOperation::less: return SDL_GPU_COMPAREOP_LESS;
+			case CompareOperation::equal: return SDL_GPU_COMPAREOP_EQUAL;
+			case CompareOperation::lessEqual: return SDL_GPU_COMPAREOP_LESS_OR_EQUAL;
+			case CompareOperation::greater: return SDL_GPU_COMPAREOP_GREATER;
+			case CompareOperation::notEqual: return SDL_GPU_COMPAREOP_NOT_EQUAL;
+			case CompareOperation::greaterEqual: return SDL_GPU_COMPAREOP_GREATER_OR_EQUAL;
+			case CompareOperation::always: return SDL_GPU_COMPAREOP_ALWAYS;
 		}
 
 		return SDL_GPU_COMPAREOP_INVALID;
@@ -457,5 +532,19 @@ private:
 		}
 
 		return SDL_GPU_BLENDFACTOR_INVALID;
+	}
+
+	SDL_GPUStencilOp getStencelOperation(StencilOperation operation) {
+		switch (operation) {
+			case StencilOperation::none: return SDL_GPU_STENCILOP_INVALID;
+			case StencilOperation::keep: return SDL_GPU_STENCILOP_KEEP;
+			case StencilOperation::zero: return SDL_GPU_STENCILOP_ZERO;
+			case StencilOperation::replace: return SDL_GPU_STENCILOP_REPLACE;
+			case StencilOperation::incrementAndClamp: return SDL_GPU_STENCILOP_INCREMENT_AND_CLAMP;
+			case StencilOperation::decrementAndClamp: return SDL_GPU_STENCILOP_DECREMENT_AND_CLAMP;
+			case StencilOperation::invert: return SDL_GPU_STENCILOP_INVERT;
+			case StencilOperation::incrementAndWrap: return SDL_GPU_STENCILOP_INCREMENT_AND_WRAP;
+			case StencilOperation::decrementAndWrap: return SDL_GPU_STENCILOP_DECREMENT_AND_WRAP;
+		}
 	}
 };

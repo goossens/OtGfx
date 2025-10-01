@@ -56,7 +56,7 @@ public:
 			pipeline.setShaders(OtCompositingVert, sizeof(OtCompositingVert), OtCompositingFrag, sizeof(OtCompositingFrag));
 			pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
 			pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
-			pipeline.setDepthTest(OtRenderPipeline::DepthTest::none);
+			pipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
 			pipeline.setCulling(OtRenderPipeline::Culling::none);
 			configurePipeline(pipeline);
 		}

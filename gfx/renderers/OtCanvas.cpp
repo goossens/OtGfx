@@ -16,7 +16,9 @@
 
 #include "OtCanvas.h"
 #include "OtImage.h"
-#include "OtRenderPass.h"
+
+#include "OtCanvasFrag.h"
+#include "OtCanvasVert.h"
 
 
 //
@@ -32,9 +34,9 @@ OtCanvas::OtCanvas() {
 	params.renderDeleteTexture = [](void* ptr, int texture) { return ((OtCanvas*) ptr)->renderDeleteTexture(texture); };
 	params.renderUpdateTexture = [](void* ptr, int texture, int x, int y, int w, int h, const unsigned char* data) { return ((OtCanvas*) ptr)->renderUpdateTexture(texture, x, y, w, h, data); };
 	params.renderGetTextureSize = [](void* ptr, int texture, int* w, int* h) { return ((OtCanvas*) ptr)->renderGetTextureSize(texture, w, h); };
-	params.renderViewport = [](void* ptr, float width, float height, float devicePixelRatio) { ((OtCanvas*) ptr)->renderViewport(width, height, devicePixelRatio); };
-	params.renderCancel = [](void* ptr) { ((OtCanvas*) ptr)->renderCancel(); };
-	params.renderFlush = [](void* ptr) { ((OtCanvas*) ptr)->renderFlush(); };
+	params.renderViewport = [](void*, float, float, float) {};
+	params.renderCancel = [](void*) {};
+	params.renderFlush = [](void*) {};
 	params.renderFill = [](void* ptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths) { ((OtCanvas*) ptr)->renderFill(paint, compositeOperation, scissor, fringe, bounds, paths, npaths); };
 	params.renderStroke = [](void* ptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths) { ((OtCanvas*) ptr)->renderStroke(paint, compositeOperation, scissor, fringe, strokeWidth, paths, npaths); };
 	params.renderTriangles = [](void* ptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, const NVGvertex* verts, int nverts, float fringe) { ((OtCanvas*) ptr)->renderTriangles(paint, compositeOperation, scissor, verts, nverts, fringe); };
@@ -46,6 +48,32 @@ OtCanvas::OtCanvas() {
 	if (!context) {
 		OtLogFatal("Internal error: can't create a new canvas context");
 	}
+
+	// configure rendering pipelines
+	pipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	pipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
+	pipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	pipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	shapesPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	shapesPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	shapesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	shapesPipeline.setTargetChannels(OtRenderPipeline::TargetChannels::z);
+	shapesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::always);
+	shapesPipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	shapesPipeline.setStencil(
+		0, 0xff,
+		OtRenderPipeline::CompareOperation::always,
+		OtRenderPipeline::StencilOperation::incrementAndWrap,
+		OtRenderPipeline::StencilOperation::none,
+		OtRenderPipeline::StencilOperation::none,
+		OtRenderPipeline::CompareOperation::always,
+		OtRenderPipeline::StencilOperation::decrementAndWrap,
+		OtRenderPipeline::StencilOperation::none,
+		OtRenderPipeline::StencilOperation::none);
 }
 
 
@@ -204,36 +232,8 @@ void OtCanvas::render(OtFrameBuffer& framebuffer, float scale, std::function<voi
 	width = static_cast<float>(framebuffer.getWidth());
 	height = static_cast<float>(framebuffer.getHeight());
 
-	// setup rendering pass
-	OtRenderPass pass;
-	pass.start(framebuffer);
-	// pass.setClear(framebuffer.hasColorTexture(), framebuffer.hasStencilTexture(), glm::vec4(0.0f));
-	// pass.setViewMode(OtPass::sequential);
-	// pass.setFrameBuffer(framebuffer);
-	// pass.touch();
-
-	// set fragment uniforms
-	struct FragmentUniforms {
-		float scissorMat[12]; // matrices are actually 3 vec4s
-		float paintMat[12];
-		glm::vec4 innerCol;
-		glm::vec4 outerCol;
-		glm::vec2 scissorExt;
-		glm::vec2 scissorScale;
-		glm::vec2 extent;
-		float radius;
-		float feather;
-		float strokeMult;
-		float strokeThr;
-		int texType;
-		int type;
-
-	} fragmentUniforms;
-
-	pass.setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
-
 	// render the canvas
-	nvgBeginFrame(context, width, height, 1.0);
+	nvgBeginFrame(context, width, height, 1.0f);
 	nvgScale(context, scale, scale);
 
 	try {
@@ -244,8 +244,50 @@ void OtCanvas::render(OtFrameBuffer& framebuffer, float scale, std::function<voi
 		throw(e);
 	}
 
-	nvgEndFrame(context);
+	// start rendering pass
+	OtRenderPass pass;
+	pass.start(framebuffer);
+	pass.bindPipeline(pipeline);
+
+	// ignore empty canvases
+	if (calls.size()) {
+		// update vertex and index buffers
+		vertexBuffer.set(vertices.data(), vertices.size(), OtVertexPosUv2D::getDescription(), true);
+		indexBuffer.set(indices.data(), indices.size(), true);
+
+		// render all calls
+		for (auto& call : calls) {
+			switch (call.type) {
+				case CallType::none:
+					break;
+
+				case CallType::fill:
+					setUniforms(pass, call);
+					pass.render(vertexBuffer, indexBuffer, call.indexOffset, call.indexCount);
+					break;
+
+				case CallType::convexFill:
+					setUniforms(pass, call);
+					pass.render(vertexBuffer, indexBuffer, call.indexOffset, call.indexCount);
+					break;
+
+				case CallType::stroke:
+					break;
+
+				case CallType::triangles:
+					break;
+			}
+		}
+	}
+
 	pass.end();
+
+	// cleanup
+	nvgEndFrame(context);
+	calls.clear();
+	vertices.clear();
+	indices.clear();
+	fragmentUniforms.clear();
 }
 
 
@@ -274,11 +316,14 @@ int OtCanvas::renderCreate() {
 //
 
 int OtCanvas::renderCreateTexture(int type, int w, int h, int imageFlags, const unsigned char* data) {
-	// create the texture
-	auto [it, valid] = textures.emplace(nextTextureID++, Texture());
+	// create the texture record
+	auto [it, valid] = textures.emplace(nextTextureID++, Texture{});
 	auto id = it->first;
 	auto& texture = it->second.texture;
 	auto& sampler = it->second.sampler;
+
+	// update the texture
+	it->second.flip = imageFlags & NVG_IMAGE_FLIPY;
 	auto format = (type == NVG_TEXTURE_RGBA) ? OtTexture::Format::rgba8 : OtTexture::Format::r8;
 
 	if (data) {
@@ -352,44 +397,58 @@ int OtCanvas::renderGetTextureSize(int texture, int* w, int* h) {
 
 
 //
-//	OtCanvas::renderViewport
-//
-
-void OtCanvas::renderViewport([[maybe_unused]] float width, [[maybe_unused]] float height, [[maybe_unused]] float devicePixelRatio) {
-	// nothing to do
-}
-
-
-//
-//	OtCanvas::renderCancel
-//
-
-void OtCanvas::renderCancel() {
-	// nothing to do
-}
-
-
-//
-//	OtCanvas::renderFlush
-//
-
-void OtCanvas::renderFlush() {
-	// TODO
-}
-
-
-//
 //	OtCanvas::renderFill
 //
 
-void OtCanvas::renderFill([[maybe_unused]] NVGpaint* paint, [[maybe_unused]] NVGcompositeOperationState compositeOperation, [[maybe_unused]] NVGscissor* scissor, [[maybe_unused]] float fringe, [[maybe_unused]] const float* bounds, [[maybe_unused]] const NVGpath* paths, [[maybe_unused]] int npaths) {
-	// int indexCount = 0;
-	// int strokeCount = 0;
-	// int maxverts = maxVertCount(paths, npaths, &indexCount, &strokeCount) + 6;
+void OtCanvas::renderFill(NVGpaint* paint, [[maybe_unused]] NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths) {
+	// setup new rendering call
+	auto& call = calls.emplace_back(Call{});
+	call.type = (npaths == 1 && paths[0].convex) ? CallType::convexFill : CallType::fill;
+	call.image = paint->image;
+	call.indexOffset = indices.size();
 
-	// if (vertices.size() + maxverts > std::numeric_limits<uint16_t>::max()) {
-	// 	renderFlush(scissor);
-	// }
+	// copy vertex and index data
+	uint32_t index = static_cast<uint32_t>(call.indexOffset);
+
+	for (int p = 0; p < npaths; p++) {
+		auto& path =  paths[p];
+
+		if (path.nfill > 2) {
+			for (int v = 2; v < path.nfill; v++) {
+				auto& vertex = path.fill[v];
+				vertices.emplace_back(glm::vec2(vertex.x, vertex.y), glm::vec2(vertex.u, vertex.v));
+				indices.emplace_back(index++);
+			}
+		}
+	}
+
+	call.indexCount = indices.size() - call.indexOffset;
+	call.strokeOffset = vertices.size();
+
+	for (int p = 0; p < npaths; p++) {
+		auto& path =  paths[p];
+
+		if (path.nstroke > 0) {
+			for (int v = 0; v < path.nstroke; v++) {
+				auto& vertex = path.stroke[v];
+				vertices.emplace_back(glm::vec2(vertex.x, vertex.y), glm::vec2(vertex.u, vertex.v));
+			}
+		}
+	}
+
+	call.strokeCount = vertices.size() - call.strokeOffset;
+
+	if (call.type == CallType::fill) {
+		call.triangleOffset = vertices.size();
+		vertices.emplace_back(glm::vec2(bounds[2], bounds[3]), glm::vec2(0.5f, 1.0f));
+		vertices.emplace_back(glm::vec2(bounds[2], bounds[1]), glm::vec2(0.5f, 1.0f));
+		vertices.emplace_back(glm::vec2(bounds[0], bounds[3]), glm::vec2(0.5f, 1.0f));
+		vertices.emplace_back(glm::vec2(bounds[0], bounds[1]), glm::vec2(0.5f, 1.0f));
+		call.triangleCount = vertices.size() - call.triangleOffset;
+	}
+
+	call.uniformOffset = fragmentUniforms.size();
+	paintToUniforms(paint, scissor, width, fringe, -1.0f);
 }
 
 
@@ -398,12 +457,6 @@ void OtCanvas::renderFill([[maybe_unused]] NVGpaint* paint, [[maybe_unused]] NVG
 //
 
 void OtCanvas::renderStroke([[maybe_unused]] NVGpaint* paint, [[maybe_unused]] NVGcompositeOperationState compositeOperation, [[maybe_unused]] NVGscissor* scissor, [[maybe_unused]] float fringe, [[maybe_unused]] float strokeWidth, [[maybe_unused]] const NVGpath* paths, [[maybe_unused]] int npaths) {
-	// int strokeCount = 0;
-	// int maxverts = maxVertCount(paths, npaths, nullptr, &strokeCount);
-
-	// if (vertices.size() + maxverts > std::numeric_limits<uint16_t>::max()) {
-	// 	renderFlush(scissor);
-	// }
 }
 
 
@@ -420,4 +473,126 @@ void OtCanvas::renderTriangles([[maybe_unused]] NVGpaint* paint, [[maybe_unused]
 //
 
 void OtCanvas::renderDelete() {
+}
+
+
+//
+//	premulColor
+//
+
+static glm::vec4 premulColor(NVGcolor c) {
+	return glm::vec4(
+		c.r * c.a,
+		c.g * c.a,
+		c.b * c.a,
+		c.a);
+}
+
+
+//
+//	OtCanvas::paintToUniforms
+//
+
+void OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr) {
+	float invxform[6];
+
+	// create new uniform set
+	auto& uniforms = fragmentUniforms.emplace_back(FragmentUniforms{});
+
+	// populate uniform values
+	uniforms.innerCol = premulColor(paint->innerColor);
+	uniforms.outerCol = premulColor(paint->outerColor);
+
+	if (scissor->extent[0] < -0.5f || scissor->extent[1] < -0.5f) {
+		uniforms.scissorExt.x = 1.0f;
+		uniforms.scissorExt.y = 1.0f;
+		uniforms.scissorScale.x = 1.0f;
+		uniforms.scissorScale.y = 1.0f;
+
+	} else {
+		nvgTransformInverse(invxform, scissor->xform);
+
+		uniforms.scissorMatCol1 = glm::vec4(invxform[0], invxform[1], 0.0f, 0.0f);
+		uniforms.scissorMatCol2 = glm::vec4(invxform[2], invxform[3], 0.0f, 0.0f);
+		uniforms.scissorMatCol3 = glm::vec4(invxform[4], invxform[5], 1.0f, 0.0f);
+
+		uniforms.scissorExt.x = scissor->extent[0];
+		uniforms.scissorExt.y = scissor->extent[1];
+		uniforms.scissorScale.x = std::sqrt(scissor->xform[0] * scissor->xform[0] + scissor->xform[2] * scissor->xform[2]) / fringe;
+		uniforms.scissorScale.y = std::sqrt(scissor->xform[1] * scissor->xform[1] + scissor->xform[3] * scissor->xform[3]) / fringe;
+	}
+
+	uniforms.extent = glm::vec2(paint->extent[0], paint->extent[1]);
+	uniforms.strokeMult = (width * 0.5f + fringe * 0.5f) / fringe;
+	uniforms.strokeThreshold = strokeThr;
+
+	if (paint->image != 0) {
+		// find texture
+		auto entry = textures.find(paint->image);
+
+		if (entry == textures.end()) {
+			OtLogFatal("Can't find texture in canvas with id {}", paint->image);
+		}
+
+		if (entry->second.flip) {
+			float m1[6], m2[6];
+			nvgTransformTranslate(m1, 0.0f, uniforms.extent.y * 0.5f);
+			nvgTransformMultiply(m1, paint->xform);
+			nvgTransformScale(m2, 1.0f, -1.0f);
+			nvgTransformMultiply(m2, m1);
+			nvgTransformTranslate(m1, 0.0f, -uniforms.extent.y * 0.5f);
+			nvgTransformMultiply(m1, m2);
+			nvgTransformInverse(invxform, m1);
+
+		} else {
+			nvgTransformInverse(invxform, paint->xform);
+		}
+
+		uniforms.shaderType = fillTextureShader;
+		uniforms.texType = entry->second.texture.getFormat() == OtTexture::Format::rgba8 ? 1 : 2;
+
+	} else {
+		uniforms.shaderType = fillGradientShader;
+		uniforms.radius = paint->radius;
+		uniforms.feather = paint->feather;
+		nvgTransformInverse(invxform, paint->xform);
+	}
+
+	uniforms.paintMatCol1 = glm::vec4(invxform[0], invxform[1], 0.0f, 0.0f);
+	uniforms.paintMatCol2 = glm::vec4(invxform[2], invxform[3], 0.0f, 0.0f);
+	uniforms.paintMatCol3 = glm::vec4(invxform[4], invxform[5], 1.0f, 0.0f);
+}
+
+
+//
+//	OtCanvas::setUniforms
+//
+
+void OtCanvas::setUniforms(OtRenderPass& pass, Call& call) {
+	struct VertexUniforms {
+		float width;
+		float heigh;
+	} vertexUniforms {
+		width,
+		height
+	};
+
+	pass.setVertexUniforms(0, &vertexUniforms, sizeof(VertexUniforms));
+	pass.setFragmentUniforms(0, &fragmentUniforms[call.uniformOffset], sizeof(FragmentUniforms));
+
+	if (call.image) {
+		// find texture
+		auto entry = textures.find(call.image);
+
+		if (entry == textures.end()) {
+			OtLogFatal("Can't find texture in canvas with id {}", call.image);
+		}
+
+		pass.bindFragmentSampler(0, entry->second.sampler, entry->second.texture);
+
+	} else {
+		// submit a dummy texture
+		OtTexture texture;
+		pass.bindFragmentSampler(0, sampler, texture);
+	}
 }

@@ -16,14 +16,20 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "glm/glm.hpp"
 #include "nanovg.h"
 
 #include "OtColorParser.h"
 #include "OtFrameBuffer.h"
+#include "OtIndexBuffer.h"
+#include "OtRenderPass.h"
+#include "OtRenderPipeline.h"
 #include "OtSampler.h"
 #include "OtTexture.h"
+#include "OtVertex.h"
+#include "OtVertexBuffer.h"
 
 
 //
@@ -42,32 +48,6 @@ public:
 	static constexpr int imageFlipY = NVG_IMAGE_FLIPY;
 	static constexpr int imageNearest = NVG_IMAGE_NEAREST;
 
-	// composite operations
-	static constexpr int compositeSourceOver = NVG_SOURCE_OVER;
-	static constexpr int compositeSourceIn = NVG_SOURCE_IN;
-	static constexpr int compositeSourceOut = NVG_SOURCE_OUT;
-	static constexpr int compositeSourceAtop = NVG_ATOP;
-	static constexpr int compositeDestinationOver = NVG_DESTINATION_OVER;
-	static constexpr int compositeDestinationIn = NVG_DESTINATION_IN;
-	static constexpr int compositeDestinationOut = NVG_DESTINATION_OUT;
-	static constexpr int compositeDestinationAtop = NVG_DESTINATION_ATOP;
-	static constexpr int compositeLighter = NVG_LIGHTER;
-	static constexpr int compositeCopy = NVG_COPY;
-	static constexpr int compositeXor = NVG_XOR;
-
-	// blend factors
-	static constexpr int blendZero = NVG_ZERO;
-	static constexpr int blendOne = NVG_ONE;
-	static constexpr int blendSourceColor = NVG_SRC_COLOR;
-	static constexpr int blendOneMinusSourceColor = NVG_ONE_MINUS_SRC_COLOR;
-	static constexpr int blendDestinationColor = NVG_DST_COLOR;
-	static constexpr int blendDneMinusDestinationColor = NVG_ONE_MINUS_DST_COLOR;
-	static constexpr int blendSourceAlpha = NVG_SRC_ALPHA;
-	static constexpr int blendOneMinusSourceAlpha = NVG_ONE_MINUS_SRC_ALPHA;
-	static constexpr int blendDestinationAlpha = NVG_DST_ALPHA;
-	static constexpr int blendOneMinusDestinationAlpha = NVG_ONE_MINUS_DST_ALPHA;
-	static constexpr int blendAlphaSaturate = NVG_SRC_ALPHA_SATURATE;
-
 	// line caps
 	static constexpr int lineButtCap = NVG_BUTT;
 	static constexpr int lineRoundCap = NVG_ROUND;
@@ -85,24 +65,6 @@ public:
 	static constexpr int alignMiddle = NVG_ALIGN_MIDDLE;
 	static constexpr int alignBottom = NVG_ALIGN_BOTTOM;
 	static constexpr int alignBaseline = NVG_ALIGN_BASELINE;
-
-	// manipulate composite operation
-	inline void compositeOperation(int operation) {
-		nvgGlobalCompositeOperation(context, operation);
-	}
-
-	inline void compositeBlendFunc(int sfactor, int dfactor) {
-		nvgGlobalCompositeBlendFunc(context, NVGblendFactor(sfactor), NVGblendFactor(dfactor));
-	}
-
-	inline void compositeBlendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {
-		nvgGlobalCompositeBlendFuncSeparate(
-			context,
-			NVGblendFactor(srcRGB),
-			NVGblendFactor(dstRGB),
-			NVGblendFactor(srcAlpha),
-			NVGblendFactor(dstAlpha));
-	}
 
 	// manipulate rendering state
 	inline void save() { nvgSave(context); }
@@ -210,6 +172,7 @@ private:
 	struct Texture {
 		OtTexture texture;
 		OtSampler sampler;
+		bool flip;
 	};
 
 	std::unordered_map<int, Texture> textures;
@@ -231,11 +194,69 @@ private:
 	int renderDeleteTexture(int texture);
 	int renderUpdateTexture(int texture, int x, int y, int w, int h, const unsigned char* data);
 	int renderGetTextureSize(int texture, int* w, int* h);
-	void renderViewport(float width, float height, float devicePixelRatio);
-	void renderCancel();
-	void renderFlush();
 	void renderFill(NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths);
 	void renderStroke(NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths);
 	void renderTriangles(NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, const NVGvertex* verts, int nverts, float fringe);
 	void renderDelete();
+
+	// drawing call data
+	enum class CallType {
+		none,
+		fill,
+		convexFill,
+		stroke,
+		triangles
+	};
+
+	struct Call {
+		CallType type;
+		int image;
+		size_t pathOffset;
+		size_t pathCount;
+		size_t indexOffset;
+		size_t indexCount;
+		size_t strokeOffset;
+		size_t strokeCount;
+		size_t triangleOffset;
+		size_t triangleCount;
+		size_t uniformOffset;
+	};
+
+	static constexpr int fillGradientShader = 0;
+	static constexpr int fillTextureShader = 1;
+	static constexpr int textureShader = 2;
+
+	struct FragmentUniforms {
+		glm::vec4 scissorMatCol1;
+		glm::vec4 scissorMatCol2;
+		glm::vec4 scissorMatCol3;
+		glm::vec4 paintMatCol1;
+		glm::vec4 paintMatCol2;
+		glm::vec4 paintMatCol3;
+		glm::vec4 innerCol;
+		glm::vec4 outerCol;
+		glm::vec2 scissorExt;
+		glm::vec2 scissorScale;
+		glm::vec2 extent;
+		float radius;
+		float feather;
+		float strokeMult;
+		float strokeThreshold;
+		int texType;
+		int shaderType;
+	};
+
+	std::vector<Call> calls;
+	std::vector<OtVertexPosUv2D> vertices;
+	std::vector<uint32_t> indices;
+	std::vector<FragmentUniforms> fragmentUniforms;
+
+	OtVertexBuffer vertexBuffer;
+	OtIndexBuffer indexBuffer;
+	OtRenderPipeline pipeline;
+	OtRenderPipeline shapesPipeline;
+	OtSampler sampler;
+
+	void paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr);
+	void setUniforms(OtRenderPass& pass, Call& call);
 };

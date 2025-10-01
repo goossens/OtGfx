@@ -184,7 +184,7 @@ protected:
 	OtID generatorID = OtIdentifier::create("Generator");
 	bool hasRenderMethod = false;
 
-	OtFrameBuffer framebuffer{OtTexture::Format::rgba8, OtTexture::Format::d24s8};
+	OtFrameBuffer framebuffer{OtTexture::Format::rgba8, OtTexture::Format::d32s8};
 };
 
 static OtNodesFactoryRegister<OtCanvasGeneratorNode> registration;
