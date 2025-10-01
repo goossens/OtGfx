@@ -90,7 +90,7 @@ void OtInstances::add(const glm::mat4 &instance, bool updateVersion) {
 	instances->emplace_back(instance);
 
 	if (updateVersion) {
-	 	incrementVersion();
+		incrementVersion();
 	}
 }
 
@@ -131,7 +131,7 @@ bool OtInstances::submit(OtCamera& camera, OtAABB& aabb) {
 			// glm::mat4* p = static_cast<glm::mat4*>((void*) idb.data);
 
 			// for (uint32_t i = 0; i < count; i++) {
-			// 	*p++ = tmp[i].matrix;
+			//	*p++ = tmp[i].matrix;
 			// }
 
 			// bgfx::setInstanceDataBuffer(&idb);

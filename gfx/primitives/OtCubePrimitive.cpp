@@ -63,8 +63,8 @@ void OtCubePrimitive::createMesh(OtMesh* mesh) {
 	// create all six planes
 	buildPlane(mesh, -1, -1, 1.0f, 1.0f,  1.0f, depthSegments, heightSegments, [](float u, float v, float w) { return glm::vec3(w, v, u); });
 	buildPlane(mesh,  1, -1, 1.0f, 1.0f, -1.0f, depthSegments, heightSegments, [](float u, float v, float w) { return glm::vec3(w, v, u); });
-	buildPlane(mesh,  1,  1, 1.0f, 1.0f,  1.0f, widthSegments,  depthSegments, [](float u, float v, float w) { return glm::vec3(u, w, v); });
-	buildPlane(mesh,  1, -1, 1.0f, 1.0f, -1.0f, widthSegments,  depthSegments, [](float u, float v, float w) { return glm::vec3(u, w, v); });
+	buildPlane(mesh,  1,  1, 1.0f, 1.0f,  1.0f, widthSegments,	depthSegments, [](float u, float v, float w) { return glm::vec3(u, w, v); });
+	buildPlane(mesh,  1, -1, 1.0f, 1.0f, -1.0f, widthSegments,	depthSegments, [](float u, float v, float w) { return glm::vec3(u, w, v); });
 	buildPlane(mesh,  1, -1, 1.0f, 1.0f,  1.0f, widthSegments, heightSegments, [](float u, float v, float w) { return glm::vec3(u, v, w); });
 	buildPlane(mesh, -1, -1, 1.0f, 1.0f, -1.0f, widthSegments, heightSegments, [](float u, float v, float w) { return glm::vec3(u, v, w); });
 }

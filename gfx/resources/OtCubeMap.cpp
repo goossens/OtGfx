@@ -72,7 +72,7 @@ void OtCubeMap::load(const std::string& path, bool async) {
 		loadJSON(path, async);
 
 	} else {
-	 	loadHdrImage(path, async);
+		loadHdrImage(path, async);
 	}
 }
 

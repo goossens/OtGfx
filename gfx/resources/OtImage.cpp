@@ -58,8 +58,8 @@ static bool isPowerOfTwo(int n) {
 		return false;
 
 	} else {
-	    // check if n has only one bit set using the bitwise AND trick
-	    return (n & (n - 1)) == 0;
+		// check if n has only one bit set using the bitwise AND trick
+		return (n & (n - 1)) == 0;
 	}
 }
 

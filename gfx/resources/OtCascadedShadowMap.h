@@ -41,7 +41,7 @@ public:
 	// get cascade specific information
 	inline float getDistance(size_t cascade) { return cascades[cascade].distance; }
 	inline OtCamera& getCamera(size_t cascade) { return cascades[cascade].camera; }
- 	inline OtFrameBuffer& getFrameBuffer(size_t cascade) { return cascades[cascade].framebuffer; }
+	inline OtFrameBuffer& getFrameBuffer(size_t cascade) { return cascades[cascade].framebuffer; }
 	inline OtTexture getDepthTexture(size_t cascade) { return cascades[cascade].framebuffer.getDepthTexture(); }
 
 	// number of cascades in shadowmap

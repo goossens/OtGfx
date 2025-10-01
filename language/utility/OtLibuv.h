@@ -51,7 +51,7 @@ public:
 	// stop the libUV loop
 	static inline void stop() {
 		// use timer so "stop" transaction can complete
-		static 	uv_timer_t uv_shutdown;
+		static uv_timer_t uv_shutdown;
 		uv_timer_init(uv_default_loop(), &uv_shutdown);
 
 		uv_timer_start(&uv_shutdown, [](uv_timer_t* /* handle */) {

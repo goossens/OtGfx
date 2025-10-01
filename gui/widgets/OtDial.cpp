@@ -89,7 +89,7 @@ void OtDialClass::render() {
 
 				// determine needle transformation
 				glm::mat4 transform{1.0f};
-	 			transform = glm::translate(transform, glm::vec3(ndcNx, ndcNy, 0.0f));
+				transform = glm::translate(transform, glm::vec3(ndcNx, ndcNy, 0.0f));
 				transform = glm::rotate(transform, glm::radians(-rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 				transform = glm::translate(transform, glm::vec3(-ndcBx, -ndcBy, 0.0f));
 

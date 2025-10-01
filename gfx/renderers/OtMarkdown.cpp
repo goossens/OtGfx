@@ -529,11 +529,11 @@ int OtMarkdown::text(MD_TEXTTYPE type, const char* text, const char* end) {
 	switch (type) {
 		case MD_TEXT_NORMAL: renderText(text, end); break;
 		case MD_TEXT_CODE: renderText(text, end); break;
-		case MD_TEXT_NULLCHAR:  break;
+		case MD_TEXT_NULLCHAR: break;
 		case MD_TEXT_BR: ImGui::NewLine(); break;
 		case MD_TEXT_SOFTBR: ImGui::NewLine();; break;
 		case MD_TEXT_ENTITY: renderEntity(text, end); break;
-		case MD_TEXT_HTML:  renderHtml(text, end); break;
+		case MD_TEXT_HTML: renderHtml(text, end); break;
 		case MD_TEXT_LATEXMATH: renderText(text, end); break;
 	}
 
@@ -741,7 +741,7 @@ void OtMarkdown::setFont(bool enter) {
 
 ImVec4 OtMarkdown::getColor() {
 	if (href.empty()) {
-		return  ImGui::GetStyle().Colors[ImGuiCol_Text];
+		return	ImGui::GetStyle().Colors[ImGuiCol_Text];
 
 	} else {
 		return ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];

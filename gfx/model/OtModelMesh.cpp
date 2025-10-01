@@ -52,7 +52,7 @@ void OtModelMesh::load(const aiMesh* mesh, OtModelNodes& nodes) {
 	indices.reserve(mesh->mNumFaces * 3);
 
 	// process all triangles
-    for(auto i = 0u; i < mesh->mNumFaces; i++) {
+	for(auto i = 0u; i < mesh->mNumFaces; i++) {
 		indices.emplace_back(mesh->mFaces[i].mIndices[0]);
 		indices.emplace_back(mesh->mFaces[i].mIndices[1]);
 		indices.emplace_back(mesh->mFaces[i].mIndices[2]);
