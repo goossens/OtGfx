@@ -45,17 +45,15 @@ bool OtTexture::update(int w, int h, Format f, Usage u) {
 		usage = u;
 
 		// create new texture
-		SDL_GPUTextureCreateInfo info{
-			.type = SDL_GPU_TEXTURETYPE_2D,
-			.format = SDL_GPUTextureFormat(format),
-			.usage = SDL_GPUTextureUsageFlags(usage),
-			.width = static_cast<Uint32>(width),
-			.height = static_cast<Uint32>(height),
-			.layer_count_or_depth = 1,
-			.num_levels = 1,
-			.sample_count = SDL_GPU_SAMPLECOUNT_1,
-			.props = 0
-		};
+		SDL_GPUTextureCreateInfo info{};
+		info.type = SDL_GPU_TEXTURETYPE_2D;
+		info.format = SDL_GPUTextureFormat(format);
+		info.usage = SDL_GPUTextureUsageFlags(usage);
+		info.width = static_cast<Uint32>(width);
+		info.height = static_cast<Uint32>(height);
+		info.layer_count_or_depth = 1;
+		info.num_levels = 1;
+		info.sample_count = SDL_GPU_SAMPLECOUNT_1;
 
 		auto sdlTexture = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
 
@@ -81,11 +79,9 @@ void OtTexture::load(OtImage& image) {
 	update(image.getWidth(), image.getHeight(), convertFromImageFormat(image.getFormat()), Usage::readAll);
 
 	// create a transfer buffer
-	SDL_GPUTransferBufferCreateInfo bufferInfo{
-		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(width * height * getBpp()),
-		.props = 0
-	};
+	SDL_GPUTransferBufferCreateInfo bufferInfo{};
+	bufferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+	bufferInfo.size = static_cast<Uint32>(width * height * getBpp());
 
 	auto& gpu = OtGpu::instance();
 	SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
@@ -100,24 +96,14 @@ void OtTexture::load(OtImage& image) {
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
 
 	// upload image to GPU
-	SDL_GPUTextureTransferInfo transferInfo{
-		.transfer_buffer = transferBuffer,
-		.offset = 0,
-		.pixels_per_row = 0,
-		.rows_per_layer = 0
-	};
+	SDL_GPUTextureTransferInfo transferInfo{};
+	transferInfo.transfer_buffer = transferBuffer;
 
-	SDL_GPUTextureRegion region{
-		.texture = texture.get(),
-		.mip_level = 0,
-		.layer = 0,
-		.x = 0,
-		.y = 0,
-		.z = 0,
-		.w = static_cast<Uint32>(width),
-		.h = static_cast<Uint32>(height),
-		.d = 1
-	};
+	SDL_GPUTextureRegion region{};
+	region.texture = texture.get();
+	region.w = static_cast<Uint32>(width);
+	region.h = static_cast<Uint32>(height);
+	region.d = 1;
 
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 	SDL_UploadToGPUTexture(copyPass, &transferInfo, &region, false);
@@ -205,11 +191,9 @@ void OtTexture::load(int w, int h, Format f, void* pixels, bool async) {
 
 void OtTexture::update(int x, int y, int w, int h, void* pixels) {
 	// create a transfer buffer
-	SDL_GPUTransferBufferCreateInfo bufferInfo{
-		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(w * h * getBpp()),
-		.props = 0
-	};
+	SDL_GPUTransferBufferCreateInfo bufferInfo{};
+	bufferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+	bufferInfo.size = static_cast<Uint32>(width * height * getBpp());
 
 	auto& gpu = OtGpu::instance();
 	SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
@@ -224,24 +208,18 @@ void OtTexture::update(int x, int y, int w, int h, void* pixels) {
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
 
 	// upload image to GPU
-	SDL_GPUTextureTransferInfo transferInfo{
-		.transfer_buffer = transferBuffer,
-		.offset = 0,
-		.pixels_per_row = 0,
-		.rows_per_layer = 0
-	};
+	SDL_GPUTextureTransferInfo transferInfo{};
+	transferInfo.transfer_buffer = transferBuffer;
+	transferInfo.pixels_per_row = static_cast<Uint32>(width);
+	transferInfo.rows_per_layer = static_cast<Uint32>(height);
 
-	SDL_GPUTextureRegion region{
-		.texture = texture.get(),
-		.mip_level = 0,
-		.layer = 0,
-		.x = static_cast<Uint32>(x),
-		.y = static_cast<Uint32>(y),
-		.z = 0,
-		.w = static_cast<Uint32>(w),
-		.h = static_cast<Uint32>(h),
-		.d = 1
-	};
+	SDL_GPUTextureRegion region{};
+	region.texture = texture.get();
+	region.x = static_cast<Uint32>(x);
+	region.y = static_cast<Uint32>(y);
+	region.w = static_cast<Uint32>(w);
+	region.h = static_cast<Uint32>(h);
+	region.d = 1;
 
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 	SDL_UploadToGPUTexture(copyPass, &transferInfo, &region, false);

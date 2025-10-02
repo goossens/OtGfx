@@ -22,7 +22,6 @@ layout(std140, set=3, binding=0) uniform UBO {
 	float radius;
 	float feather;
 	float strokeMult;
-	float strokeThr;
 	int texType;
 	int type;
 };
@@ -33,6 +32,9 @@ const int fillGradientShader = 0;
 const int fillTextureShader = 1;
 const int textureShader = 2;
 
+const int transparentTexture = 0;
+const int rTexture = 1;
+const int rgbaTexture = 2;
 
 float sdroundrect(vec2 pt, vec2 ext, float rad) {
 	vec2 ext2 = ext - vec2(rad, rad);
@@ -51,36 +53,40 @@ float strokeMask() {
 }
 
 void main(void) {
-	// fragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	float scissor = scissorMask(vPosition);
 	float strokeAlpha = strokeMask();
-	if (strokeAlpha < strokeThr) discard;
 
 	if (type == fillGradientShader) {
 		// calculate gradient color
 		vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy;
 		float d = clamp((sdroundrect(pt, extent, radius) + feather * 0.5f) / feather, 0.0f, 1.0f);
 		vec4 color = mix(innerCol, outerCol, d);
-
-		// combine alpha
-		color.w *= strokeAlpha * scissor;
-		fragColor = color;
+		fragColor = color * scissor;
 
 	} else if (type == fillTextureShader) {
 		// calculate color from texture
 		vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy / extent;
 		vec4 color = texture(tex, pt);
-		color = texType == 0 ? color : vec4(1.0f, 1.0f, 1.0f, color.x);
 
-		// combine alpha
-		color.w *= strokeAlpha * scissor;
-		fragColor = color;
+		if (texType == 1) {
+			color = vec4(color.r);
+
+		} else if (texType == 2) {
+			color = vec4(color.rgb * color.a, color.a);
+		}
+
+		fragColor = color * scissor * innerCol;
 
 	} else if (type == textureShader) {
 		vec4 color = texture(tex, vUv);
-		if (texType == 1.0) color = vec4(color.xyz * color.w, color.w);
-		if (texType == 2.0) color = vec4(color.x);
-		color *= scissor;
-		fragColor = color * innerCol;
+
+		if (texType == 1) {
+			color = vec4(color.r, color.r, color.r, 1.0f);
+
+		} else if (texType == 2) {
+			color = vec4(color.rgb * color.a, color.a);
+		}
+
+		fragColor = color * scissor * innerCol;
 	}
 }

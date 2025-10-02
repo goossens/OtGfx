@@ -211,16 +211,18 @@ private:
 	struct Call {
 		CallType type;
 		int image;
-		size_t pathOffset;
-		size_t pathCount;
-		size_t indexOffset;
-		size_t indexCount;
+		size_t shapeOffset;
+		size_t shapeCount;
 		size_t strokeOffset;
 		size_t strokeCount;
-		size_t triangleOffset;
-		size_t triangleCount;
+		size_t fillOffset;
+		size_t fillCount;
 		size_t uniformOffset;
 	};
+
+	static constexpr int transparentTexture = 0;
+	static constexpr int rTexture = 1;
+	static constexpr int rgbaTexture = 2;
 
 	static constexpr int fillGradientShader = 0;
 	static constexpr int fillTextureShader = 1;
@@ -233,15 +235,14 @@ private:
 		glm::vec4 paintMatCol1;
 		glm::vec4 paintMatCol2;
 		glm::vec4 paintMatCol3;
-		glm::vec4 innerCol;
-		glm::vec4 outerCol;
+		glm::vec4 innerColor;
+		glm::vec4 outerColor;
 		glm::vec2 scissorExt;
 		glm::vec2 scissorScale;
 		glm::vec2 extent;
 		float radius;
 		float feather;
 		float strokeMult;
-		float strokeThreshold;
 		int texType;
 		int shaderType;
 	};
@@ -257,6 +258,6 @@ private:
 	OtRenderPipeline shapesPipeline;
 	OtSampler sampler;
 
-	void paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr);
+	size_t paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, bool triangles=false);
 	void setUniforms(OtRenderPass& pass, Call& call);
 };

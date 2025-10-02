@@ -11,6 +11,7 @@
 
 #include <algorithm>
 
+#include "glm/glm.hpp"
 #include "imgui.h"
 
 #include "OtFunction.h"
@@ -123,6 +124,7 @@ void OtCanvasStackClass::render() {
 
 		if (sizeChanged || cvs.needsRerender()) {
 			// update framebuffer size (if required)
+			canvas.framebuffer.setClearColor(true, glm::vec4(0.0f));
 			canvas.framebuffer.update(w, h);
 
 			// render the canvas
@@ -151,7 +153,7 @@ void OtCanvasStackClass::render() {
 	ImGui::PushID(this);
 	ImVec2 size{float(w), float(h)};
 	OtUi::align(size, horizontalAlign, verticalAlign);
-	ImGui::Image(canvases[0].framebuffer.getColorTexture().getTextureID(), size);
+	ImGui::Image(framebuffer.getColorTexture().getTextureID(), size);
 	ImGui::PopID();
 }
 
