@@ -377,12 +377,12 @@ int OtCanvas::renderCreateTexture(int type, int w, int h, int imageFlags, const 
 //	OtCanvas::renderDeleteTexture
 //
 
-int OtCanvas::renderDeleteTexture(int texture) {
+int OtCanvas::renderDeleteTexture(int textureID) {
 	// find and delete texture
-	auto entry = textures.find(texture);
+	auto entry = textures.find(textureID);
 
 	if (entry != textures.end()) {
-		textures.erase(texture);
+		textures.erase(textureID);
 	}
 
 	return 1;
@@ -393,16 +393,36 @@ int OtCanvas::renderDeleteTexture(int texture) {
 //	OtCanvas::renderUpdateTexture
 //
 
-int OtCanvas::renderUpdateTexture(int texture, int x, int y, int w, int h, const unsigned char* data) {
+int OtCanvas::renderUpdateTexture(int textureID, int x, int y, int w, int h, const unsigned char* data) {
 	// find texture
-	auto entry = textures.find(texture);
+	auto entry = textures.find(textureID);
 
 	if (entry == textures.end()) {
-		OtLogFatal("Can't find texture in canvas with id {}", texture);
+		OtLogFatal("Can't find canvas texture with id {}", textureID);
+	}
+
+	// extract update region (since data points to complete texture)
+	auto& texture = entry->second.texture;
+	auto bpp = texture.getBpp();
+
+	auto srcPitch = texture.getWidth() * bpp;
+	auto src = data + y * srcPitch + x * bpp;
+
+	auto dstPitch = w * bpp;
+	unsigned char* buffer = new unsigned char[h * dstPitch];
+	auto dst = buffer;
+
+	for (auto i = 0; i < h; i++) {
+		std::memcpy(dst, src, dstPitch);
+		dst += dstPitch;
+		src += srcPitch;
 	}
 
 	// update the texture
-	entry->second.texture.update(x, y, w, h, (void*) data);
+	texture.update(x, y, w, h, (void*) buffer);
+
+	// cleanup
+	delete [] buffer;
 	return 1;
 }
 
@@ -411,17 +431,18 @@ int OtCanvas::renderUpdateTexture(int texture, int x, int y, int w, int h, const
 //	OtCanvas::renderGetTextureSize
 //
 
-int OtCanvas::renderGetTextureSize(int texture, int* w, int* h) {
+int OtCanvas::renderGetTextureSize(int textureID, int* w, int* h) {
 	// find texture
-	auto entry = textures.find(texture);
+	auto entry = textures.find(textureID);
 
 	if (entry == textures.end()) {
-		OtLogFatal("Can't find texture in canvas with id {}", texture);
+		OtLogFatal("Can't find canvas texture with id {}", textureID);
 	}
 
 	// get the size
-	*w = entry->second.texture.getWidth();
-	*h = entry->second.texture.getHeight();
+	auto& texture = entry->second.texture;
+	*w = texture.getWidth();
+	*h = texture.getHeight();
 	return 1;
 }
 
@@ -634,7 +655,7 @@ size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float wid
 		auto entry = textures.find(paint->image);
 
 		if (entry == textures.end()) {
-			OtLogFatal("Can't find texture in canvas with id {}", paint->image);
+			OtLogFatal("Can't find canvas texture with id {}", paint->image);
 		}
 
 		if (entry->second.flip) {
@@ -690,7 +711,7 @@ void OtCanvas::setUniforms(OtRenderPass& pass, Call& call) {
 		auto entry = textures.find(call.image);
 
 		if (entry == textures.end()) {
-			OtLogFatal("Can't find texture in canvas with id {}", call.image);
+			OtLogFatal("Can't find canvas texture with id {}", call.image);
 		}
 
 		pass.bindFragmentSampler(0, entry->second.sampler, entry->second.texture);
