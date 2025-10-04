@@ -125,6 +125,7 @@ void OtCanvasStackClass::render() {
 		if (sizeChanged || cvs.needsRerender()) {
 			// update framebuffer size (if required)
 			canvas.framebuffer.setClearColor(true, glm::vec4(0.0f));
+			canvas.framebuffer.setClearStencil(true, 0);
 			canvas.framebuffer.update(w, h);
 
 			// render the canvas

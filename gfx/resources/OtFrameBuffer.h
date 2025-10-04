@@ -12,6 +12,8 @@
 //	Include files
 //
 
+#include <cstdint>
+
 #include "imgui.h"
 #include "SDL3/SDL.h"
 
@@ -71,6 +73,12 @@ public:
 		valid = false;
 	}
 
+	inline void setClearStencil(bool flag, uint8_t value=0) {
+		clearStencilTexture = flag;
+		clearStencilValue = value;
+		valid = false;
+	}
+
 	// update frame buffer
 	inline bool update(int w, int h) {
 		// update framebuffer if required
@@ -118,6 +126,9 @@ public:
 			depthStencilTargetInfo.clear_depth = clearDepthValue;
 			depthStencilTargetInfo.load_op = hasDepthTexture() && clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
 			depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+			depthStencilTargetInfo.stencil_load_op = hasStencilTexture() && clearStencilTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+			depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+			depthStencilTargetInfo.clear_stencil = static_cast<Uint8>(clearStencilValue);
 
 			info.colorTargetInfo = &colorTargetInfo;
 			info.numColorTargets = 1;
@@ -172,12 +183,14 @@ private:
 	// clearing flags
 	bool clearColorTexture = true;
 	bool clearDepthTexture = true;
+	bool clearStencilTexture = true;
 	glm::vec4 clearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
 	float clearDepthValue = 1.0f;
+	std::uint8_t clearStencilValue = 0;
 
 	// render target description
-	SDL_GPUColorTargetInfo colorTargetInfo;
-	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
+	SDL_GPUColorTargetInfo colorTargetInfo{};
+	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo{};
 	OtRenderTargetInfo info;
 
 	// get render target information

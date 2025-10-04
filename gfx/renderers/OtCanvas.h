@@ -188,6 +188,33 @@ private:
 	int addPaint(const NVGpaint& paint);
 	int paintID = 1;
 
+	// drawing call data
+	enum class CallType {
+		none,
+		concaveFill,
+		convexFill,
+		stroke,
+		triangles
+	};
+
+	struct Call {
+		CallType type;
+		int textureID;
+		size_t shapeOffset;
+		size_t shapeCount;
+		size_t strokeOffset;
+		size_t strokeCount;
+		size_t fillOffset;
+		size_t fillCount;
+		size_t uniformOffset;
+	};
+
+	// rendering functions
+	void concaveFill(OtRenderPass& pass, Call& call);
+	void convexFill(OtRenderPass& pass, Call& call);
+	void stroke(OtRenderPass& pass, Call& call);
+	void triangles(OtRenderPass& pass, Call& call);
+
 	// driver functions
 	int renderCreate();
 	int renderCreateTexture(int type, int w, int h, int imageFlags, const unsigned char* data);
@@ -198,27 +225,6 @@ private:
 	void renderStroke(NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths);
 	void renderTriangles(NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, const NVGvertex* verts, int nverts, float fringe);
 	void renderDelete();
-
-	// drawing call data
-	enum class CallType {
-		none,
-		fill,
-		convexFill,
-		stroke,
-		triangles
-	};
-
-	struct Call {
-		CallType type;
-		int image;
-		size_t shapeOffset;
-		size_t shapeCount;
-		size_t strokeOffset;
-		size_t strokeCount;
-		size_t fillOffset;
-		size_t fillCount;
-		size_t uniformOffset;
-	};
 
 	static constexpr int transparentTexture = 0;
 	static constexpr int rTexture = 1;
@@ -243,6 +249,7 @@ private:
 		float radius;
 		float feather;
 		float strokeMult;
+		float strokeThr;
 		int texType;
 		int shaderType;
 	};
@@ -254,10 +261,18 @@ private:
 
 	OtVertexBuffer vertexBuffer;
 	OtIndexBuffer indexBuffer;
-	OtRenderPipeline pipeline;
-	OtRenderPipeline shapesPipeline;
+	OtRenderPipeline convexPipeline;
+
+	OtRenderPipeline fillShapesPipeline;
+	OtRenderPipeline fillFragmentsPipeline;
+	OtRenderPipeline fillPipeline;
+	OtRenderPipeline strokeBasePipeline;
+	OtRenderPipeline strokeFragmentPipeline;
+	OtRenderPipeline clearStencilPipeline;
 	OtSampler sampler;
 
-	size_t paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, bool triangles=false);
-	void setUniforms(OtRenderPass& pass, Call& call);
+	size_t paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, bool triangles=false);
+
+	void setVertexUniforms(OtRenderPass& pass);
+	void setFragmentUniforms(OtRenderPass& pass, size_t uniformOffset, size_t textureID);
 };

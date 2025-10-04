@@ -41,16 +41,14 @@ public:
 		gBuffer
 	};
 
-	enum TargetChannels {
+	enum ColorMask {
 		none = 0,
 		r = 1 << 0,
 		g = 1 << 1,
 		b = 1 << 2,
 		a = 1 << 3,
-		z = 1 << 4,
 		rgb = (r | g | b),
 		rgba = (r | g | b | a),
-		rgbaz = (r | g | b | a | z)
 	};
 
 	enum class CompareOperation {
@@ -129,17 +127,29 @@ public:
 
 	inline void setVertexDescription(OtVertexDescription* description) { vertexDescription = description; }
 	inline void setRenderTargetType(RenderTargetType value) { renderTargetType = value; }
-	inline void setTargetChannels(TargetChannels value) { targetChannels = value; }
-	inline void setDepthTest(CompareOperation value) { depthTest = value; }
 	inline void setCulling(Culling value) { culling = value; }
 	inline void setFill(bool mode) { fill = mode; }
+
+	inline void setColorMask(ColorMask value) {
+		useColorMask = true;
+		colorMask = value;
+	}
+
+	inline void setDepthTest(CompareOperation value) {
+		useDepth = value != CompareOperation::none;
+		depthTest = value;
+	}
+
+	inline void setStencil(uint8_t compareMask, uint8_t writeMask, CompareOperation compare, StencilOperation pass, StencilOperation fail, StencilOperation depthFail) {
+		setStencil(compareMask, writeMask, compare, pass, fail, depthFail, compare, pass, fail, depthFail);
+	}
 
 	inline void setStencil(
 		uint8_t compareMask, uint8_t writeMask,
 		CompareOperation frontCompare, StencilOperation frontPass, StencilOperation frontFail, StencilOperation frontDepthFail,
 		CompareOperation backCompare, StencilOperation backPass, StencilOperation backFail, StencilOperation backDepthFail) {
 
-		useStencil = true;
+		useStencilTest = (compareMask | writeMask) != 0;
 		stencilCompareMask = compareMask;
 		stencilWriteMask = writeMask;
 
@@ -182,12 +192,16 @@ public:
 
 		vertexDescription = nullptr;
 		renderTargetType = RenderTargetType::rgba8d32;
-		targetChannels = TargetChannels::rgbaz;
-		depthTest = CompareOperation::less;
 		culling = Culling::cw;
 		fill = true;
 
-		useStencil = false;
+		useColorMask = false;
+		colorMask = ColorMask::rgba;
+
+		useDepth = true;
+		depthTest = CompareOperation::less;
+
+		useStencilTest = false;
 		stencilCompareMask = 0;
 		stencilWriteMask = 0;
 
@@ -234,14 +248,18 @@ private:
 	// pipeline properties
 	OtVertexDescription* vertexDescription = nullptr;
 	RenderTargetType renderTargetType = RenderTargetType::rgba8d32;
-	TargetChannels targetChannels = TargetChannels::rgbaz;
-	CompareOperation depthTest = CompareOperation::less;
 	Culling culling = Culling::cw;
 	bool fill = true;
 
-	bool useStencil = false;
-	uint8_t stencilCompareMask = 0;
-	uint8_t stencilWriteMask = 0;
+	bool useColorMask = false;
+	ColorMask colorMask = ColorMask::rgba;
+
+	bool useDepth = true;
+	CompareOperation depthTest = CompareOperation::less;
+
+	bool useStencilTest = false;
+	uint8_t stencilCompareMask = 0xff;
+	uint8_t stencilWriteMask = 0xff;
 
 	CompareOperation stencilFrontCompare = CompareOperation::none;
 	StencilOperation stencilFrontPassOperation = StencilOperation::none;
@@ -326,9 +344,9 @@ private:
 						.src_alpha_blendfactor = getBlendFactor(alphaSrcFactor),
 						.dst_alpha_blendfactor = getBlendFactor(alphaDstFactor),
 						.alpha_blend_op = getBlendOperation(alphaBlendOperation),
-						.color_write_mask = getTargetChannel(),
+						.color_write_mask = getColorMask(),
 						.enable_blend = colorBlendOperation != BlendOperation::none || alphaBlendOperation != BlendOperation::none,
-						.enable_color_write_mask = (targetChannels & TargetChannels::rgba) != TargetChannels::rgba,
+						.enable_color_write_mask = useColorMask,
 						.padding1 = 0,
 						.padding2 = 0
 					}
@@ -363,22 +381,22 @@ private:
 				.depth_stencil_state = SDL_GPUDepthStencilState{
 					.compare_op = getCompareOperation(depthTest),
 					.back_stencil_state = SDL_GPUStencilOpState{
-						.fail_op = getStencelOperation(stencilBackFailOperation),
-						.pass_op = getStencelOperation(stencilBackPassOperation),
-						.depth_fail_op = getStencelOperation(stencilBackDepthFailOperation),
+						.fail_op = getStencilOperation(stencilBackFailOperation),
+						.pass_op = getStencilOperation(stencilBackPassOperation),
+						.depth_fail_op = getStencilOperation(stencilBackDepthFailOperation),
 						.compare_op = getCompareOperation(stencilBackCompare)
 					},
 					.front_stencil_state = SDL_GPUStencilOpState{
-						.fail_op = getStencelOperation(stencilFrontFailOperation),
-						.pass_op = getStencelOperation(stencilFrontPassOperation),
-						.depth_fail_op = getStencelOperation(stencilFrontDepthFailOperation),
+						.fail_op = getStencilOperation(stencilFrontFailOperation),
+						.pass_op = getStencilOperation(stencilFrontPassOperation),
+						.depth_fail_op = getStencilOperation(stencilFrontDepthFailOperation),
 						.compare_op = getCompareOperation(stencilFrontCompare)
 					},
 					.compare_mask = static_cast<Uint8>(stencilCompareMask),
-					.write_mask = static_cast<Uint8>(stencilCompareMask),
-					.enable_depth_test = (depthTest != CompareOperation::none),
-					.enable_depth_write = (targetChannels & TargetChannels::z) != 0,
-					.enable_stencil_test = useStencil,
+					.write_mask = static_cast<Uint8>(stencilWriteMask),
+					.enable_depth_test = useDepth,
+					.enable_depth_write = useDepth,
+					.enable_stencil_test = useStencilTest,
 					.padding1 = 0,
 					.padding2 = 0,
 					.padding3 = 0
@@ -452,22 +470,22 @@ private:
 		return SDL_GPU_TEXTUREFORMAT_INVALID;
 	}
 
-	SDL_GPUColorComponentFlags getTargetChannel() {
+	SDL_GPUColorComponentFlags getColorMask() {
 		SDL_GPUColorComponentFlags flags = 0;
 
-		if (targetChannels & TargetChannels::r) {
+		if (colorMask & ColorMask::r) {
 			flags |= SDL_GPU_COLORCOMPONENT_R;
 		}
 
-		if (targetChannels & TargetChannels::g) {
+		if (colorMask & ColorMask::g) {
 			flags |= SDL_GPU_COLORCOMPONENT_G;
 		}
 
-		if (targetChannels & TargetChannels::b) {
+		if (colorMask & ColorMask::b) {
 			flags |= SDL_GPU_COLORCOMPONENT_B;
 		}
 
-		if (targetChannels & TargetChannels::a) {
+		if (colorMask & ColorMask::a) {
 			flags |= SDL_GPU_COLORCOMPONENT_A;
 		}
 
@@ -534,7 +552,7 @@ private:
 		return SDL_GPU_BLENDFACTOR_INVALID;
 	}
 
-	SDL_GPUStencilOp getStencelOperation(StencilOperation operation) {
+	SDL_GPUStencilOp getStencilOperation(StencilOperation operation) {
 		switch (operation) {
 			case StencilOperation::none: return SDL_GPU_STENCILOP_INVALID;
 			case StencilOperation::keep: return SDL_GPU_STENCILOP_KEEP;

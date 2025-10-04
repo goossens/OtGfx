@@ -22,6 +22,7 @@ layout(std140, set=3, binding=0) uniform UBO {
 	float radius;
 	float feather;
 	float strokeMult;
+	float strokeThr;
 	int texType;
 	int type;
 };
@@ -56,12 +57,15 @@ void main(void) {
 	float scissor = scissorMask(vPosition);
 	float strokeAlpha = strokeMask();
 
+	if (strokeAlpha < strokeThr) {
+		discard;
+	}
+
 	if (type == fillGradientShader) {
 		// calculate gradient color
 		vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy;
 		float d = clamp((sdroundrect(pt, extent, radius) + feather * 0.5f) / feather, 0.0f, 1.0f);
-		vec4 color = mix(innerCol, outerCol, d);
-		fragColor = color * scissor;
+		fragColor = mix(innerCol, outerCol, d) * scissor * strokeAlpha;
 
 	} else if (type == fillTextureShader) {
 		// calculate color from texture
@@ -75,18 +79,18 @@ void main(void) {
 			color = vec4(color.rgb * color.a, color.a);
 		}
 
-		fragColor = color * scissor * innerCol;
+		fragColor = color * innerCol * scissor * strokeAlpha;
 
 	} else if (type == textureShader) {
 		vec4 color = texture(tex, vUv);
 
 		if (texType == 1) {
-			color = vec4(color.r, color.r, color.r, 1.0f);
+			color = vec4(color.r);
 
 		} else if (texType == 2) {
 			color = vec4(color.rgb * color.a, color.a);
 		}
 
-		fragColor = color * scissor * innerCol;
+		fragColor = color * innerCol * scissor;
 	}
 }

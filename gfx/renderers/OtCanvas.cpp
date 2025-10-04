@@ -50,36 +50,119 @@ OtCanvas::OtCanvas() {
 	}
 
 	// configure rendering pipelines
-	pipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
-	pipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
-	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
-	pipeline.setTargetChannels(OtRenderPipeline::TargetChannels::rgba);
-	pipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	pipeline.setCulling(OtRenderPipeline::Culling::none);
+	convexPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	convexPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	convexPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	convexPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	convexPipeline.setCulling(OtRenderPipeline::Culling::none);
 
-	pipeline.setBlend(
+	convexPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::srcAlpha,
+		OtRenderPipeline::BlendFactor::one,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
-	shapesPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
-	shapesPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
-	shapesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
-	shapesPipeline.setTargetChannels(OtRenderPipeline::TargetChannels::z);
-	shapesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::always);
-	shapesPipeline.setCulling(OtRenderPipeline::Culling::none);
+	fillShapesPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	fillShapesPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	fillShapesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	fillShapesPipeline.setColorMask(OtRenderPipeline::ColorMask::none);
+	fillShapesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	fillShapesPipeline.setCulling(OtRenderPipeline::Culling::none);
 
-	shapesPipeline.setStencil(
-		0, 0xff,
+	fillShapesPipeline.setStencil(
+		0xff, 0xff,
 		OtRenderPipeline::CompareOperation::always,
 		OtRenderPipeline::StencilOperation::incrementAndWrap,
-		OtRenderPipeline::StencilOperation::none,
-		OtRenderPipeline::StencilOperation::none,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep,
 		OtRenderPipeline::CompareOperation::always,
 		OtRenderPipeline::StencilOperation::decrementAndWrap,
-		OtRenderPipeline::StencilOperation::none,
-		OtRenderPipeline::StencilOperation::none);
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep);
+
+	fillFragmentsPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	fillFragmentsPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	fillFragmentsPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	fillFragmentsPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	fillFragmentsPipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	fillFragmentsPipeline.setStencil(
+		0xff, 0xff,
+		OtRenderPipeline::CompareOperation::equal,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep);
+
+	fillPipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	fillPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	fillPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	fillPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	fillPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	fillPipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	fillPipeline.setStencil(
+		0xff, 0xff,
+		OtRenderPipeline::CompareOperation::notEqual,
+		OtRenderPipeline::StencilOperation::zero,
+		OtRenderPipeline::StencilOperation::zero,
+		OtRenderPipeline::StencilOperation::zero);
+
+	strokeBasePipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	strokeBasePipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	strokeBasePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	strokeBasePipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	strokeBasePipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	strokeBasePipeline.setStencil(
+		0xff, 0xff,
+		OtRenderPipeline::CompareOperation::equal,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::incrementAndClamp);
+
+	strokeBasePipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	strokeFragmentPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	strokeFragmentPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	strokeFragmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	strokeFragmentPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	strokeFragmentPipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	strokeFragmentPipeline.setStencil(
+		0xff, 0xff,
+		OtRenderPipeline::CompareOperation::equal,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep,
+		OtRenderPipeline::StencilOperation::keep);
+
+	strokeBasePipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	clearStencilPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
+	clearStencilPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
+	clearStencilPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
+	clearStencilPipeline.setColorMask(OtRenderPipeline::ColorMask::none);
+	clearStencilPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	clearStencilPipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	clearStencilPipeline.setStencil(
+		0xff, 0xff,
+		OtRenderPipeline::CompareOperation::always,
+		OtRenderPipeline::StencilOperation::zero,
+		OtRenderPipeline::StencilOperation::zero,
+		OtRenderPipeline::StencilOperation::zero);
 }
 
 
@@ -253,54 +336,22 @@ void OtCanvas::render(OtFrameBuffer& framebuffer, float scale, std::function<voi
 	// start rendering pass
 	OtRenderPass pass;
 	pass.start(framebuffer);
-	pass.bindPipeline(pipeline);
 
 	// ignore empty canvases
 	if (calls.size()) {
 		// update vertex and index buffers
 		vertexBuffer.set(vertices.data(), vertices.size(), OtVertexPosUv2D::getDescription(), true);
 		indexBuffer.set(indices.data(), indices.size(), true);
+		setVertexUniforms(pass);
 
 		// render all calls
 		for (auto& call : calls) {
-			// set call specific uniforms
-			setUniforms(pass, call);
-
 			switch (call.type) {
-				case CallType::none:
-					break;
-
-				case CallType::fill:
-					if (call.shapeCount) {
-						pass.render(vertexBuffer, indexBuffer, call.shapeOffset, call.shapeCount);
-					}
-
-					break;
-
-				case CallType::convexFill:
-					if (call.shapeCount) {
-						pass.render(vertexBuffer, indexBuffer, call.shapeOffset, call.shapeCount);
-					}
-
-					if (call.strokeCount) {
-						pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
-					}
-
-					break;
-
-				case CallType::stroke:
-					if (call.strokeCount) {
-						pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
-					}
-
-					break;
-
-				case CallType::triangles:
-					if (call.fillCount) {
-						pass.render(vertexBuffer, indexBuffer, call.fillOffset, call.fillCount);
-					}
-
-					break;
+				case CallType::none: break;
+				case CallType::concaveFill: concaveFill(pass, call); break;
+				case CallType::convexFill: convexFill(pass, call); break;
+				case CallType::stroke: stroke(pass, call); break;
+				case CallType::triangles: triangles(pass, call); break;
 			}
 		}
 	}
@@ -324,6 +375,81 @@ int OtCanvas::addPaint(const NVGpaint& paint) {
 	auto id = paintID++;
 	paints[id] = paint;
 	return id;
+}
+
+
+//
+//	OtCanvas::concaveFill
+//
+
+void OtCanvas::concaveFill(OtRenderPass& pass, Call& call) {
+	setFragmentUniforms(pass, call.uniformOffset, call.textureID);
+
+	if (call.shapeCount) {
+		pass.bindPipeline(fillShapesPipeline);
+		pass.render(vertexBuffer, indexBuffer, call.shapeOffset, call.shapeCount);
+	}
+
+	if (call.strokeCount) {
+		pass.bindPipeline(fillFragmentsPipeline);
+		pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
+	}
+
+	if (call.fillCount) {
+		pass.bindPipeline(fillPipeline);
+		pass.render(vertexBuffer, indexBuffer, call.fillOffset, call.fillCount);
+	}
+}
+
+
+//
+//	OtCanvas::convexFill
+//
+
+void OtCanvas::convexFill(OtRenderPass& pass, Call& call) {
+	setFragmentUniforms(pass, call.uniformOffset, call.textureID);
+	pass.bindPipeline(convexPipeline);
+
+	if (call.shapeCount) {
+		pass.render(vertexBuffer, indexBuffer, call.shapeOffset, call.shapeCount);
+	}
+
+	if (call.strokeCount) {
+		pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
+	}
+}
+
+
+//
+//	OtCanvas::stroke
+//
+
+void OtCanvas::stroke(OtRenderPass& pass, Call& call) {
+	if (call.strokeCount) {
+		setFragmentUniforms(pass, call.uniformOffset + 1, call.textureID);
+		pass.bindPipeline(strokeBasePipeline);
+		pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
+
+		setFragmentUniforms(pass, call.uniformOffset, call.textureID);
+		pass.bindPipeline(strokeFragmentPipeline);
+		pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
+
+		pass.bindPipeline(clearStencilPipeline);
+		pass.render(vertexBuffer, indexBuffer, call.strokeOffset, call.strokeCount);
+	}
+}
+
+
+//
+//	OtCanvas::triangles
+//
+
+void OtCanvas::triangles(OtRenderPass& pass, Call& call) {
+	if (call.fillCount) {
+		setFragmentUniforms(pass, call.uniformOffset, call.textureID);
+		pass.bindPipeline(convexPipeline);
+		pass.render(vertexBuffer, indexBuffer, call.fillOffset, call.fillCount);
+	}
 }
 
 
@@ -454,8 +580,8 @@ int OtCanvas::renderGetTextureSize(int textureID, int* w, int* h) {
 void OtCanvas::renderFill(NVGpaint* paint, NVGcompositeOperationState, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths) {
 	// setup new rendering call
 	auto& call = calls.emplace_back(Call{});
-	call.type = (npaths == 1 && paths[0].convex) ? CallType::convexFill : CallType::fill;
-	call.image = paint->image;
+	call.type = (npaths == 1 && paths[0].convex) ? CallType::convexFill : CallType::concaveFill;
+	call.textureID = paint->image;
 	call.shapeOffset = indices.size();
 
 	// copy vertex and index data for shapes
@@ -514,24 +640,26 @@ void OtCanvas::renderFill(NVGpaint* paint, NVGcompositeOperationState, NVGscisso
 	call.strokeCount = indices.size() - call.strokeOffset;
 
 	// handle fills
-	if (call.type == CallType::fill) {
+	if (call.type == CallType::concaveFill) {
 		call.fillOffset = indices.size();
+		size_t vertOffset = vertices.size();
+
 		vertices.emplace_back(glm::vec2(bounds[0], bounds[1]), glm::vec2(0.5f, 1.0f));
 		vertices.emplace_back(glm::vec2(bounds[0], bounds[3]), glm::vec2(0.5f, 1.0f));
 		vertices.emplace_back(glm::vec2(bounds[2], bounds[3]), glm::vec2(0.5f, 1.0f));
 		vertices.emplace_back(glm::vec2(bounds[2], bounds[1]), glm::vec2(0.5f, 1.0f));
 
-		indices.emplace_back(call.fillOffset);
-		indices.emplace_back(call.fillOffset + 1);
-		indices.emplace_back(call.fillOffset + 2);
+		indices.emplace_back(vertOffset);
+		indices.emplace_back(vertOffset + 1);
+		indices.emplace_back(vertOffset + 2);
 
-		indices.emplace_back(call.fillOffset + 2);
-		indices.emplace_back(call.fillOffset + 3);
-		indices.emplace_back(call.fillOffset);
+		indices.emplace_back(vertOffset + 2);
+		indices.emplace_back(vertOffset + 3);
+		indices.emplace_back(vertOffset);
 		call.fillCount = indices.size() - call.fillOffset;
 	}
 
-	call.uniformOffset = paintToUniforms(paint, scissor, width, fringe);
+	call.uniformOffset = paintToUniforms(paint, scissor, width, fringe, -1.0f);
 }
 
 
@@ -543,7 +671,7 @@ void OtCanvas::renderStroke(NVGpaint* paint, NVGcompositeOperationState, NVGscis
 	// setup new rendering call
 	auto& call = calls.emplace_back(Call{});
 	call.type = CallType::stroke;
-	call.image = paint->image;
+	call.textureID = paint->image;
 	call.strokeOffset = indices.size();
 
 	for (int p = 0; p < npaths; p++) {
@@ -575,7 +703,8 @@ void OtCanvas::renderStroke(NVGpaint* paint, NVGcompositeOperationState, NVGscis
 	}
 
 	call.strokeCount = indices.size() - call.strokeOffset;
-	call.uniformOffset = paintToUniforms(paint, scissor, strokeWidth, fringe);
+	call.uniformOffset = paintToUniforms(paint, scissor, strokeWidth, fringe, -1.0f);
+	paintToUniforms(paint, scissor, strokeWidth, fringe, 1.0f - 0.5f / 255.0f);
 }
 
 
@@ -587,7 +716,7 @@ void OtCanvas::renderTriangles(NVGpaint* paint, NVGcompositeOperationState, NVGs
 	// setup new rendering call
 	auto& call = calls.emplace_back(Call{});
 	call.type = CallType::triangles;
-	call.image = paint->image;
+	call.textureID = paint->image;
 	call.fillOffset = indices.size();
 
 	// copy vertex and index data for triangles
@@ -608,7 +737,7 @@ void OtCanvas::renderTriangles(NVGpaint* paint, NVGcompositeOperationState, NVGs
 //	OtCanvas::paintToUniforms
 //
 
-size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, bool triangles) {
+size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, bool triangles) {
 	float invxform[6];
 
 	// create new uniform set
@@ -617,15 +746,15 @@ size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float wid
 
 	// populate uniform values
 	uniforms.innerColor = glm::vec4(
-		paint->innerColor.r,
-		paint->innerColor.g,
-		paint->innerColor.b,
+		paint->innerColor.r * paint->innerColor.a,
+		paint->innerColor.g * paint->innerColor.a,
+		paint->innerColor.b * paint->innerColor.a,
 		paint->innerColor.a);
 
 	uniforms.outerColor = glm::vec4(
-		paint->outerColor.r,
-		paint->outerColor.g,
-		paint->outerColor.b,
+		paint->outerColor.r * paint->innerColor.a,
+		paint->outerColor.g * paint->innerColor.a,
+		paint->outerColor.b * paint->innerColor.a,
 		paint->outerColor.a);
 
 	if (scissor->extent[0] < -0.5f || scissor->extent[1] < -0.5f) {
@@ -649,6 +778,7 @@ size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float wid
 
 	uniforms.extent = glm::vec2(paint->extent[0], paint->extent[1]);
 	uniforms.strokeMult = (width * 0.5f + fringe * 0.5f) / fringe;
+	uniforms.strokeThr = strokeThr;
 
 	if (paint->image != 0) {
 		// find texture
@@ -691,10 +821,10 @@ size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float wid
 
 
 //
-//	OtCanvas::setUniforms
+//	OtCanvas::setVertexUniforms
 //
 
-void OtCanvas::setUniforms(OtRenderPass& pass, Call& call) {
+void OtCanvas::setVertexUniforms(OtRenderPass& pass) {
 	struct VertexUniforms {
 		float width;
 		float heigh;
@@ -704,14 +834,22 @@ void OtCanvas::setUniforms(OtRenderPass& pass, Call& call) {
 	};
 
 	pass.setVertexUniforms(0, &vertexUniforms, sizeof(VertexUniforms));
-	pass.setFragmentUniforms(0, &fragmentUniforms[call.uniformOffset], sizeof(FragmentUniforms));
+}
 
-	if (call.image) {
+
+//
+//	OtCanvas::setFragmentUniforms
+//
+
+void OtCanvas::setFragmentUniforms(OtRenderPass& pass, size_t uniformOffset, size_t textureID) {
+	pass.setFragmentUniforms(0, &fragmentUniforms[uniformOffset], sizeof(FragmentUniforms));
+
+	if (textureID) {
 		// find texture
-		auto entry = textures.find(call.image);
+		auto entry = textures.find(textureID);
 
 		if (entry == textures.end()) {
-			OtLogFatal("Can't find canvas texture with id {}", call.image);
+			OtLogFatal("Can't find canvas texture with id {}", textureID);
 		}
 
 		pass.bindFragmentSampler(0, entry->second.sampler, entry->second.texture);

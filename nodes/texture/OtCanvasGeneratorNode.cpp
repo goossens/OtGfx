@@ -98,6 +98,8 @@ public:
 
 			// render the canvas by calling the script
 			try {
+				framebuffer.setClearColor(true, glm::vec4(0.0f));
+				framebuffer.setClearStencil(true, 0);
 				framebuffer.update(width, height);
 
 				canvas.render(framebuffer, 1.0f, [this]() {

@@ -12,6 +12,7 @@
 //	Include files
 //
 
+#include <cstdint>
 #include <vector>
 
 #include "glm/glm.hpp"
@@ -167,6 +168,12 @@ public:
 			static_cast<Uint32>(slot),
 			data,
 			static_cast<Uint32>(size));
+	}
+
+	// set the stencil reference
+	inline void setStencilReference(uint8_t reference) {
+		OtAssert(open);
+		SDL_SetGPUStencilReference(pass, static_cast<Uint8>(reference));
 	}
 
 	// execute a rendering command
