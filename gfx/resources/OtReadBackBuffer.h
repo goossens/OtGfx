@@ -39,4 +39,7 @@ public:
 private:
 	// properties
 	OtImage image;
+
+	// convert downloaded texture data to image
+	void convertToImage(int w, int h, OtTexture::Format format, void* data);
 };

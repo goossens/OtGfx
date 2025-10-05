@@ -83,10 +83,42 @@ OtImage& OtReadBackBuffer::readback(OtTexture& texture, int x, int y, int w, int
 
 	// transfer data to image
 	void* data = SDL_MapGPUTransferBuffer(gpu.device, transferBuffer, false);
-	image.load(w, h, texture.getBestImageFormat(), data);
+	convertToImage(w, h, texture.getFormat(), data);
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer);
 	SDL_ReleaseGPUTransferBuffer(gpu.device, transferBuffer);
 
 	// return reference to image
 	return image;
+}
+
+
+//
+//	OtReadBackBuffer::convertToImage
+//
+
+void OtReadBackBuffer::convertToImage(int w, int h, OtTexture::Format format, void* data) {
+	if (format == OtTexture::Format::r8) {
+		image.load(w, h, OtImage::Format::r8, data);
+
+	} else if (format == OtTexture::Format::rgba8) {
+		image.load(w, h, OtImage::Format::rgba8, data);
+
+	} else if (format == OtTexture::Format::rgba32) {
+		image.load(w, h, OtImage::Format::rgba32, data);
+
+	} else if (format == OtTexture::Format::r32) {
+		auto buffer = new glm::vec4[w * h];
+		auto src = (float*) data;
+		auto dst = &buffer[0];
+
+		for (int i = 0; i < w * h; i++) {
+			*dst++ = glm::vec4(*src++, 0.0f, 0.0f, 1.0f);
+		}
+
+		image.load(w, h, OtImage::Format::rgba32, buffer);
+		delete [] buffer;
+
+	} else {
+		OtLogFatal("Texture type can't be read back to image");
+	}
 }

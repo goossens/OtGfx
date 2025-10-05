@@ -58,17 +58,17 @@ public:
 
 		// set uniforms
 		struct Uniforms {
-			int32_t frequency;
-			int32_t lacunarity;
+			float lacunarity;
 			float amplitude;
 			float persistence;
+			int32_t frequency;
 			int32_t octaves;
 			int32_t noiseType;
 		} uniforms{
-			static_cast<int32_t>(frequency),
-			static_cast<int32_t>(lacunarity),
+			lacunarity,
 			amplitude,
 			persistence,
+			static_cast<int32_t>(frequency),
 			static_cast<int32_t>(octaves),
 			static_cast<int32_t>(noiseType)
 		};
