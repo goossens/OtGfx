@@ -29,9 +29,10 @@ layout(std140, set=3, binding=0) uniform UBO {
 
 layout(set=0, binding=0) uniform sampler2D tex;
 
-const int fillGradientShader = 0;
-const int fillTextureShader = 1;
-const int textureShader = 2;
+const int simpleShader = 0;
+const int fillGradientShader = 1;
+const int fillTextureShader = 2;
+const int textureShader = 3;
 
 const int transparentTexture = 0;
 const int rTexture = 1;
@@ -54,43 +55,37 @@ float strokeMask() {
 }
 
 void main(void) {
-	float scissor = scissorMask(vPosition);
-	float strokeAlpha = strokeMask();
+	if (type == simpleShader) {
+		fragColor = vec4(1.0f);
 
-	if (strokeAlpha < strokeThr) {
-		discard;
-	}
+	} else {
+		float scissor = scissorMask(vPosition);
 
-	if (type == fillGradientShader) {
-		// calculate gradient color
-		vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy;
-		float d = clamp((sdroundrect(pt, extent, radius) + feather * 0.5f) / feather, 0.0f, 1.0f);
-		fragColor = mix(innerCol, outerCol, d) * scissor * strokeAlpha;
+		if (type == textureShader) {
+			vec4 color = texture(tex, vUv);
+			color = texType == 1 ? vec4(color.r) :  vec4(color.rgb * color.a, color.a);
+			fragColor = color * innerCol * scissor;
 
-	} else if (type == fillTextureShader) {
-		// calculate color from texture
-		vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy / extent;
-		vec4 color = texture(tex, pt);
+		} else {
+			float strokeAlpha = strokeMask();
 
-		if (texType == 1) {
-			color = vec4(color.r);
+			if (strokeAlpha < strokeThr) {
+				discard;
+			}
 
-		} else if (texType == 2) {
-			color = vec4(color.rgb * color.a, color.a);
+			if (type == fillGradientShader) {
+				// calculate gradient color
+				vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy;
+				float d = clamp((sdroundrect(pt, extent, radius) + feather * 0.5f) / feather, 0.0f, 1.0f);
+				fragColor = mix(innerCol, outerCol, d) * scissor * strokeAlpha;
+
+			} else if (type == fillTextureShader) {
+				// calculate color from texture
+				vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy / extent;
+				vec4 color = texture(tex, pt);
+				color = texType == 1 ? vec4(color.r) :  vec4(color.rgb * color.a, color.a);
+				fragColor = color * innerCol * scissor * strokeAlpha;
+			}
 		}
-
-		fragColor = color * innerCol * scissor * strokeAlpha;
-
-	} else if (type == textureShader) {
-		vec4 color = texture(tex, vUv);
-
-		if (texType == 1) {
-			color = vec4(color.r);
-
-		} else if (texType == 2) {
-			color = vec4(color.rgb * color.a, color.a);
-		}
-
-		fragColor = color * innerCol * scissor;
 	}
 }

@@ -230,9 +230,10 @@ private:
 	static constexpr int rTexture = 1;
 	static constexpr int rgbaTexture = 2;
 
-	static constexpr int fillGradientShader = 0;
-	static constexpr int fillTextureShader = 1;
-	static constexpr int textureShader = 2;
+	static constexpr int simpleShader = 0;
+	static constexpr int fillGradientShader = 1;
+	static constexpr int fillTextureShader = 2;
+	static constexpr int textureShader = 3;
 
 	struct FragmentUniforms {
 		glm::vec4 scissorMatCol1;
@@ -271,8 +272,8 @@ private:
 	OtRenderPipeline clearStencilPipeline;
 	OtSampler sampler;
 
-	size_t paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, bool triangles=false);
+	size_t paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, int shaderType);
 
 	void setVertexUniforms(OtRenderPass& pass);
-	void setFragmentUniforms(OtRenderPass& pass, size_t uniformOffset, size_t textureID);
+	void setFragmentUniforms(OtRenderPass& pass, size_t uniformOffset, int textureID);
 };

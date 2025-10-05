@@ -29,6 +29,9 @@ OtCanvas::OtCanvas() {
 	// initialize canvas renderer
 	NVGparams params;
 
+	params.userPtr = this;
+	params.edgeAntiAlias = 1;
+
 	params.renderCreate = [](void* ptr) { return ((OtCanvas*) ptr)->renderCreate(); };
 	params.renderCreateTexture = [](void* ptr, int type, int w, int h, int imageFlags, const unsigned char* data) { return ((OtCanvas*) ptr)->renderCreateTexture(type, w, h, imageFlags, data); };
 	params.renderDeleteTexture = [](void* ptr, int texture) { return ((OtCanvas*) ptr)->renderDeleteTexture(texture); };
@@ -41,8 +44,7 @@ OtCanvas::OtCanvas() {
 	params.renderStroke = [](void* ptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths) { ((OtCanvas*) ptr)->renderStroke(paint, compositeOperation, scissor, fringe, strokeWidth, paths, npaths); };
 	params.renderTriangles = [](void* ptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, const NVGvertex* verts, int nverts, float fringe) { ((OtCanvas*) ptr)->renderTriangles(paint, compositeOperation, scissor, verts, nverts, fringe); };
 	params.renderDelete = [](void*) {};
-	params.userPtr = this;
-	params.edgeAntiAlias = 1;
+
 	context = nvgCreateInternal(&params);
 
 	if (!context) {
@@ -93,7 +95,7 @@ OtCanvas::OtCanvas() {
 		OtRenderPipeline::StencilOperation::keep,
 		OtRenderPipeline::StencilOperation::keep);
 
-	fillPipeline.setBlend(
+	fillFragmentsPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
 		OtRenderPipeline::BlendFactor::one,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
@@ -111,6 +113,12 @@ OtCanvas::OtCanvas() {
 		OtRenderPipeline::StencilOperation::zero,
 		OtRenderPipeline::StencilOperation::zero,
 		OtRenderPipeline::StencilOperation::zero);
+
+	fillPipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
 
 	strokeBasePipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
 	strokeBasePipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
@@ -144,7 +152,7 @@ OtCanvas::OtCanvas() {
 		OtRenderPipeline::StencilOperation::keep,
 		OtRenderPipeline::StencilOperation::keep);
 
-	strokeBasePipeline.setBlend(
+	strokeFragmentPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
 		OtRenderPipeline::BlendFactor::one,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
@@ -383,12 +391,14 @@ int OtCanvas::addPaint(const NVGpaint& paint) {
 //
 
 void OtCanvas::concaveFill(OtRenderPass& pass, Call& call) {
-	setFragmentUniforms(pass, call.uniformOffset, call.textureID);
-
 	if (call.shapeCount) {
+	setFragmentUniforms(pass, call.uniformOffset, call.textureID);
+		setFragmentUniforms(pass, call.uniformOffset + 1, call.textureID);
 		pass.bindPipeline(fillShapesPipeline);
 		pass.render(vertexBuffer, indexBuffer, call.shapeOffset, call.shapeCount);
 	}
+
+	setFragmentUniforms(pass, call.uniformOffset, call.textureID);
 
 	if (call.strokeCount) {
 		pass.bindPipeline(fillFragmentsPipeline);
@@ -639,6 +649,10 @@ void OtCanvas::renderFill(NVGpaint* paint, NVGcompositeOperationState, NVGscisso
 
 	call.strokeCount = indices.size() - call.strokeOffset;
 
+	// deter shader type and convert paint to uniforms
+	int shaderType = paint->image ? fillTextureShader : fillGradientShader;
+	call.uniformOffset = paintToUniforms(paint, scissor, fringe, fringe, -1.0f, shaderType);
+
 	// handle fills
 	if (call.type == CallType::concaveFill) {
 		call.fillOffset = indices.size();
@@ -657,9 +671,11 @@ void OtCanvas::renderFill(NVGpaint* paint, NVGcompositeOperationState, NVGscisso
 		indices.emplace_back(vertOffset + 3);
 		indices.emplace_back(vertOffset);
 		call.fillCount = indices.size() - call.fillOffset;
+
+		paintToUniforms(paint, scissor, fringe, fringe, -1.0f, simpleShader);
 	}
 
-	call.uniformOffset = paintToUniforms(paint, scissor, width, fringe, -1.0f);
+
 }
 
 
@@ -702,9 +718,10 @@ void OtCanvas::renderStroke(NVGpaint* paint, NVGcompositeOperationState, NVGscis
 		}
 	}
 
+	int shaderType = paint->image ? fillTextureShader : fillGradientShader;
 	call.strokeCount = indices.size() - call.strokeOffset;
-	call.uniformOffset = paintToUniforms(paint, scissor, strokeWidth, fringe, -1.0f);
-	paintToUniforms(paint, scissor, strokeWidth, fringe, 1.0f - 0.5f / 255.0f);
+	call.uniformOffset = paintToUniforms(paint, scissor, strokeWidth, fringe, -1.0f, shaderType);
+	paintToUniforms(paint, scissor, strokeWidth, fringe, 1.0f - 0.5f / 255.0f, shaderType);
 }
 
 
@@ -729,7 +746,7 @@ void OtCanvas::renderTriangles(NVGpaint* paint, NVGcompositeOperationState, NVGs
 	}
 
 	call.fillCount = indices.size() - call.fillOffset;
-	call.uniformOffset = paintToUniforms(paint, scissor, 1.0f, fringe, true);
+	call.uniformOffset = paintToUniforms(paint, scissor, 1.0f, fringe, -1.0f, textureShader);
 }
 
 
@@ -737,7 +754,7 @@ void OtCanvas::renderTriangles(NVGpaint* paint, NVGcompositeOperationState, NVGs
 //	OtCanvas::paintToUniforms
 //
 
-size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, bool triangles) {
+size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, int shaderType) {
 	float invxform[6];
 
 	// create new uniform set
@@ -779,6 +796,7 @@ size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float wid
 	uniforms.extent = glm::vec2(paint->extent[0], paint->extent[1]);
 	uniforms.strokeMult = (width * 0.5f + fringe * 0.5f) / fringe;
 	uniforms.strokeThr = strokeThr;
+	uniforms.shaderType = shaderType;
 
 	if (paint->image != 0) {
 		// find texture
@@ -802,11 +820,9 @@ size_t OtCanvas::paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float wid
 			nvgTransformInverse(invxform, paint->xform);
 		}
 
-		uniforms.shaderType = triangles ? textureShader : fillTextureShader;
 		uniforms.texType = entry->second.texture.getFormat() == OtTexture::Format::r8 ? rTexture : rgbaTexture;
 
 	} else {
-		uniforms.shaderType = fillGradientShader;
 		uniforms.radius = paint->radius;
 		uniforms.feather = paint->feather;
 		nvgTransformInverse(invxform, paint->xform);
@@ -841,7 +857,7 @@ void OtCanvas::setVertexUniforms(OtRenderPass& pass) {
 //	OtCanvas::setFragmentUniforms
 //
 
-void OtCanvas::setFragmentUniforms(OtRenderPass& pass, size_t uniformOffset, size_t textureID) {
+void OtCanvas::setFragmentUniforms(OtRenderPass& pass, size_t uniformOffset, int textureID) {
 	pass.setFragmentUniforms(0, &fragmentUniforms[uniformOffset], sizeof(FragmentUniforms));
 
 	if (textureID) {
