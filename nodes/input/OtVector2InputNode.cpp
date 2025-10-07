@@ -60,7 +60,8 @@ public:
 	static constexpr OtNodeClass::Category nodeCategory = OtNodeClass::Category::input;
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::fixed;
 
-protected:
+private:
+	// properties
 	glm::vec2 value{0.0f};
 };
 

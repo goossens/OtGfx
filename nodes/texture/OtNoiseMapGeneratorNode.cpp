@@ -88,7 +88,7 @@ public:
 	static constexpr OtNodeClass::Category nodeCategory = OtNodeClass::Category::texture;
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::fixed;
 
-protected:
+private:
 	int width = 256;
 	int height = 256;
 	int frequency = 10;

@@ -89,7 +89,8 @@ public:
 	static constexpr OtNodeClass::Category nodeCategory = OtNodeClass::Category::geometry;
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::fixed;
 
-protected:
+private:
+	// properties
 	OtGeometry input;
 	OtGeometry output;
 	glm::vec3 translate{0.0f};

@@ -45,23 +45,11 @@ public:
 		for (auto i = 0; i < iterations; i++) {
 			// run horizontal blur
 			gaussian.setDirection(glm::vec2(1.0f, 0.0f));
-
-			if (i == 0) {
-				gaussian.render(input, temp1);
-
-			} else {
-				gaussian.render(temp2, temp1);
-			}
+			gaussian.render(i == 0 ? input : temp2, temp1);
 
 			// run vertical blur
 			gaussian.setDirection(glm::vec2(0.0f, 1.0f));
-
-			if (i == iterations - 1) {
-				gaussian.render(temp1, output);
-
-			} else {
-				gaussian.render(temp1, temp2);
-			}
+			gaussian.render(temp1, (i == iterations - 1) ? output : temp2);
 		}
 	}
 
@@ -69,6 +57,7 @@ public:
 	static constexpr OtNodeClass::Category nodeCategory = OtNodeClass::Category::texture;
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::fixed;
 
+private:
 	// properties
 	float radius = 2.0f;
 	int iterations = 2;

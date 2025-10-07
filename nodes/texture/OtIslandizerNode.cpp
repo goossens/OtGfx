@@ -65,6 +65,7 @@ public:
 	static constexpr OtNodeClass::Category nodeCategory = OtNodeClass::Category::texture;
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::fixed;
 
+private:
 	// properties
 	OtIslandizer islandizer;
 	OtIslandizer::DistanceFunction distance = OtIslandizer::DistanceFunction::squareBump;

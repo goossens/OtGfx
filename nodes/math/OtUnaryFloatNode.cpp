@@ -99,7 +99,8 @@ public:
 	static constexpr OtNodeClass::Category nodeCategory = OtNodeClass::Category::math;
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::flexible;
 
-protected:
+private:
+	// proterties
 	enum class Operator {
 		neg,
 		abs,

@@ -121,7 +121,8 @@ public:
 	static constexpr OtNodeClass::Kind nodeKind = OtNodeClass::Kind::fixed;
 	static constexpr float size = 170.0f;
 
-protected:
+private:
+	// proterties
 	OtManifold manifold;
 	OtMesh mesh;
 
