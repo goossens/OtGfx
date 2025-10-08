@@ -38,6 +38,7 @@
 #include "OtAssetManager.h"
 #include "OtFramework.h"
 #include "OtFrameworkAtExit.h"
+#include "OtGpu.h"
 #include "OtMessageBus.h"
 
 
@@ -71,10 +72,13 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		}
 	});
 
-	// setup framework and app
-	startSetupSDL();
+	// startup/setup app
+	OtGpu::instance().startFrame();
 	app->onSetup();
-	endSetupSDL();
+	OtGpu::instance().endFrame();
+
+	// start loop timer
+	lastTime = std::chrono::high_resolution_clock::now();
 
 	// run app until we are told to stop
 	running = true;
@@ -83,8 +87,19 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		// process all events
 		eventsSDL();
 
+		// calculate loop speed
+		loopTime = std::chrono::high_resolution_clock::now();
+		auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(loopTime - lastTime).count();
+		loopDuration = static_cast<float>(microseconds) / 1000.0f;
+		lastTime = loopTime;
+
 		// start new frame
-		startFrameSDL();
+		{
+			OtMeasureStopWatch stopwatch;
+			OtGpu::instance().startFrame();
+			gpuWaitTime = stopwatch.elapsed();
+		}
+
 		startFrameIMGUI();
 
 		// process all messages on the bus
@@ -99,13 +114,19 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		uv_run(uv_default_loop(), UV_RUN_NOWAIT);
 
 		// let app render a frame
-		OtMeasureStopWatch stopwatch;
-		app->onRender();
-		cpuTime = stopwatch.elapsed();
+		{
+			OtMeasureStopWatch stopwatch;
+			app->onRender();
+			cpuTime = stopwatch.elapsed();
+		}
 
 		// put results on screen
-		endFrameIMGUI();
-		endFrameSDL();
+		{
+			OtMeasureStopWatch stopwatch;
+			endFrameIMGUI();
+			OtGpu::instance().endFrame();
+			gpuTime = stopwatch.elapsed();
+		}
 	}
 
 	// tell app we're done

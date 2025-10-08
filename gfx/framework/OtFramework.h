@@ -53,11 +53,7 @@ private:
 
 	// initialize, run and terminate libraries
 	void initSDL();
-	void startSetupSDL();
-	void endSetupSDL();
 	void eventsSDL();
-	void startFrameSDL();
-	void endFrameSDL();
 	void endSDL();
 
 	void initIMGUI();
@@ -66,9 +62,8 @@ private:
 	void endFrameIMGUI();
 	void endIMGUI();
 
-	// support functions for command buffers
-	void startCommandCycle();
-	void endCommandCycle();
+	// window information
+	SDL_Window* window;
 
 	// time tracking
 	std::chrono::time_point<std::chrono::high_resolution_clock> lastTime;

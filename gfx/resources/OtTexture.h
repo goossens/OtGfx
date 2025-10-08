@@ -122,7 +122,7 @@ public:
 
 	// see if textures are identical
 	inline bool operator==(OtTexture& rhs) {
-		return texture == rhs.texture && width == rhs.width && height == rhs.height && version == rhs.version;
+		return texture == rhs.texture && version == rhs.version;
 	}
 
 	inline bool operator!=(OtTexture& rhs) {
