@@ -48,7 +48,7 @@ public:
 			float brightness;
 			float transparency;
 		} uniforms {
-			direction * sourcePixelSize,
+			direction * sourceTexelSize,
 			brightness,
 			transparency
 		};

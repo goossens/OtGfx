@@ -36,10 +36,10 @@ public:
 
 		// set uniforms
 		struct Uniforms {
-			glm::vec2 pixelSize;
+			glm::vec2 texelSize;
 			int32_t strength;
 		} uniforms {
-			sourcePixelSize,
+			sourceTexelSize,
 			static_cast<int32_t>(strength)
 		};
 

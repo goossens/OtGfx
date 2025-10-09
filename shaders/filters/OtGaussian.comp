@@ -15,7 +15,7 @@ layout(set=0, binding=0) uniform sampler2D inTexture;
 layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
-	vec2 pixelSize;
+	vec2 texelSize;
     vec2 direction;
 };
 
@@ -29,8 +29,8 @@ void main() {
 
 	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 
-	vec2 off1 = vec2(1.3846153846f) * direction.xy * pixelSize;
-	vec2 off2 = vec2(3.2307692308f) * direction.xy * pixelSize;
+	vec2 off1 = vec2(1.3846153846f) * direction * texelSize;
+	vec2 off2 = vec2(3.2307692308f) * direction * texelSize;
 
 	vec4 color = preMultiplyAlpha(texture(inTexture, uv)) * 0.2270270270f;
 	color += preMultiplyAlpha(texture(inTexture, uv + off1)) * 0.3162162162f;
@@ -38,5 +38,5 @@ void main() {
 	color += preMultiplyAlpha(texture(inTexture, uv + off2)) * 0.0702702703f;
 	color += preMultiplyAlpha(texture(inTexture, uv - off2)) * 0.0702702703f;
 
-	imageStore(outTexture, coord, texture(inTexture, uv) * unPreMultiplyAlpha(color));
+	imageStore(outTexture, coord, unPreMultiplyAlpha(color));
 }

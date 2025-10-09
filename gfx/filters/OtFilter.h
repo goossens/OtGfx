@@ -46,8 +46,8 @@ public:
 		pass.addOutputTexture(destination);
 
 		// determine pixel size
-		sourcePixelSize = 1.0f / glm::vec2(source.getWidth(), source.getHeight());
-		destinationPixelSize = 1.0f / glm::vec2(destination.getWidth(), destination.getHeight());
+		sourceTexelSize = 1.0f / glm::vec2(source.getWidth(), source.getHeight());
+		destinationTexelSize = 1.0f / glm::vec2(destination.getWidth(), destination.getHeight());
 
 		// ask derived class to configure the compute pass
 		// e.g. create compute pipeline, add input samplers and/or set uniforms
@@ -67,6 +67,6 @@ protected:
 
 	// work variables
 	OtSampler sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	glm::vec2 sourcePixelSize;
-	glm::vec2 destinationPixelSize;
+	glm::vec2 sourceTexelSize;
+	glm::vec2 destinationTexelSize;
 };

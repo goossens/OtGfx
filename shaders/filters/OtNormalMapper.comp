@@ -12,7 +12,7 @@ layout(set=0, binding=0) uniform sampler2D inTexture;
 layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
-	vec2 pixelSize;
+	vec2 texelSize;
 	float normalStrength;
     bool includeHeight;
 };
@@ -28,15 +28,15 @@ void main() {
 	vec2 uv = (vec2(coord) + 0.5f) / vec2(size);
 
 	// convert height map to normal map using Sobel filter
-	float tl = texture(inTexture, uv + vec2(-pixelSize.x, -pixelSize.y)).r;
-	float tc = texture(inTexture, uv + vec2(0.0, -pixelSize.y)).r;
-	float tr = texture(inTexture, uv + vec2(pixelSize.x, -pixelSize.y)).r;
-	float cl = texture(inTexture, uv + vec2(-pixelSize.x, 0.0)).r;
+	float tl = texture(inTexture, uv + vec2(-texelSize.x, -texelSize.y)).r;
+	float tc = texture(inTexture, uv + vec2(0.0, -texelSize.y)).r;
+	float tr = texture(inTexture, uv + vec2(texelSize.x, -texelSize.y)).r;
+	float cl = texture(inTexture, uv + vec2(-texelSize.x, 0.0)).r;
 	float cc = texture(inTexture, uv).r;
-	float cr = texture(inTexture, uv + vec2(pixelSize.x, 0.0)).r;
-	float bl = texture(inTexture, uv + vec2(-pixelSize.x, pixelSize.y)).r;
-	float bc = texture(inTexture, uv + vec2(0.0, pixelSize.y)).r;
-	float br = texture(inTexture, uv + vec2(pixelSize.x, pixelSize.y)).r;
+	float cr = texture(inTexture, uv + vec2(texelSize.x, 0.0)).r;
+	float bl = texture(inTexture, uv + vec2(-texelSize.x, texelSize.y)).r;
+	float bc = texture(inTexture, uv + vec2(0.0, texelSize.y)).r;
+	float br = texture(inTexture, uv + vec2(texelSize.x, texelSize.y)).r;
 
 	vec3 normal = normalize(vec3(
 		(tr + (2.0f * cr) + br) - (tl + (2.0f * cl) + bl),
