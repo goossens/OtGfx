@@ -41,6 +41,12 @@ OtImage& OtReadBackBuffer::readback(OtTexture& texture) {
 //
 
 OtImage& OtReadBackBuffer::readback(OtTexture& texture, int x, int y, int w, int h) {
+	// this is a hack to ensure things happen in the right order
+	// this object creates it's own command buffer which is executed immediately
+	// therefore, previous GPU commands have the be executed first
+	auto& gpu = OtGpu::instance();
+	gpu.flushAndRestartFrame();
+
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD,
@@ -49,7 +55,6 @@ OtImage& OtReadBackBuffer::readback(OtTexture& texture, int x, int y, int w, int
 	};
 
 	// transfer GPU texture back to CPU
-	auto& gpu = OtGpu::instance();
 	auto transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
 
 	SDL_GPUTextureRegion region{

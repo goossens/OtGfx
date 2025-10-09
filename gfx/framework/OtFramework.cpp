@@ -73,9 +73,10 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 	});
 
 	// startup/setup app
-	OtGpu::instance().startFrame();
+	auto& gpu = OtGpu::instance();
+	gpu.startFrame();
 	app->onSetup();
-	OtGpu::instance().endFrame();
+	gpu.endFrame();
 
 	// start loop timer
 	lastTime = std::chrono::high_resolution_clock::now();
@@ -96,7 +97,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		// start new frame
 		{
 			OtMeasureStopWatch stopwatch;
-			OtGpu::instance().startFrame();
+			gpu.startFrame();
 			gpuWaitTime = stopwatch.elapsed();
 		}
 
@@ -124,7 +125,7 @@ void OtFramework::run(OtFrameworkApp* targetApp) {
 		{
 			OtMeasureStopWatch stopwatch;
 			endFrameIMGUI();
-			OtGpu::instance().endFrame();
+			gpu.endFrame();
 			gpuTime = stopwatch.elapsed();
 		}
 	}

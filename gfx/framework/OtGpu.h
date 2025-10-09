@@ -112,21 +112,16 @@ public:
 		SDL_DestroyGPUDevice(device);
 	}
 
+	// set a new window size
+	void setWindowSize(int w, int h) {
+		width = w;
+		height = h;
+	}
+
 	// start a new frame
 	void startFrame() {
-		// acquire a copy command buffer
-		copyCommandBuffer = SDL_AcquireGPUCommandBuffer(device);
-
-		if (!copyCommandBuffer) {
-			OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
-		}
-
-		// acquire a pipeline command buffer
-		pipelineCommandBuffer = SDL_AcquireGPUCommandBuffer(device);
-
-		if (!pipelineCommandBuffer) {
-			OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
-		}
+		// acquire new command buffers
+		acquireCommandBuffers();
 
 		// get the swapchain texture
 		if (!SDL_WaitAndAcquireGPUSwapchainTexture(pipelineCommandBuffer, window, &swapchainTexture, nullptr, nullptr)) {
@@ -136,27 +131,14 @@ public:
 
 	// end current frame
 	void endFrame() {
-		// submit the copy command buffer
-		SDL_GPUFence* fences[2];
-		fences[0] = SDL_SubmitGPUCommandBufferAndAcquireFence(copyCommandBuffer);
+		// execute command captured in this frame
+		executeCommandBuffer();
+	}
 
-		if (!fences[0]) {
-			OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
-		}
-
-		// submit the pipeline command buffer
-		fences[1] = SDL_SubmitGPUCommandBufferAndAcquireFence(pipelineCommandBuffer);
-
-		if (!fences[1]) {
-			OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
-		}
-
-		if (!SDL_WaitForGPUFences(device, true, fences, 2)) {
-			OtLogFatal("Error in SDL_WaitForGPUFences: {}", SDL_GetError());
-		}
-
-		SDL_ReleaseGPUFence(device, fences[0]);
-		SDL_ReleaseGPUFence(device, fences[1]);
+	// execute commands captured sofar in current frame and restart frame
+	void flushAndRestartFrame() {
+		executeCommandBuffer();
+		acquireCommandBuffers();
 	}
 
 	// rendering properties
@@ -222,5 +204,45 @@ private:
 
 		SDL_UploadToGPUTexture(pass, &transferInfo, &region, true);
 		return texture;
+	}
+
+	void acquireCommandBuffers() {
+		// acquire a copy command buffer
+		copyCommandBuffer = SDL_AcquireGPUCommandBuffer(device);
+
+		if (!copyCommandBuffer) {
+			OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
+		}
+
+		// acquire a pipeline command buffer
+		pipelineCommandBuffer = SDL_AcquireGPUCommandBuffer(device);
+
+		if (!pipelineCommandBuffer) {
+			OtLogFatal("Error in SDL_AcquireGPUCommandBuffer: {}", SDL_GetError());
+		}
+	}
+
+	void executeCommandBuffer() {
+		// submit the copy command buffer
+		SDL_GPUFence* fences[2];
+		fences[0] = SDL_SubmitGPUCommandBufferAndAcquireFence(copyCommandBuffer);
+
+		if (!fences[0]) {
+			OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
+		}
+
+		// submit the pipeline command buffer
+		fences[1] = SDL_SubmitGPUCommandBufferAndAcquireFence(pipelineCommandBuffer);
+
+		if (!fences[1]) {
+			OtLogFatal("Error in SDL_SubmitGPUCommandBufferAndAcquireFence: {}", SDL_GetError());
+		}
+
+		if (!SDL_WaitForGPUFences(device, true, fences, 2)) {
+			OtLogFatal("Error in SDL_WaitForGPUFences: {}", SDL_GetError());
+		}
+
+		SDL_ReleaseGPUFence(device, fences[0]);
+		SDL_ReleaseGPUFence(device, fences[1]);
 	}
 };

@@ -27,9 +27,6 @@ void OtFramework::initSDL() {
 		OtLogFatal("Can't initialize SDL library: {}", SDL_GetError());
 	}
 
-	// initialize GPU data singleton
-	auto& gpu = OtGpu::instance();
-
 	// determine best default window size
 	int width;
 	int height;
@@ -83,7 +80,7 @@ void OtFramework::initSDL() {
 	SDL_SetHint(SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE, "0");
 
 	// create GPU device
-	gpu.init(window, width, height);
+	OtGpu::instance().init(window, width, height);
 
 #if __APPLE__
 	fixMenus();
@@ -98,15 +95,13 @@ void OtFramework::initSDL() {
 void OtFramework::eventsSDL() {
 	// process available events
 	SDL_Event event;
-	auto& gpu = OtGpu::instance();
 
 	while (SDL_PollEvent(&event)) {
 		eventIMGUI(event);
 
 		switch (event.type) {
 			case SDL_EVENT_WINDOW_RESIZED:
-				gpu.width = event.window.data1;
-				gpu.height = event.window.data2;
+				OtGpu::instance().setWindowSize(event.window.data1, event.window.data2);
 				break;
 
 			case SDL_EVENT_QUIT:
