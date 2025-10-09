@@ -28,7 +28,7 @@
 #include "OtMarkdownEditor.h"
 #include "OtNodesEditor.h"
 #include "OtObjectTalkEditor.h"
-// #include "OtSceneEditor.h"
+#include "OtSceneEditor.h"
 #include "OtTxtEditor.h"
 #include "OtWorkspace.h"
 
@@ -43,7 +43,7 @@ OtWorkspace::OtWorkspace() {
 	registerEditorType<OtMarkdownEditor>();
 	registerEditorType<OtNodesEditor>();
 	registerEditorType<OtObjectTalkEditor>();
-	// registerEditorType<OtSceneEditor>();
+	registerEditorType<OtSceneEditor>();
 	registerEditorType<OtTxtEditor>();
 }
 
@@ -69,8 +69,8 @@ void OtWorkspace::onSetup() {
 		if (OtPath::isDirectory(examples)) {
 			OtPath::changeDirectory(examples);
 
-//		} else if (OtText::contains(exec, "/build/xcode/Debug/ObjectTalk.app/Contents/MacOS/ot")) {
-//			OtPath::changeDirectory(OtPath::join(OtText::left(exec, exec.size() - 51), "examples"));
+		} else if (OtText::contains(exec, "/build/xcode/Debug/ObjectTalk.app/Contents/MacOS/ot")) {
+			OtPath::changeDirectory(OtPath::join(OtText::left(exec, exec.size() - 51), "examples"));
 
 		} else {
 			auto path = OtPath::getDocumentsDirectory();

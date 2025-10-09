@@ -27,7 +27,7 @@
 
 #if defined(OT_INCLUDE_UI)
 #include "OtFramework.h"
-// #include "OtSceneApp.h"
+#include "OtSceneApp.h"
 #include "OtWorkspace.h"
 #endif
 
@@ -137,11 +137,11 @@ int main(int argc, char* argv[]) {
 					module->load(file);
 					module->unsetAll();
 
-				// } else if (extension == ".ots") {
-				// 	// handle a scene file
-				// 	OtFramework framework;
-				// 	OtSceneApp app{file};
-				// 	framework.run(&app);
+				} else if (extension == ".ots") {
+					// handle a scene file
+					OtFramework framework;
+					OtSceneApp app{file};
+					framework.run(&app);
 
 				} else {
 					// handle other file types

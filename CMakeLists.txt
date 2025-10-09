@@ -26,6 +26,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 add_subdirectory(deps)
 add_subdirectory(3rdparty)
 add_subdirectory(language)
@@ -36,18 +38,17 @@ if(OT_INCLUDE_UI)
 	add_subdirectory(gfx)
 	add_subdirectory(gui)
 	add_subdirectory(nodes)
+	add_subdirectory(scene)
 	add_subdirectory(physics)
 	add_subdirectory(ide)
 endif()
 
 add_executable(ot main.cpp)
-
-target_include_directories(ot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/demos)
 target_link_libraries(ot language network argparse)
 
 if(OT_INCLUDE_UI)
 	target_compile_definitions(ot PRIVATE OT_INCLUDE_UI)
-	target_link_libraries(ot shaders gfx gui nodes physics ide)
+	target_link_libraries(ot shaders gfx gui nodes scene physics ide)
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
 		if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)
@@ -63,7 +64,6 @@ target_compile_options(ot PRIVATE
 if(APPLE)
 	target_link_options(ot PRIVATE LINKER:-no_warn_duplicate_libraries)
 endif()
-
 
 add_custom_command(TARGET ot POST_BUILD COMMAND $<$<CONFIG:release>:${CMAKE_STRIP}> ARGS ${CMAKE_BINARY_DIR}/Release/ot)
 
