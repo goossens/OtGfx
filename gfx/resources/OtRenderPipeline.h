@@ -125,19 +125,36 @@ public:
 		pipeline = nullptr;
 	}
 
-	inline void setVertexDescription(OtVertexDescription* description) { vertexDescription = description; }
-	inline void setRenderTargetType(RenderTargetType value) { renderTargetType = value; }
-	inline void setCulling(Culling value) { culling = value; }
-	inline void setFill(bool mode) { fill = mode; }
+	inline void setVertexDescription(OtVertexDescription* description) {
+		vertexDescription = description;
+		pipeline = nullptr;
+	}
+
+	inline void setRenderTargetType(RenderTargetType value) {
+		renderTargetType = value;
+		pipeline = nullptr;
+	}
+
+	inline void setCulling(Culling value) {
+		culling = value;
+		pipeline = nullptr;
+	}
+
+	inline void setFill(bool mode) {
+		fill = mode;
+		pipeline = nullptr;
+	}
 
 	inline void setColorMask(ColorMask value) {
 		useColorMask = true;
 		colorMask = value;
+		pipeline = nullptr;
 	}
 
 	inline void setDepthTest(CompareOperation value) {
 		useDepth = value != CompareOperation::none;
 		depthTest = value;
+		pipeline = nullptr;
 	}
 
 	inline void setStencil(uint8_t compareMask, uint8_t writeMask, CompareOperation compare, StencilOperation pass, StencilOperation fail, StencilOperation depthFail) {
@@ -162,6 +179,7 @@ public:
 		stencilBackPassOperation = backPass;
 		stencilBackFailOperation = backFail;
 		stencilBackDepthFailOperation = backDepthFail;
+		pipeline = nullptr;
 	}
 
 	inline void setBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
@@ -173,12 +191,14 @@ public:
 		colorBlendOperation = operation;
 		colorSrcFactor = src;
 		colorDstFactor = dst;
+		pipeline = nullptr;
 	}
 
 	inline void setAlphaBlend(BlendOperation operation, BlendFactor src, BlendFactor dst) {
 		alphaBlendOperation = operation;
 		alphaSrcFactor = src;
 		alphaDstFactor = dst;
+		pipeline = nullptr;
 	}
 
 	// clear the object
@@ -227,12 +247,6 @@ public:
 	inline bool isValid() { return pipeline != nullptr; }
 
 private:
-	// shader definitions
-	const uint32_t* vertexShaderCode = nullptr;
-	size_t vertexShaderSize = 0;
-	const uint32_t* fragmentShaderCode = nullptr;
-	size_t fragmentShaderSize = 0;
-
 	// the GPU resource
 	std::shared_ptr<SDL_GPUGraphicsPipeline> pipeline;
 
@@ -246,6 +260,11 @@ private:
 	}
 
 	// pipeline properties
+	const uint32_t* vertexShaderCode = nullptr;
+	size_t vertexShaderSize = 0;
+	const uint32_t* fragmentShaderCode = nullptr;
+	size_t fragmentShaderSize = 0;
+
 	OtVertexDescription* vertexDescription = nullptr;
 	RenderTargetType renderTargetType = RenderTargetType::rgba8d32;
 	Culling culling = Culling::cw;

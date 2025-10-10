@@ -84,12 +84,12 @@ public:
 	}
 
 	// (de)serialize node
-	inline void customSerialize(nlohmann::json* data, std::string* /* basedir */) override {
+	inline void customSerialize(nlohmann::json* data, [[maybe_unused]] std::string* basedir) override {
 		(*data)["mode"] = mode;
 		(*data)["lut"] = lut;
 	}
 
-	inline void customDeserialize(nlohmann::json* data, std::string* /* basedir */) override {
+	inline void customDeserialize(nlohmann::json* data, [[maybe_unused]] std::string* basedir) override {
 		mode = data->value("mode", OtRgbaCurve::Mode::rgb);
 		lut = data->value("lut", std::array<ImVec2, curvePoints>{ImVec2(ImGui::CurveTerminator, 0.0f)});
 	}

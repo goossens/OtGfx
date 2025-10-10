@@ -49,7 +49,7 @@ void OtShape::save(const std::string& filepath) {
 	Context context{&text, true};
 
 	// see if we have any paths
-	plutovg_path_traverse(path, [](void* closure, plutovg_path_command_t command, const plutovg_point_t* points, int /* npoints */) {
+	plutovg_path_traverse(path, [](void* closure, plutovg_path_command_t command, const plutovg_point_t* points, [[maybe_unused]] int npoints) {
 		Context* ctx = (Context*) closure;
 
 		switch (command) {
@@ -261,7 +261,7 @@ void OtShape::getSegments(std::vector<glm::vec2>& points, std::vector<size_t>& s
 		float tolerance;
 	} config{&points, &sizes, 0, std::max(tolerance, 0.001f)};
 
-	plutovg_path_traverse(path, [](void* closure, plutovg_path_command_t command, const plutovg_point_t* points, int /* npoints */) {
+	plutovg_path_traverse(path, [](void* closure, plutovg_path_command_t command, const plutovg_point_t* points, [[maybe_unused]] int npoints) {
 		Config* config = (Config*) closure;
 		auto size = config->points->size() - config->start;
 

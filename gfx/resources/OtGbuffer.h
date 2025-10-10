@@ -66,22 +66,22 @@ public:
 
 			// create/update render target information
 			colorTargetInfo[0].texture = albedoTexture.getTexture();
-			colorTargetInfo[0].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
+			colorTargetInfo[0].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 			colorTargetInfo[0].load_op = SDL_GPU_LOADOP_CLEAR;
 			colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
 
 			colorTargetInfo[1].texture = normalTexture.getTexture();
-			colorTargetInfo[1].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
+			colorTargetInfo[1].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 			colorTargetInfo[1].load_op = SDL_GPU_LOADOP_CLEAR;
 			colorTargetInfo[1].store_op = SDL_GPU_STOREOP_STORE;
 
 			colorTargetInfo[2].texture = pbrTexture.getTexture();
-			colorTargetInfo[2].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
+			colorTargetInfo[2].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 			colorTargetInfo[2].load_op = SDL_GPU_LOADOP_CLEAR;
 			colorTargetInfo[2].store_op = SDL_GPU_STOREOP_STORE;
 
 			colorTargetInfo[3].texture = emissiveTexture.getTexture();
-			colorTargetInfo[3].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
+			colorTargetInfo[3].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 			colorTargetInfo[3].load_op = SDL_GPU_LOADOP_CLEAR;
 			colorTargetInfo[3].store_op = SDL_GPU_STOREOP_STORE;
 

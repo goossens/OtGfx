@@ -36,6 +36,7 @@ public:
 		none = SDL_GPU_TEXTUREFORMAT_INVALID,
 		r8 = SDL_GPU_TEXTUREFORMAT_R8_UNORM,
 		r32 = SDL_GPU_TEXTUREFORMAT_R32_FLOAT,
+		rg16 = SDL_GPU_TEXTUREFORMAT_R16G16_UNORM,
 		rgba8 = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
 		rgba32 = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT,
 		d32 = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
@@ -100,6 +101,7 @@ public:
 			case Format::none: return 0;
 			case Format::r8: return 1;
 			case Format::r32: return 4;
+			case Format::rg16: return 4;
 			case Format::rgba8: return 4;
 			case Format::rgba32: return 16;
 			case Format::d32: return 4;

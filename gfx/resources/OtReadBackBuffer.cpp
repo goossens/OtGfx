@@ -10,6 +10,7 @@
 //
 
 #include <algorithm>
+#include <cstdint>
 
 #include "SDL3/SDL.h"
 
@@ -110,6 +111,20 @@ void OtReadBackBuffer::convertToImage(int w, int h, OtTexture::Format format, vo
 
 	} else if (format == OtTexture::Format::rgba32) {
 		image.load(w, h, OtImage::Format::rgba32, data);
+
+	} else if (format == OtTexture::Format::rg16) {
+		auto buffer = new glm::vec4[w * h];
+		auto src = (uint16_t*) data;
+		auto dst = &buffer[0];
+
+		for (int i = 0; i < w * h; i++) {
+			auto red = static_cast<float>(*src++) / 255.0f;
+			auto green = static_cast<float>(*src++) / 255.0f;
+			*dst++ = glm::vec4(red, green, 0.0f, 1.0f);
+		}
+
+		image.load(w, h, OtImage::Format::rgba32, buffer);
+		delete [] buffer;
 
 	} else if (format == OtTexture::Format::r32) {
 		auto buffer = new glm::vec4[w * h];

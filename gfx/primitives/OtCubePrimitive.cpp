@@ -34,7 +34,7 @@ bool OtCubePrimitive::renderUI() {
 //	OtCubePrimitive::serialize
 //
 
-nlohmann::json OtCubePrimitive::serialize(std::string* /* basedir */) {
+nlohmann::json OtCubePrimitive::serialize([[maybe_unused]] std::string* basedir) {
 	auto data = nlohmann::json::object();
 	data["type"] = name;
 	data["xsegments"] = widthSegments;
@@ -48,7 +48,7 @@ nlohmann::json OtCubePrimitive::serialize(std::string* /* basedir */) {
 //	OtCubePrimitive::deserialize
 //
 
-void OtCubePrimitive::deserialize(nlohmann::json data, std::string* /* basedir */) {
+void OtCubePrimitive::deserialize(nlohmann::json data, [[maybe_unused]] std::string* basedir) {
 	widthSegments = data.value("xsegments", 1);
 	heightSegments = data.value("ysegments", 1);
 	depthSegments = data.value("zsegments", 1);

@@ -55,7 +55,7 @@ bool OtGrassComponent::renderUI() {
 //	OtGrassComponent::serialize
 //
 
-nlohmann::json OtGrassComponent::serialize(std::string* /* basedir */) {
+nlohmann::json OtGrassComponent::serialize([[maybe_unused]] std::string* basedir) {
 	auto data = nlohmann::json::object();
 	data["patchWidth"] = patchWidth;
 	data["patchDepth"] = patchDepth;
@@ -87,7 +87,7 @@ nlohmann::json OtGrassComponent::serialize(std::string* /* basedir */) {
 //	OtGrassComponent::deserialize
 //
 
-void OtGrassComponent::deserialize(nlohmann::json data, std::string* /* basedir */) {
+void OtGrassComponent::deserialize(nlohmann::json data, [[maybe_unused]] std::string* basedir) {
 	patchWidth = data.value("patchWidth", 1.0f);
 	patchDepth = data.value("patchDepth", 1.0f);
 	blades = data.value("blades", 10);

@@ -34,7 +34,7 @@
 
 class OtComputePass {
 public:
-	// add an input sampler
+	// add an input sampler for a texture
 	inline void addInputSampler(OtSampler& sampler, OtTexture& texture) {
 		if ((texture.getUsage() & OtTexture::sampler) == 0) {
 			OtLogFatal("Can't add texture without [sampler] usage to compute pass");
@@ -42,6 +42,16 @@ public:
 
 		SDL_GPUTextureSamplerBinding binding{
 			.texture = texture.getTexture(),
+			.sampler = sampler.getSampler()
+		};
+
+		samplers.emplace_back(binding);
+	}
+
+	// add an input sampler for a cubemap
+	inline void addInputSampler(OtSampler& sampler, OtCubeMap& cubemap) {
+		SDL_GPUTextureSamplerBinding binding{
+			.texture = cubemap.getTexture(),
 			.sampler = sampler.getSampler()
 		};
 
@@ -67,7 +77,7 @@ public:
 		textures.emplace_back(binding);
 	}
 
-	// add an output texture
+	// add an output cubemap
 	inline void addOutputCubeMap(OtCubeMap& cubemap) {
 		SDL_GPUStorageTextureReadWriteBinding binding{
 			.texture = cubemap.getTexture(),

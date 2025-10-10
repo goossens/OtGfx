@@ -95,7 +95,7 @@ public:
 		return customH;
 	}
 
-	inline void customSerialize(nlohmann::json* data, std::string* /* basedir */) override {
+	inline void customSerialize(nlohmann::json* data, [[maybe_unused]] std::string* basedir) override {
 		(*data)["azimuth"] = context.azimuth;
 		(*data)["elevation"] = context.elevation;
 		(*data)["zoom"] = context.zoom;
@@ -104,7 +104,7 @@ public:
 		(*data)["wireframe"] = context.wireframe;
 	}
 
-	inline void customDeserialize(nlohmann::json* data, std::string* /* basedir */) override {
+	inline void customDeserialize(nlohmann::json* data, [[maybe_unused]] std::string* basedir) override {
 		context.azimuth = data->value("azimuth", 0.0f);
 		context.elevation = data->value("elevation", 0.0f);
 		context.zoom = data->value("zoom", 0.95f);

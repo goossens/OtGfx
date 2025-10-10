@@ -41,7 +41,7 @@ void OtCubeMap::create(int s, bool m) {
 	SDL_GPUTextureCreateInfo info{
 		.type = SDL_GPU_TEXTURETYPE_CUBE,
 		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-		.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
+		.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE,
 		.width = static_cast<Uint32>(size),
 		.height = static_cast<Uint32>(size),
 		.layer_count_or_depth = 6,

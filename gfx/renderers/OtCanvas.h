@@ -251,8 +251,8 @@ private:
 		float feather;
 		float strokeMult;
 		float strokeThr;
-		int texType;
-		int shaderType;
+		uint32_t texType;
+		uint32_t shaderType;
 	};
 
 	std::vector<Call> calls;

@@ -21,6 +21,7 @@
 #include "OtAssert.h"
 #include "OtLog.h"
 
+#include "OtCubeMap.h"
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
 #include "OtGeometry.h"
@@ -125,7 +126,7 @@ public:
 		SDL_BindGPUGraphicsPipeline(pass, pipeline.getPipeline());
 	}
 
-	// bind a vertex sampler
+	// bind a vertex sampler for a texture
 	inline void bindVertexSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
 		OtAssert(open);
 
@@ -137,12 +138,36 @@ public:
 		SDL_BindGPUVertexSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 	}
 
-	// bind a fragment sampler
+	// bind a vertex sampler for a cubemap
+	inline void bindVertexSampler(size_t slot, OtSampler& sampler, OtCubeMap& cubemap) {
+		OtAssert(open);
+
+		SDL_GPUTextureSamplerBinding binding{
+			.texture = cubemap.getTexture(),
+			.sampler = sampler.getSampler()
+		};
+
+		SDL_BindGPUVertexSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
+	}
+
+	// bind a fragment sampler for a texture
 	inline void bindFragmentSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
 		OtAssert(open);
 
 		SDL_GPUTextureSamplerBinding binding{
 			.texture = texture.getTexture(),
+			.sampler = sampler.getSampler()
+		};
+
+		SDL_BindGPUFragmentSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
+	}
+
+	// bind a vertex sampler for a cubemap
+	inline void bindFragmentSampler(size_t slot, OtSampler& sampler, OtCubeMap& cubemap) {
+		OtAssert(open);
+
+		SDL_GPUTextureSamplerBinding binding{
+			.texture = cubemap.getTexture(),
 			.sampler = sampler.getSampler()
 		};
 
