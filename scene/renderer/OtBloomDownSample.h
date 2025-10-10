@@ -14,43 +14,30 @@
 
 #include "glm/glm.hpp"
 
-#include "OtNeedleComp.h"
 #include "OtFilter.h"
+#include "OtBloomDownSampleComp.h"
 
 
 //
-//	OtNeedle
+//	OtBloomDownSample
 //
 
-class OtNeedle : public OtFilter {
+class OtBloomDownSample : public OtFilter {
 public:
-	// set properties
-	inline void setNeedle(OtTexture value) { needleTexture = value; }
-	inline void setTransform(const glm::mat4& value) { transform = value; }
-
 	// configure the compute pass
 	void configurePass(OtComputePass& pass) override {
 		// initialize pipeline (if required)
 		if (!pipeline.isValid()) {
-			pipeline.setShader(OtNeedleComp, sizeof(OtNeedleComp));
+			pipeline.setShader(OtBloomDownSampleComp, sizeof(OtBloomDownSampleComp));
 		}
-
-		// add overlay texture
-		pass.addInputSampler(needleSampler, needleTexture);
 
 		// set uniforms
 		struct Uniforms {
-			glm::mat4 transform;
+			glm::vec2 texelSize;
 		} uniforms {
-			transform
+			sourceTexelSize
 		};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
-
-private:
-	// properties
-	glm::mat4 transform{1.0f};
-	OtTexture needleTexture;
-	OtSampler needleSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 };

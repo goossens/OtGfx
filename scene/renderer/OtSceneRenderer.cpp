@@ -18,7 +18,7 @@
 //	OtSceneRenderer::render
 //
 
-int OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
+ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	// create rendering context
 	OtSceneRendererContext ctx{camera, scene, &ibl, &csm};
 	OtMeasureStopWatch stopwatch;
@@ -32,7 +32,7 @@ int OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// generate shadow maps (if required)
 	if (ctx.castShadow) {
-		shadowPass.render(ctx);
+		// shadowPass.render(ctx);
 	}
 
 	shadowPassTime = stopwatch.lap();
@@ -42,7 +42,7 @@ int OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	backgroundPass.render(ctx);
 
 	if (ctx.hasSkyEntities) {
-		skyPass.render(ctx);
+		// skyPass.render(ctx);
 	}
 
 	backgroundPassTime = stopwatch.lap();
@@ -50,48 +50,48 @@ int OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	// render opaque entities
 	if (ctx.hasOpaqueEntities) {
 		deferredRenderingBuffer.update(camera.width, camera.height);
-		deferredPass.render(ctx);
+		// deferredPass.render(ctx);
 	}
 
 	opaquePassTime = stopwatch.lap();
 
 	// render transparent entities
 	if (ctx.hasTransparentEntities) {
-		forwardPass.render(ctx);
+		// forwardPass.render(ctx);
 	}
 
 	transparentPassTime = stopwatch.lap();
 
 	// generate water (if required)
 	if (ctx.hasWaterEntities) {
-		waterPass.render(ctx);
+		// waterPass.render(ctx);
 	}
 
 	waterPassTime = stopwatch.lap();
 
 	// render particles
 	if (ctx.hasParticlesEntities) {
-		particlePass.render(ctx);
+		// particlePass.render(ctx);
 	}
 
 	particlePassTime = stopwatch.lap();
 
 	// handle editor passes
-	gridPass.render(ctx);
+	// gridPass.render(ctx);
 
 	if (scene->isValidEntity(selectedEntity)) {
-		highlightPass.render(ctx, selectedEntity);
+		// highlightPass.render(ctx, selectedEntity);
 	}
 
 	if (pickingCallback) {
-		pickingPass.render(ctx, pickingNDC, pickingCallback);
+		// pickingPass.render(ctx, pickingNDC, pickingCallback);
 		pickingCallback = nullptr;
 	}
 
 	editorPassTime = stopwatch.lap();
 
 	// post process frame
-	auto textureIndex = postProcessingPass.render(ctx);
+	auto textureID = postProcessingPass.render(ctx);
 	postProcessingTime = stopwatch.lap();
-	return textureIndex;
+	return textureID;
 }

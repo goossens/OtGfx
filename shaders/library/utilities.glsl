@@ -7,6 +7,16 @@
 #ifndef OT_UTILITIES_GLSL
 #define OT_UTILITIES_GLSL
 
+// convert depth from depth buffer to clip space depth
+float depthToClipSpace(float depth) {
+	return depth * 2.0 - 1.0;
+}
+
+// convert point from uv to clip space
+vec3 uvToClipSpace(vec2 uv, float depth) {
+	return vec3(uv * 2.0 - 1.0, depthToClipSpace(depth));
+}
+
 // pre multiply color
 vec4 preMultiplyAlpha(vec4 color) {
 	return vec4(color.rgb * color.a, color.a);

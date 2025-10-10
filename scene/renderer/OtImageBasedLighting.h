@@ -12,12 +12,16 @@
 //	Include files
 //
 
-#include "OtComputeProgram.h"
+#include "OtComputePipeline.h"
 #include "OtCubeMap.h"
 #include "OtSampler.h"
 #include "OtTexture.h"
 
 #include "OtIblComponent.h"
+
+#include "OtBrdfLutComp.h"
+#include "OtIblEnvironmentMapComp.h"
+#include "OtIblIrradianceMapComp.h"
 
 
 //
@@ -39,16 +43,13 @@ public:
 	int maxEnvLevel;
 
 private:
-	// uniforms
-	OtUniformVec4 iblEnvironmentUniform{"u_iblEnvironment", 1};
-
 	// samplers
-	OtSampler cubemapSampler{"s_cubemap"};
+	OtSampler cubemapSampler;
 
 	// compute programs
-	OtComputeProgram brdfLutProgram{"OtBrdfLutCS"};
-	OtComputeProgram irradianceProgram{"OtIblIrradianceMapCS"};
-	OtComputeProgram envmapProgram{"OtIblEnvironmentMapCS"};
+	OtComputePipeline brdfLutPipeline{OtBrdfLutComp, sizeof(OtBrdfLutComp)};
+	OtComputePipeline iblEnvironmentMapPipeline{OtIblEnvironmentMapComp, sizeof(OtIblEnvironmentMapComp)};
+	OtComputePipeline iblIrradianceMapPipeline{OtIblIrradianceMapComp, sizeof(OtIblIrradianceMapComp)};
 
 	// image based lighting data
 	int iblSkyMapVersion = 0;

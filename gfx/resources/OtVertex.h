@@ -219,6 +219,40 @@ struct OtVertexPosColor {
 
 
 //
+//	OtVertexPos
+//
+
+struct OtVertexPos {
+	// vertex elements
+	glm::vec3 position;
+
+	// constructors
+	OtVertexPos() = default;
+	inline OtVertexPos(const glm::vec3& p) : position(p) {}
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{
+				.location = 0,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+				.offset = offsetof(OtVertexPos, position)
+			}
+		};
+
+		static OtVertexDescription description{
+			.size = sizeof(OtVertexPos),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
+			.attributes = attributes
+		};
+
+		return &description;
+	}
+};
+
+
+//
 //	OtVertexPosUvCol2D
 //
 

@@ -13,10 +13,11 @@
 //
 
 #include <functional>
-#include <memory>
 
 #include "glm/glm.hpp"
+#include "imgui.h"
 
+#include "OtCascadedShadowMap.h"
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
 
@@ -27,16 +28,16 @@
 #include "OtImageBasedLighting.h"
 
 #include "OtBackgroundPass.h"
-#include "OtDeferredPass.h"
-#include "OtForwardPass.h"
-#include "OtOcclusionPass.h"
-#include "OtParticlesPass.h"
-#include "OtShadowPass.h"
-#include "OtSkyPass.h"
-#include "OtWaterPass.h"
-#include "OtGridPass.h"
-#include "OtHighlightPass.h"
-#include "OtPickingPass.h"
+// #include "OtDeferredPass.h"
+// #include "OtForwardPass.h"
+// #include "OtOcclusionPass.h"
+// #include "OtParticlesPass.h"
+// #include "OtShadowPass.h"
+// #include "OtSkyPass.h"
+// #include "OtWaterPass.h"
+// #include "OtGridPass.h"
+// #include "OtHighlightPass.h"
+// #include "OtPickingPass.h"
 #include "OtPostProcessingPass.h"
 
 
@@ -47,7 +48,7 @@
 class OtSceneRenderer {
 public:
 	// set properties
-	inline void setGridScale(float gridScale) { gridPass.setGridScale(gridScale); }
+//	inline void setGridScale(float gridScale) { gridPass.setGridScale(gridScale); }
 	inline void setSelectedEntity(OtEntity entity) { selectedEntity = entity; }
 
 	// support entity picking
@@ -56,10 +57,10 @@ public:
 		pickingCallback = callback;
 	}
 
-	inline bool isPicking() { return pickingPass.isPicking(); }
+//	inline bool isPicking() { return pickingPass.isPicking(); }
 
 	// render specified scene
-	int render(OtCamera& camera, OtScene* scene);
+	ImTextureID render(OtCamera& camera, OtScene* scene);
 
 private:
 	// give the debugger access to the inner circle
@@ -67,22 +68,22 @@ private:
 
 	// framebuffers
 	OtGbuffer deferredRenderingBuffer;
-	OtFrameBuffer compositeBuffer{OtTexture::rgbaFloat16Texture, OtTexture::dFloatTexture};
+	OtFrameBuffer compositeBuffer{OtTexture::Format::rgba8, OtTexture::Format::d32};
 
 	OtCascadedShadowMap csm;
 	OtImageBasedLighting ibl;
 
 	// rendering passes
-	OtShadowPass shadowPass;
+	// OtShadowPass shadowPass;
 	OtBackgroundPass backgroundPass{compositeBuffer};
-	OtSkyPass skyPass{compositeBuffer};
-	OtDeferredPass deferredPass{deferredRenderingBuffer, compositeBuffer};
-	OtForwardPass forwardPass{compositeBuffer};
-	OtWaterPass waterPass{compositeBuffer};
-	OtParticlesPass particlePass{compositeBuffer};
-	OtGridPass gridPass{compositeBuffer};
-	OtHighlightPass highlightPass{compositeBuffer};
-	OtPickingPass pickingPass;
+	// OtDeferredPass deferredPass{deferredRenderingBuffer, compositeBuffer};
+	// OtForwardPass forwardPass{compositeBuffer};
+	// OtSkyPass skyPass{compositeBuffer};
+	// OtWaterPass waterPass{compositeBuffer};
+	// OtParticlesPass particlePass{compositeBuffer};
+	// OtGridPass gridPass{compositeBuffer};
+	// OtHighlightPass highlightPass{compositeBuffer};
+	// OtPickingPass pickingPass;
 	OtPostProcessingPass postProcessingPass{compositeBuffer};
 
 	// timings

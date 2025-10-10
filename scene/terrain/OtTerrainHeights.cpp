@@ -50,7 +50,7 @@ bool OtTerrainHeights::renderUI() {
 			ImGui::TableNextColumn();
 
 			if (normalmap.isValid()) {
-				ImGui::Image(normalmap.getColorTextureID(), ImVec2(512.0f, 512.0f));
+				ImGui::Image(normalmap.getTextureID(), ImVec2(512.0f, 512.0f));
 			}
 
 			ImGui::EndTable();
@@ -103,8 +103,8 @@ void OtTerrainHeights::deserialize(nlohmann::json data, [[maybe_unused]] std::st
 
 void OtTerrainHeights::update(OtTileableFbm& noise, OtNormalMapper& normals) {
 	// update size of framebuffer
-	heightmap.update(heightmapSize, heightmapSize);
-	normalmap.update(heightmapSize, heightmapSize);
+	heightmap.update(heightmapSize, heightmapSize, OtTexture::Format::r32, OtTexture::Usage::rwDefault);
+	normalmap.update(heightmapSize, heightmapSize, OtTexture::Format::rgba32, OtTexture::Usage::rwDefault);
 
 	// create noise map
 	noise.setFrequency(frequency);

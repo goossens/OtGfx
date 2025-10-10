@@ -16,9 +16,9 @@
 
 #include "OtAssetManager.h"
 #include "OtPath.h"
-#include "OtPass.h"
-#include "OtTransientIndexBuffer.h"
-#include "OtTransientVertexBuffer.h"
+// #include "OtPass.h"
+// #include "OtTransientIndexBuffer.h"
+// #include "OtTransientVertexBuffer.h"
 #include "OtVertex.h"
 #include "OtUi.h"
 
@@ -75,7 +75,7 @@ void OtSceneRendererDebug::renderIbl(OtSceneRenderer& renderer) {
 #define RENDER_GBUFFER(title, part)											\
 	renderTexture(															\
 		title,																\
-		renderer.deferredRenderingBuffer.get ## part ## TextureIndex(),		\
+		renderer.deferredRenderingBuffer.get ## part ## TextureID(),		\
 		renderer.deferredRenderingBuffer.getWidth(),						\
 		renderer.deferredRenderingBuffer.getHeight())
 
@@ -107,7 +107,7 @@ void OtSceneRendererDebug::renderShadowMaps(OtSceneRenderer& renderer) {
 
 			for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
 				auto title = fmt::format("Cascade {}", i + 1);
-				renderTexture(title.c_str(), renderer.csm.getDepthTextureIndex(i), size, size);
+				renderTexture(title.c_str(), renderer.csm.getDepthTexture(i).getTextureID(), size, size);
 			}
 
 		} else {
@@ -121,24 +121,24 @@ void OtSceneRendererDebug::renderShadowMaps(OtSceneRenderer& renderer) {
 //	OtSceneRendererDebug::renderReflection
 //
 
-void OtSceneRendererDebug::renderReflection(OtSceneRenderer& renderer) {
+void OtSceneRendererDebug::renderReflection([[maybe_unused]] OtSceneRenderer& renderer) {
 	if (ImGui::CollapsingHeader("Reflection/Refraction")) {
-		auto& water = renderer.waterPass;
+		// auto& water = renderer.waterPass;
 
-		if (water.reflectionBuffer.isValid()) {
-			if (water.reflectionBuffer.isValid()) {
-				auto texture = water.reflectionBuffer.getColorTexture();
-				renderTexture("Reflection Buffer", texture);
-			}
+		// if (water.reflectionBuffer.isValid()) {
+		// 	if (water.reflectionBuffer.isValid()) {
+		// 		auto texture = water.reflectionBuffer.getColorTexture();
+		// 		renderTexture("Reflection Buffer", texture);
+		// 	}
 
-			if (water.refractionBuffer.isValid()) {
-				auto texture = water.refractionBuffer.getColorTexture();
-				renderTexture("Refraction Buffer", texture);
-			}
+		// 	if (water.refractionBuffer.isValid()) {
+		// 		auto texture = water.refractionBuffer.getColorTexture();
+		// 		renderTexture("Refraction Buffer", texture);
+		// 	}
 
-		} else {
-			ImGui::SeparatorText("No Data");
-		}
+		// } else {
+		// 	ImGui::SeparatorText("No Data");
+		// }
 	}
 }
 
@@ -147,17 +147,17 @@ void OtSceneRendererDebug::renderReflection(OtSceneRenderer& renderer) {
 //	OtSceneRendererDebug::renderOcclusion
 //
 
-void OtSceneRendererDebug::renderOcclusion(OtSceneRenderer& renderer) {
+void OtSceneRendererDebug::renderOcclusion([[maybe_unused]] OtSceneRenderer& renderer) {
 	if (ImGui::CollapsingHeader("Occlusion")) {
-		auto& postProcessor = renderer.postProcessingPass;
+		// auto& postProcessor = renderer.postProcessingPass;
 
-		if (postProcessor.occlusionBuffer.isValid()) {
-			auto texture = postProcessor.occlusionBuffer.getColorTexture();
-			renderTexture("Occlusion Buffer", texture);
+		// if (postProcessor.occlusionBuffer.isValid()) {
+		// 	auto texture = postProcessor.occlusionBuffer.getColorTexture();
+		// 	renderTexture("Occlusion Buffer", texture);
 
-		} else {
-			ImGui::SeparatorText("No Data");
-		}
+		// } else {
+		// 	ImGui::SeparatorText("No Data");
+		// }
 	}
 }
 
@@ -269,69 +269,69 @@ void OtSceneRendererDebug::renderCubeMap(const char* title, OtCubeMap& cubemap, 
 //
 
 void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug& debug) {
-	static float crossVertices[] = {
-		0.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
-		0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+	// static float crossVertices[] = {
+	// 	0.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
+	// 	0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
 
-		0.5f, 0.0f, 0.0f, -1.0f,  1.0f, -1.0f,
-		0.5f, 0.5f, 0.0f, -1.0f,  1.0f,  1.0f,
-		0.5f, 1.0f, 0.0f, -1.0f, -1.0f,  1.0f,
-		0.5f, 1.5f, 0.0f, -1.0f, -1.0f, -1.0f,
+	// 	0.5f, 0.0f, 0.0f, -1.0f,  1.0f, -1.0f,
+	// 	0.5f, 0.5f, 0.0f, -1.0f,  1.0f,  1.0f,
+	// 	0.5f, 1.0f, 0.0f, -1.0f, -1.0f,  1.0f,
+	// 	0.5f, 1.5f, 0.0f, -1.0f, -1.0f, -1.0f,
 
-		1.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
-		1.0f, 0.5f, 0.0f,  1.0f,  1.0f,  1.0f,
-		1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
-		1.0f, 1.5f, 0.0f,  1.0f, -1.0f, -1.0f,
+	// 	1.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
+	// 	1.0f, 0.5f, 0.0f,  1.0f,  1.0f,  1.0f,
+	// 	1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
+	// 	1.0f, 1.5f, 0.0f,  1.0f, -1.0f, -1.0f,
 
-		1.5f, 0.5f, 0.0f,  1.0f,  1.0f, -1.0f,
-		1.5f, 1.0f, 0.0f,  1.0f, -1.0f, -1.0f,
+	// 	1.5f, 0.5f, 0.0f,  1.0f,  1.0f, -1.0f,
+	// 	1.5f, 1.0f, 0.0f,  1.0f, -1.0f, -1.0f,
 
-		2.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
-		2.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
-	};
+	// 	2.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
+	// 	2.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+	// };
 
-	static constexpr size_t crossVertexCount = sizeof(crossVertices) / sizeof(*crossVertices) / 6;
+	// static constexpr size_t crossVertexCount = sizeof(crossVertices) / sizeof(*crossVertices) / 6;
 
-	static uint32_t crossIndices[] = {
-		0, 1, 3, 3, 1, 4,
-		2, 3, 6, 6, 3, 7,
-		3, 4, 7, 7, 4, 8,
-		4, 5, 8, 8, 5, 9,
-		7, 8, 10, 10, 8, 11,
-		10, 11, 12, 12, 11, 13
-	};
+	// static uint32_t crossIndices[] = {
+	// 	0, 1, 3, 3, 1, 4,
+	// 	2, 3, 6, 6, 3, 7,
+	// 	3, 4, 7, 7, 4, 8,
+	// 	4, 5, 8, 8, 5, 9,
+	// 	7, 8, 10, 10, 8, 11,
+	// 	10, 11, 12, 12, 11, 13
+	// };
 
-	static constexpr size_t crossIndexCount = sizeof(crossIndices) / sizeof(*crossIndices);
+	// static constexpr size_t crossIndexCount = sizeof(crossIndices) / sizeof(*crossIndices);
 
 	// set framebuffer size
 	static constexpr int width = 600;
 	static constexpr int height = width * 4 / 6;
 	debug.framebuffer.update(width, height);
 
-	// start a rendering pass
-	OtPass pass;
-	pass.setClear(true);
-	pass.setRectangle(0, 0, width, height);
-	pass.setFrameBuffer(debug.framebuffer);
+	// // start a rendering pass
+	// OtPass pass;
+	// pass.setClear(true);
+	// pass.setRectangle(0, 0, width, height);
+	// pass.setFrameBuffer(debug.framebuffer);
 
-	// setup projection
-	glm::mat4 view = glm::scale(glm::mat4(1.0f), glm::vec3(width / 2.0f, height / 1.5f, 1.0f));
-	glm::mat4 projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
-	pass.setTransform(view, projection);
+	// // setup projection
+	// glm::mat4 view = glm::scale(glm::mat4(1.0f), glm::vec3(width / 2.0f, height / 1.5f, 1.0f));
+	// glm::mat4 projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
+	// pass.setTransform(view, projection);
 
-	// submit geometry for cross
-	OtTransientVertexBuffer tvb;
-	OtTransientIndexBuffer tib;
-	tvb.submit(crossVertices, crossVertexCount, OtVertexPosUvw::getLayout());
-	tib.submit(crossIndices, crossIndexCount);
+	// // submit geometry for cross
+	// OtTransientVertexBuffer tvb;
+	// OtTransientIndexBuffer tib;
+	// tvb.submit(crossVertices, crossVertexCount, OtVertexPosUvw::getLayout());
+	// tib.submit(crossIndices, crossIndexCount);
 
-	// setup sampler and uniform
-	crossSampler.submit(0, cubemap.getHandle());
-	crossUniform.setValue(0, float(debug.requestedMip), 0.0f, 0.0f, 0.0f);
-	crossUniform.submit();
+	// // setup sampler and uniform
+	// crossSampler.submit(0, cubemap.getHandle());
+	// crossUniform.setValue(0, float(debug.requestedMip), 0.0f, 0.0f, 0.0f);
+	// crossUniform.submit();
 
-	// run program
-	pass.runShaderProgram(crossShader);
+	// // run program
+	// pass.runShaderProgram(crossShader);
 
 	// update metadata
 	debug.renderedVersion = cubemap.getVersion();

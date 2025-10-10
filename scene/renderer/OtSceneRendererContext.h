@@ -16,7 +16,7 @@
 
 #include "OtCamera.h"
 #include "OtCascadedShadowMap.h"
-#include "OtPass.h"
+#include "OtRenderPass.h"
 
 #include "OtImageBasedLighting.h"
 #include "OtScene.h"
@@ -45,7 +45,7 @@ public:
 	OtScene* scene;
 
 	// rendering pass
-	OtPass* pass;
+	OtRenderPass* pass;
 
 	// image base lighting
 	OtImageBasedLighting* ibl;

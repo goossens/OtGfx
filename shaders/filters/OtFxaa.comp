@@ -12,8 +12,7 @@ layout(set=0, binding=0) uniform sampler2D inTexture;
 layout(set=1, binding=0, rgba8) uniform writeonly image2D outTexture;
 
 layout(std140, set=2, binding=0) uniform UBO {
-	vec2 pixelSize;
-    vec4 rgba;
+	vec2 texelSize;
 };
 
 const float FXAA_REDUCE_MIN  = 1.0f / 128.0f;
@@ -32,10 +31,10 @@ void main() {
 
 	// Fast Approximate Anti-Aliasing (FXAA)
 	// Original FXAA algorithm by Timothy Lottes at Nvidia
-	vec3 rgbNW = texture(inTexture, uv + vec2(-pixelSize.x, -pixelSize.y)).rgb;
-	vec3 rgbNE = texture(inTexture, uv + vec2(pixelSize.x, -pixelSize.y)).rgb;
-	vec3 rgbSW = texture(inTexture, uv + vec2(-pixelSize.x, pixelSize.y)).rgb;
-	vec3 rgbSE = texture(inTexture, uv + vec2(pixelSize.x, pixelSize.y)).rgb;
+	vec3 rgbNW = texture(inTexture, uv + vec2(-texelSize.x, -texelSize.y)).rgb;
+	vec3 rgbNE = texture(inTexture, uv + vec2(texelSize.x, -texelSize.y)).rgb;
+	vec3 rgbSW = texture(inTexture, uv + vec2(-texelSize.x, texelSize.y)).rgb;
+	vec3 rgbSE = texture(inTexture, uv + vec2(texelSize.x, texelSize.y)).rgb;
 	vec3 rgbM = texture(inTexture, uv).rgb;
 	vec3 luma = vec3(0.299f, 0.587f, 0.114f);
 
@@ -48,11 +47,11 @@ void main() {
 	float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
 
 	vec2 dir = vec2(-((lumaNW + lumaNE) - (lumaSW + lumaSE)), (lumaNW + lumaSW) - (lumaNE + lumaSE));
-	float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL), FXAA_REDUCE_MIN);
+	float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25f * FXAA_REDUCE_MUL), FXAA_REDUCE_MIN);
 	float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
-	dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX), max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX), dir * rcpDirMin)) * vec2(pixelSize.x, pixelSize.y);
+	dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX), max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX), dir * rcpDirMin)) * vec2(texelSize.x, texelSize.y);
 
-	vec3 rgbA = 0.5 * (
+	vec3 rgbA = 0.5f * (
 		texture(inTexture, uv + dir * (1.0f / 3.0f- 0.5f)).rgb +
 		texture(inTexture, uv + dir * (2.0f / 3.0f - 0.5f)).rgb);
 

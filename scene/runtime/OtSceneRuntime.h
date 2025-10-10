@@ -15,6 +15,8 @@
 #include <memory>
 #include <string>
 
+#include "imgui.h"
+
 #include "OtSceneAsset.h"
 #include "OtSceneRenderer.h"
 
@@ -31,8 +33,8 @@ public:
 	// are we ready
 	bool isReady();
 
-	// render a frame for the scene (return the texture index)
-	int render(int width, int height);
+	// render a frame for the scene (return the texture ID)
+	ImTextureID render(int width, int height);
 
 	// handle popup messages
 	void messages();

@@ -18,9 +18,9 @@
 #include "OtCubeMap.h"
 #include "OtFrameBuffer.h"
 #include "OtSampler.h"
-#include "OtShaderProgram.h"
+#include "OtRenderPipeline.h"
 #include "OtTexture.h"
-#include "OtUniformVec4.h"
+// #include "OtUniformVec4.h"
 
 #include "OtSceneRenderer.h"
 
@@ -36,7 +36,7 @@ public:
 
 private:
 	struct CubeMapDebug {
-		OtFrameBuffer framebuffer{OtTexture::rgba8Texture};
+		OtFrameBuffer framebuffer{OtTexture::Format::rgba8};
 		int renderedVersion = 0;
 		int renderedMip = 0;
 		int requestedMip = 0;
@@ -61,7 +61,7 @@ private:
 	CubeMapDebug iblIrradianceDebug;
 	CubeMapDebug iblEnvironmentDebug;
 
-	OtSampler crossSampler{"s_cubemap"};
-	OtUniformVec4 crossUniform{"u_crossUniform", 1};
-	OtShaderProgram crossShader{"OtCubeMapCrossVS", "OtCubeMapCrossFS"};
+	// OtSampler crossSampler{"s_cubemap"};
+	// OtUniformVec4 crossUniform{"u_crossUniform", 1};
+	// OtRenderPipeline crossShader{"OtCubeMapCrossVS", "OtCubeMapCrossFS"};
 };

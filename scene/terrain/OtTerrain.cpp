@@ -191,7 +191,7 @@ void OtTerrain::createVertices()
 	}
 
 	// store vertices in GPU buffer
-	vertices.set(buffer.data(), buffer.size(), OtVertexPos::getLayout());
+	vertices.set(buffer.data(), buffer.size(), OtVertexPos::getDescription());
 }
 
 
