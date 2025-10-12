@@ -173,6 +173,7 @@ void OtSceneRendererDebug::renderTimings(OtSceneRenderer& renderer) {
 		OtUi::readonlyFloat("Background pass", renderer.backgroundPassTime);
 		OtUi::readonlyFloat("Opaque pass", renderer.opaquePassTime);
 		OtUi::readonlyFloat("Transparent pass", renderer.transparentPassTime);
+		OtUi::readonlyFloat("Sky pass", renderer.skyPassTime);
 		OtUi::readonlyFloat("Water pass", renderer.waterPassTime);
 		OtUi::readonlyFloat("Particle pass", renderer.particlePassTime);
 		OtUi::readonlyFloat("Editor pass", renderer.editorPassTime);
@@ -226,10 +227,10 @@ void OtSceneRendererDebug::renderAssets() {
 //	OtSceneRendererDebug::renderTexture
 //
 
-void OtSceneRendererDebug::renderTexture(const char* title, uint16_t index, int width, int height) {
+void OtSceneRendererDebug::renderTexture(const char* title, ImTextureID index, int width, int height) {
 	if (ImGui::TreeNode(title)) {
 		auto size = ImGui::GetContentRegionAvail().x;
-		ImGui::Image(static_cast<ImTextureID>(index), ImVec2(size, size * height / width));
+		ImGui::Image(index, ImVec2(size, size * height / width));
 		ImGui::TreePop();
 	}
 }

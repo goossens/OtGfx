@@ -15,6 +15,15 @@
 
 
 //
+//	OtSceneRenderer::OtSceneRenderer
+//
+
+OtSceneRenderer::OtSceneRenderer() {
+	compositeBuffer.setClearColor(false);
+}
+
+
+//
 //	OtSceneRenderer::render
 //
 
@@ -32,7 +41,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// generate shadow maps (if required)
 	if (ctx.castShadow) {
-		// shadowPass.render(ctx);
+		shadowPass.render(ctx);
 	}
 
 	shadowPassTime = stopwatch.lap();
@@ -40,29 +49,31 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	// render background items
 	compositeBuffer.update(camera.width, camera.height);
 	backgroundPass.render(ctx);
-
-	if (ctx.hasSkyEntities) {
-		// skyPass.render(ctx);
-	}
-
 	backgroundPassTime = stopwatch.lap();
 
 	// render opaque entities
 	if (ctx.hasOpaqueEntities) {
 		deferredRenderingBuffer.update(camera.width, camera.height);
-		// deferredPass.render(ctx);
+		deferredPass.render(ctx);
 	}
 
 	opaquePassTime = stopwatch.lap();
 
 	// render transparent entities
 	if (ctx.hasTransparentEntities) {
-		// forwardPass.render(ctx);
+		forwardPass.render(ctx);
 	}
 
 	transparentPassTime = stopwatch.lap();
 
-	// generate water (if required)
+	// render water (if required)
+	if (ctx.hasSkyEntities) {
+		// skyPass.render(ctx);
+	}
+
+	skyPassTime = stopwatch.lap();
+
+	// render water (if required)
 	if (ctx.hasWaterEntities) {
 		// waterPass.render(ctx);
 	}

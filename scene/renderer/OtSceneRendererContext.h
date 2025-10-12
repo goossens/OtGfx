@@ -45,13 +45,13 @@ public:
 	OtScene* scene;
 
 	// rendering pass
-	OtRenderPass* pass;
+	OtRenderPass* pass = nullptr;
 
 	// image base lighting
-	OtImageBasedLighting* ibl;
+	OtImageBasedLighting* ibl = nullptr;
 
 	// shadows
-	OtCascadedShadowMap* csm;
+	OtCascadedShadowMap* csm = nullptr;
 
 	// clipping plane
 	glm::vec4 clippingPlane;

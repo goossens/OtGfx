@@ -22,8 +22,8 @@
 
 ImTextureID OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
 	// setup buffers
-	postProcessBuffer1.update(ctx.camera.width, ctx.camera.height, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
-	postProcessBuffer2.update(ctx.camera.width, ctx.camera.height, OtTexture::Format::rgba8, OtTexture::Usage::rwDefault);
+	postProcessBuffer1.update(ctx.camera.width, ctx.camera.height, OtTexture::Format::rgba16, OtTexture::Usage::rwDefault);
+	postProcessBuffer2.update(ctx.camera.width, ctx.camera.height, OtTexture::Format::rgba16, OtTexture::Usage::rwDefault);
 	OtTexture* input = &framebuffer.getColorTexture();
 	OtTexture* output = &postProcessBuffer1;
 
@@ -82,7 +82,7 @@ ImTextureID OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
 			bloomBuffer[i].update(
 				ctx.camera.width >> (i + 1),
 				ctx.camera.height >> (i + 1),
-				OtTexture::Format::rgba8,
+				OtTexture::Format::rgba16,
 				OtTexture::Usage::rwDefault);
 		}
 

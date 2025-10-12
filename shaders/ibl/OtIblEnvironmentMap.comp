@@ -1,0 +1,81 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+#version 450 core
+#extension GL_GOOGLE_include_directive : require
+
+#include "constants.glsl"
+#include "pbrHelpers.glsl"
+
+#define NUM_SAMPLES 64u
+
+layout(local_size_x=16, local_size_y=16, local_size_z=1) in;
+
+layout(set=0, binding=0) uniform samplerCube inTexture;
+layout(set=1, binding=0, rgba16f) uniform writeonly image2DArray outTexture;
+
+layout(std140, set=2, binding=0) uniform UBO {
+    float roughness;
+    float mipLevel;
+    float size;
+};
+
+// From Karis, 2014
+vec3 prefilterEnvMap(float roughness, vec3 R, float imgSize) {
+	// Isotropic approximation: we lose stretchy reflections :(
+	vec3 N = R;
+	vec3 V = R;
+	vec3 prefilteredColor = vec3(0.0f);
+	float totalWeight = 0.0f;
+
+	for (uint i = 0u; i < NUM_SAMPLES; i++) {
+		vec2 Xi = hammersley(i, NUM_SAMPLES);
+		vec3 H = importanceSampleGGX(Xi, roughness, N);
+		float VoH = dot(V, H);
+		float NoH = VoH; // Since N = V in our approximation
+		vec3 L = 2.0f * VoH * H - V;
+		float NoL = clamp(dot(N, L), 0.0f, 1.0f);
+		NoH = clamp(NoH, 0.0f, 1.0f);
+
+		if (NoL > 0.0) {
+			// Based off https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch20.html
+			// Typically you'd have the following:
+			// float pdf = D_GGX(NoH, roughness) * NoH / (4.0 * VoH);
+			// but since V = N => VoH == NoH
+			float pdf = D_GGX(NoH, roughness) / 4.0f + 0.001f;
+			// Solid angle of current sample -- bigger for less likely samples
+			float omegaS = 1.0 / (float(NUM_SAMPLES) * pdf);
+			// Solid angle  of pixel
+			float omegaP = 4.0 * PI / (6.0 * imgSize * imgSize);
+			float mipLevel = roughness == 0.0f ? 0.0f : max(0.5f * log2(omegaS / omegaP), 0.0f);
+			prefilteredColor += texture(inTexture, L, mipLevel).rgb * NoL;
+			totalWeight += NoL;
+		}
+	}
+
+	return prefilteredColor / totalWeight;
+}
+
+void main() {
+	float mipImageSize = size / pow(2.0, mipLevel);
+	ivec3 globalId = ivec3(gl_GlobalInvocationID.xyz);
+
+	if (globalId.x >= mipImageSize || globalId.y >= mipImageSize) {
+		return;
+	}
+
+	vec3 R = normalize(toWorldCoords(globalId, mipImageSize));
+
+	// Don't need to integrate for roughness == 0, since it's a perfect reflector
+	if (roughness == 0.0) {
+		vec4 color = texture(inTexture, R, 0);
+		imageStore(outTexture, globalId, color);
+
+	} else {
+		vec3 color = prefilterEnvMap(roughness, R, size);
+		imageStore(outTexture, globalId, vec4(color, 1.0));
+	}
+}

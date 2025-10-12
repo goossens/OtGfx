@@ -1,0 +1,10 @@
+Compute Pipelines:
+	set 0: Read-Only storage textures and buffers
+	set 1: Read-Write storage textures and buffers
+	set 2: Uniform buffers
+
+Graphics Pipelines:
+	set 0: Samplers, textures and storage buffers available to the vertex shader
+	set 1: Uniform buffers available to the vertex shader
+	set 2: Samplers, textures and storage buffers available to the fragment shader
+	set 3: Uniform buffers available to the fragment shader

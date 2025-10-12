@@ -7,6 +7,11 @@
 #version 450
 #extension GL_GOOGLE_include_directive : require
 
+#define MATERIAL_UNIFORMS 0
+#define MATERIAL_SAMPLERS 0
+#include "material.glsl"
+
+#define CLIP_UNIFORMS 1
 #include "clip.glsl"
 
 layout (location = 0) in vec3 vPosition;
@@ -20,36 +25,13 @@ layout (location = 1) out vec4 fragNormal;
 layout (location = 2) out vec4 fragPBR;
 layout (location = 3) out vec4 fragEmissive;
 
-layout(std140, set=3, binding=0) uniform UBO {
-	vec4 clipPlane;
-	vec4 albedoColor;
-	vec4 emissiveColor;
-	vec2 offset;
-	float scale;
-	float metallicFactor;
-	float roughnessFactor;
-	float aoFactor;
-	bool hasAlbedoTexture;
-	bool hasMetallicRoughnessTexture;
-	bool hasEmissiveTexture;
-	bool hasAoTexture;
-	bool hasNormalTexture;
-};
-
-// texture samplers
-layout(set=0, binding=0) uniform sampler2D albedoTexture;
-layout(set=0, binding=1) uniform sampler2D metallicRoughnessTexture;
-layout(set=0, binding=2) uniform sampler2D emissiveTexture;
-layout(set=0, binding=3) uniform sampler2D aoTexture;
-layout(set=0, binding=4) uniform sampler2D normalTexture;
-
 // main function
 void main() {
 	// apply clip plane
-	clipAgainstPlane(clipPlane, vPosition);
+	clipAgainstPlane(vPosition);
 
 	// determine UV coordinates
-	vec2 uv = vUv * scale + offset;
+	vec2 uv = vUv * textureScale + textureOffset;
 
 	// determine albedo
 	vec3 albedo = albedoColor.rgb;

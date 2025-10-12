@@ -28,11 +28,11 @@
 #include "OtImageBasedLighting.h"
 
 #include "OtBackgroundPass.h"
-// #include "OtDeferredPass.h"
-// #include "OtForwardPass.h"
+#include "OtDeferredPass.h"
+#include "OtForwardPass.h"
 // #include "OtOcclusionPass.h"
 // #include "OtParticlesPass.h"
-// #include "OtShadowPass.h"
+#include "OtShadowPass.h"
 // #include "OtSkyPass.h"
 // #include "OtWaterPass.h"
 // #include "OtGridPass.h"
@@ -47,6 +47,9 @@
 
 class OtSceneRenderer {
 public:
+	// constructor
+	OtSceneRenderer();
+
 	// set properties
 //	inline void setGridScale(float gridScale) { gridPass.setGridScale(gridScale); }
 	inline void setSelectedEntity(OtEntity entity) { selectedEntity = entity; }
@@ -68,16 +71,16 @@ private:
 
 	// framebuffers
 	OtGbuffer deferredRenderingBuffer;
-	OtFrameBuffer compositeBuffer{OtTexture::Format::rgba8, OtTexture::Format::d32};
+	OtFrameBuffer compositeBuffer{OtTexture::Format::rgba16, OtTexture::Format::d32};
 
 	OtCascadedShadowMap csm;
 	OtImageBasedLighting ibl;
 
 	// rendering passes
-	// OtShadowPass shadowPass;
+	OtShadowPass shadowPass;
 	OtBackgroundPass backgroundPass{compositeBuffer};
-	// OtDeferredPass deferredPass{deferredRenderingBuffer, compositeBuffer};
-	// OtForwardPass forwardPass{compositeBuffer};
+	OtDeferredPass deferredPass{deferredRenderingBuffer, compositeBuffer};
+	OtForwardPass forwardPass{compositeBuffer};
 	// OtSkyPass skyPass{compositeBuffer};
 	// OtWaterPass waterPass{compositeBuffer};
 	// OtParticlesPass particlePass{compositeBuffer};
@@ -93,6 +96,7 @@ private:
 	float opaquePassTime;
 	float transparentPassTime;
 	float waterPassTime;
+	float skyPassTime;
 	float particlePassTime;
 	float editorPassTime;
 	float postProcessingTime;
