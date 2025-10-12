@@ -71,7 +71,6 @@ private:
 	std::vector<OtVertexBones> vertexBones;
 	size_t rootNode = std::numeric_limits<size_t>::max();
 
-
 	// material reference (index in model)
 	size_t material;
 

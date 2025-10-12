@@ -58,7 +58,7 @@ public:
 			auto colorUsage = OtTexture::Usage(OtTexture::Usage::colorTarget | OtTexture::Usage::sampler);
 			auto depthUsage = OtTexture::Usage(OtTexture::Usage::depthStencilTarget | OtTexture::Usage::sampler);
 
-			albedoTexture.update(w32, h32, OtTexture::Format::rgba32, colorUsage);
+			albedoTexture.update(w32, h32, OtTexture::Format::rgba16, colorUsage);
 			normalTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);
 			pbrTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);
 			emissiveTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);

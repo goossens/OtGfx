@@ -13,7 +13,6 @@
 //
 
 #include <cmath>
-#include <cstddef>
 #include <memory>
 #include <string>
 
@@ -38,11 +37,7 @@ public:
 	void load(const std::string& path, bool async=false);
 
 	// clear the resources
-	inline void clear() {
-		cubemap = nullptr;
-		size = 1;
-		mip = false;
-	}
+	void clear();
 
 	// see if cubemap is valid
 	inline bool isValid() { return cubemap != nullptr; }
@@ -71,15 +66,7 @@ private:
 	std::shared_ptr<SDL_GPUTexture> cubemap;
 
 	// memory manage SDL resource
-	inline void assign(SDL_GPUTexture* newTexture) {
-		cubemap = std::shared_ptr<SDL_GPUTexture>(
-			newTexture,
-			[](SDL_GPUTexture* oldTexture) {
-				SDL_ReleaseGPUTexture(OtGpu::instance().device, oldTexture);
-			});
-
-		incrementVersion();
-	}
+	void assign(SDL_GPUTexture* newTexture);
 
 	// properties
 	int size = 1;
@@ -104,9 +91,5 @@ private:
 	friend class OtComputePass;
 	friend class OtRenderPass;
 
-	inline SDL_GPUTexture* getTexture() {
-		return isValid()
-			? cubemap.get()
-			: OtGpu::instance().transparentDummyTexture;
-	}
+	inline SDL_GPUTexture* getTexture() { return isValid() ? cubemap.get() : OtGpu::instance().dummyCubeMap; }
 };

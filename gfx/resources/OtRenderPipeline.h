@@ -32,9 +32,11 @@ class OtRenderPipeline {
 public:
 	// property types
 	enum class RenderTargetType {
+		none,
 		r8,
 		rg16,
 		rgba8,
+		rgba16,
 		rgba32,
 		rgba8d32,
 		rgba8d24s8,
@@ -450,9 +452,11 @@ private:
 	// translate properties
 	SDL_GPUTextureFormat getTextureFormat() {
 		switch (renderTargetType) {
+			case RenderTargetType::none: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::r8: return SDL_GPU_TEXTUREFORMAT_R8_UNORM;
 			case RenderTargetType::rg16: return SDL_GPU_TEXTUREFORMAT_R16G16_UNORM;
 			case RenderTargetType::rgba8: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+			case RenderTargetType::rgba16: return SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
 			case RenderTargetType::rgba32: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
 			case RenderTargetType::rgba8d32: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
 			case RenderTargetType::rgba32d32: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
@@ -465,9 +469,11 @@ private:
 
 	bool hasDepthStencilFormat() {
 		switch (renderTargetType) {
+			case RenderTargetType::none: return false;
 			case RenderTargetType::r8: return false;
 			case RenderTargetType::rg16: return false;
 			case RenderTargetType::rgba8: return false;
+			case RenderTargetType::rgba16: return false;
 			case RenderTargetType::rgba32: return false;
 			case RenderTargetType::rgba8d32: return true;
 			case RenderTargetType::rgba32d32: return true;
@@ -480,9 +486,11 @@ private:
 
 	SDL_GPUTextureFormat getDepthStencilFormat() {
 		switch (renderTargetType) {
+			case RenderTargetType::none: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::r8: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rg16: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rgba8: return SDL_GPU_TEXTUREFORMAT_INVALID;
+			case RenderTargetType::rgba16: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rgba32: return SDL_GPU_TEXTUREFORMAT_INVALID;
 			case RenderTargetType::rgba8d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 			case RenderTargetType::rgba32d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;

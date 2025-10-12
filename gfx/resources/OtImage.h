@@ -89,15 +89,7 @@ private:
 	int version = 0;
 
 	// memory manage SDL resource
-	inline void assign(SDL_Surface* newSurface) {
-		surface = std::shared_ptr<SDL_Surface>(
-			newSurface,
-			[](SDL_Surface* oldSurface) {
-				SDL_DestroySurface(oldSurface);
-			});
-
-		incrementVersion();
-	}
+	void assign(SDL_Surface* newSurface);
 
 	// local utility functions
 	void normalize();

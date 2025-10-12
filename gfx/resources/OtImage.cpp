@@ -294,6 +294,21 @@ float OtImage::sampleValueGray(float x, float y) {
 
 
 //
+//	OtImage::assign
+//
+
+void OtImage::assign(SDL_Surface* newSurface) {
+	surface = std::shared_ptr<SDL_Surface>(
+		newSurface,
+		[](SDL_Surface* oldSurface) {
+			SDL_DestroySurface(oldSurface);
+		});
+
+	incrementVersion();
+}
+
+
+//
 //	OtImage::normalize
 //
 

@@ -36,8 +36,10 @@ public:
 
 		// set uniforms
 		struct Uniforms {
+			glm::vec2 texelSize;
 			float intensity;
 		} uniforms {
+			sourceTexelSize,
 			intensity
 		};
 

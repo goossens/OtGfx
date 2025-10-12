@@ -9,9 +9,6 @@
 //	Include files
 //
 
-#include <cmath>
-#include <cstring>
-
 #include "nlohmann/json.hpp"
 #include "SDL3_image/SDL_image.h"
 
@@ -76,6 +73,31 @@ void OtCubeMap::load(const std::string& path, bool async) {
 	}
 }
 
+
+//
+//	OtCubeMap::clear
+//
+
+void OtCubeMap::clear() {
+	cubemap = nullptr;
+	size = 1;
+	mip = false;
+}
+
+
+//
+//	OtCubeMap::assign
+//
+
+void OtCubeMap::assign(SDL_GPUTexture* newTexture) {
+	cubemap = std::shared_ptr<SDL_GPUTexture>(
+		newTexture,
+		[](SDL_GPUTexture* oldTexture) {
+			SDL_ReleaseGPUTexture(OtGpu::instance().device, oldTexture);
+		});
+
+	incrementVersion();
+}
 
 //
 //	OtCubeMap::loadJSON
