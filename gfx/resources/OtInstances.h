@@ -17,9 +17,11 @@
 #include <vector>
 
 #include "glm/glm.hpp"
+#include "SDL3/SDL_gpu.h"
 
 #include "OtAABB.h"
 #include "OtCamera.h"
+#include "OtVertex.h"
 
 
 //
@@ -45,11 +47,9 @@ public:
 	void add(const glm::mat4& instance, bool updateVersion=true);
 
 	// access individual instances
-	glm::mat4& operator[](size_t i) { return instances->operator[](i); }
-	size_t size() { return instances->size(); }
-
-	// submit instances to GPU
-	bool submit(OtCamera& camera, OtAABB& aabb);
+	inline glm::mat4& operator[](size_t i) { return instances->operator[](i); }
+	inline size_t size() { return instances->size(); }
+	inline glm::mat4* data() { return instances->data(); }
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -65,8 +65,59 @@ public:
 		return !operator==(rhs);
 	}
 
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{
+				.location = 0,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = 0
+			},
+			{
+				.location = 1,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = sizeof(glm::vec4)
+			},
+			{
+				.location = 2,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset = sizeof(glm::vec4) * 2
+			},
+			{
+				.location = 3,
+				.buffer_slot = 0,
+				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+				.offset =  sizeof(glm::vec4) * 3
+			}
+		};
+
+		static OtVertexDescription description{
+			.size = sizeof(glm::mat4),
+			.members = sizeof(attributes) / sizeof(attributes[0]),
+			.attributes = attributes
+		};
+
+		return &description;
+	}
+
 private:
 	// list of transformations (for the instances)
 	std::shared_ptr<std::vector<glm::mat4>> instances;
 	int version = 0;
+
+	// the GPU resources
+	std::shared_ptr<SDL_GPUBuffer> vertexBuffer;
+	std::shared_ptr<SDL_GPUTransferBuffer> transferBuffer;
+	int gpuVersion = -1;
+
+	// memory manage SDL resource
+	void assignVertexBuffer(SDL_GPUBuffer* newBuffer);
+	void assignTransferBuffer(SDL_GPUTransferBuffer* newBuffer);
+
+	// get accesss to the raw buffer handle
+	friend class OtRenderPass;
+	SDL_GPUBuffer* getBuffer();
 };

@@ -120,6 +120,7 @@ public:
 	// set pipeline properties
 	void setShaders(const uint32_t* vertexCode, size_t vertexSize, const uint32_t* fragmentCode, size_t fragmentSize) ;
 	void setVertexDescription(OtVertexDescription* description);
+	void setInstanceDescription(OtVertexDescription* description);
 	void setRenderTargetType(RenderTargetType value);
 	void setCulling(Culling value);
 	void setFill(bool mode);
@@ -159,6 +160,7 @@ private:
 	size_t fragmentShaderSize = 0;
 
 	OtVertexDescription* vertexDescription = nullptr;
+	OtVertexDescription* instanceDescription = nullptr;
 	RenderTargetType renderTargetType = RenderTargetType::rgba8d32;
 	Culling culling = Culling::cw;
 	bool fill = true;

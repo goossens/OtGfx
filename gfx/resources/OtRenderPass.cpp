@@ -231,6 +231,24 @@ void OtRenderPass::setStencilReference(uint8_t reference) {
 
 
 //
+//	OtRenderPass::setInstanceData
+//
+
+void OtRenderPass::setInstanceData(OtInstances& instances, size_t slot) {
+	OtAssert(open);
+
+	// bind the vertex buffer to the pass
+	SDL_GPUBufferBinding bufferBindings{
+		.buffer = instances.getBuffer(),
+		.offset = 0
+	};
+
+	SDL_BindGPUVertexBuffers(pass, static_cast<Uint32>(slot), &bufferBindings, 1);
+	instanceCount = instances.size();
+}
+
+
+//
 //	OtRenderPass::render
 //
 
@@ -251,7 +269,7 @@ void OtRenderPass::render(OtVertexBuffer& buffer) {
 	SDL_BindGPUVertexBuffers(pass, 0, &bufferBindings, 1);
 
 	// render the triangles
-	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(buffer.getCount()), 1, 0, 0);
+	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(buffer.getCount()), static_cast<Uint32>(instanceCount), 0, 0);
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset, size_t count) {
@@ -274,7 +292,8 @@ void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuff
 	// render the triangles
 	Uint32 numIndices = static_cast<Uint32>(count == 0 ? indexBuffer.getCount() : count);
 	Uint32 firstIndex = static_cast<Uint32>(offset);
-	SDL_DrawGPUIndexedPrimitives(pass, numIndices, 1, firstIndex, 0, 0);
+	Uint32 numInstances = static_cast<Uint32>(instanceCount);
+	SDL_DrawGPUIndexedPrimitives(pass, numIndices, numInstances, firstIndex, 0, 0);
 }
 
 

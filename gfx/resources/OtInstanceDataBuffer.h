@@ -13,6 +13,7 @@
 //
 
 #include <memory>
+#include <vector>
 
 #include "SDL3/SDL_gpu.h"
 
@@ -23,14 +24,22 @@
 
 class OtInstanceDataBuffer {
 public:
+	enum class ElementFormat {
+		mat4,
+		vec4
+	};
+
 	// clear the object
 	void clear();
 
 	// see if buffer is valid
 	inline bool isValid() { return dataBuffer != nullptr; }
 
+	// specify element formats
+	void  addElement(ElementFormat format);
+
 	// set instance data
-	void set(void* data, size_t size, size_t count, bool dynamic=false);
+	void set(void* data, size_t count, bool dynamic=false);
 
 	// get instance data details
 	inline size_t getSize() { return dataSize; }
@@ -46,6 +55,8 @@ private:
 	void assignTransferBuffer(SDL_GPUTransferBuffer* newBuffer);
 
 	// instance data information
+	std::vector<SDL_GPUVertexAttribute> elements;
+
 	size_t dataSize = 0;
 	size_t dataCount = 0;
 	size_t currentBufferCount = 0;

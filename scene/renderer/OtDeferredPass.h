@@ -15,8 +15,6 @@
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
 #include "OtSampler.h"
-#include "OtVertex.h"
-#include "OtVertexBuffer.h"
 
 #include "OtSceneRenderEntitiesPass.h"
 
@@ -40,6 +38,7 @@ protected:
 	bool isRenderingTransparent() override { return false; }
 
 	void renderOpaqueGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& component) override;
+	void renderOpaqueInstancedGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& geometry, OtInstancingComponent& instances) override;
 
 private:
 	// properties

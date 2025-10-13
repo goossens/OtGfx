@@ -34,7 +34,8 @@ public:
 	// set vertices
 	void set(void* data, size_t count, OtVertexDescription* description, bool dynamic=false);
 
-	// get vertex count
+	// get vertex description and count
+	inline OtVertexDescription* getDescription() { return vertexDescription; }
 	inline size_t getCount() { return vertexCount; }
 
 private:

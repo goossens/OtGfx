@@ -11,6 +11,8 @@
 
 #include <cstring>
 
+#include "glm/glm.hpp"
+
 #include "OtLog.h"
 
 #include "OtGpu.h"
@@ -31,16 +33,39 @@ void OtInstanceDataBuffer::clear() {
 
 
 //
+//	OtInstanceDataBuffer::addElement
+//
+
+void OtInstanceDataBuffer::addElement(ElementFormat format) {
+	// special handling form matrices (they are streamed as a series of vec4 columns)
+	if (format == ElementFormat::mat4) {
+		for (auto i = 0; i < 4; i++) {
+			addElement(ElementFormat::vec4);
+		}
+
+	} else {
+		elements.emplace_back(SDL_GPUVertexAttribute{
+			.location = static_cast<Uint32>(elements.size()),
+			.buffer_slot = 0,
+			.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+			.offset = static_cast<Uint32>(dataSize)
+		});
+
+		dataSize += sizeof(glm::vec4);
+ 	}
+}
+
+
+//
 //	OtInstanceDataBuffer::set
 //
 
-void OtInstanceDataBuffer::set(void* data, size_t size, size_t count, bool dynamic) {
+void OtInstanceDataBuffer::set(void* data, size_t count, bool dynamic) {
 	// remember the data details
-	dataSize = size;
 	dataCount = count;
 
 	// create/resize data buffer (if required)
-	auto bufferSize = count * size;
+	auto bufferSize = count * dataSize;
 	auto& gpu = OtGpu::instance();
 
 	if (!dynamic || count > currentBufferCount) {

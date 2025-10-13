@@ -83,8 +83,8 @@ vec3 tonemapUchimura(vec3 color) {
 	float b = 0.0f;  // pedestal
 
 	float l0 = ((P - m) * l) / a;
-	float L0 = m - m / a;
-	float L1 = m + (1.0 - m) / a;
+	// float L0 = m - m / a;
+	// float L1 = m + (1.0f - m) / a;
 	float S0 = m + l0;
 	float S1 = m + a * l0;
 	float C2 = (a * P) / (P - S1);

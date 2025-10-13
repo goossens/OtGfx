@@ -49,26 +49,31 @@ bool OtGbuffer::update(int w, int h) {
 		depthTexture.update(w32, h32, OtTexture::Format::d32, depthUsage);
 
 		// create/update render target information
+		colorTargetInfo[0] = SDL_GPUColorTargetInfo{};
 		colorTargetInfo[0].texture = albedoTexture.getTexture();
 		colorTargetInfo[0].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 		colorTargetInfo[0].load_op = SDL_GPU_LOADOP_CLEAR;
 		colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
 
+		colorTargetInfo[1] = SDL_GPUColorTargetInfo{};
 		colorTargetInfo[1].texture = normalTexture.getTexture();
 		colorTargetInfo[1].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 		colorTargetInfo[1].load_op = SDL_GPU_LOADOP_CLEAR;
 		colorTargetInfo[1].store_op = SDL_GPU_STOREOP_STORE;
 
+		colorTargetInfo[2] = SDL_GPUColorTargetInfo{};
 		colorTargetInfo[2].texture = pbrTexture.getTexture();
 		colorTargetInfo[2].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 		colorTargetInfo[2].load_op = SDL_GPU_LOADOP_CLEAR;
 		colorTargetInfo[2].store_op = SDL_GPU_STOREOP_STORE;
 
+		colorTargetInfo[3] = SDL_GPUColorTargetInfo{};
 		colorTargetInfo[3].texture = emissiveTexture.getTexture();
 		colorTargetInfo[3].clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 0.0f};
 		colorTargetInfo[3].load_op = SDL_GPU_LOADOP_CLEAR;
 		colorTargetInfo[3].store_op = SDL_GPU_STOREOP_STORE;
 
+		depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo{};
 		depthStencilTargetInfo.texture = depthTexture.getTexture();
 		depthStencilTargetInfo.clear_depth = 1.0f;
 		depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;

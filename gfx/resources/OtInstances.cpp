@@ -19,6 +19,7 @@
 #include "OtText.h"
 
 #include "OtGlm.h"
+#include "OtGpu.h"
 #include "OtInstances.h"
 
 
@@ -96,52 +97,92 @@ void OtInstances::add(const glm::mat4 &instance, bool updateVersion) {
 
 
 //
-//	OtInstances::submit
+//	OtInstances::assignVertexBuffer
 //
 
-bool OtInstances::submit(OtCamera& camera, OtAABB& aabb) {
-	if (instances->size()) {
-		// filter instances based on visibility
-		struct Instance {
-			Instance(const glm::mat4& m, float d) : matrix(m), distance(d) {}
-			glm::mat4 matrix;
-			float distance;
+void OtInstances::assignVertexBuffer(SDL_GPUBuffer* newBuffer) {
+	vertexBuffer = std::shared_ptr<SDL_GPUBuffer>(
+		newBuffer,
+		[](SDL_GPUBuffer* oldBuffer) {
+			SDL_ReleaseGPUBuffer(OtGpu::instance().device, oldBuffer);
+		});
+}
+
+
+//
+//	OtInstances::assignTransferBuffer
+//
+
+void OtInstances::assignTransferBuffer(SDL_GPUTransferBuffer* newBuffer) {
+	transferBuffer = std::shared_ptr<SDL_GPUTransferBuffer>(
+		newBuffer,
+		[](SDL_GPUTransferBuffer* oldBuffer) {
+			SDL_ReleaseGPUTransferBuffer(OtGpu::instance().device, oldBuffer);
+		});
+}
+
+
+//
+//	OtInstances::getBuffer
+//
+
+SDL_GPUBuffer* OtInstances::getBuffer() {
+	// update GPU buffer (if required)
+	if (gpuVersion != version) {
+		auto bufferSize = sizeof(glm::mat4) * instances->size();
+
+		SDL_GPUBufferCreateInfo bufferInfo{
+			.usage = SDL_GPU_BUFFERUSAGE_VERTEX,
+			.size = static_cast<Uint32>(bufferSize),
+			.props = 0
 		};
 
-		std::vector<Instance> tmp;
+		auto& gpu = OtGpu::instance();
+		SDL_GPUBuffer* vbuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
 
-		for (auto& instance : *instances) {
-			auto instanceAabb = aabb.transform(instance);
-
-			if (camera.isVisibleAABB(instanceAabb)) {
-				tmp.emplace_back(instance, glm::distance(camera.position, instanceAabb.getCenter()));
-			}
+		if (!vbuffer) {
+			OtLogFatal("Error in SDL_CreateGPUBuffer: {}", SDL_GetError());
 		}
 
-		if (tmp.size()) {
-			// sort instances by distance to camera
-			std::sort(tmp.begin(), tmp.end(), [&](const Instance& i1, const Instance& i2) {
-				return i1.distance < i2.distance;
-			});
+		assignVertexBuffer(vbuffer);
 
-			// create instance data buffer and submit it to the GPU
-			// bgfx::InstanceDataBuffer idb;
-			// uint32_t count = bgfx::getAvailInstanceDataBuffer(static_cast<uint32_t>(tmp.size()), sizeof(glm::mat4));
-			// bgfx::allocInstanceDataBuffer(&idb, count, sizeof(glm::mat4));
-			// glm::mat4* p = static_cast<glm::mat4*>((void*) idb.data);
+		// create a transfer buffer
+		SDL_GPUTransferBufferCreateInfo transferInfo{
+			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+			.size = static_cast<Uint32>(bufferSize),
+			.props = 0
+		};
 
-			// for (uint32_t i = 0; i < count; i++) {
-			//	*p++ = tmp[i].matrix;
-			// }
+		SDL_GPUTransferBuffer* tbuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
 
-			// bgfx::setInstanceDataBuffer(&idb);
-			return true;
-
-		} else {
-			return false;
+		if (!tbuffer) {
+			OtLogFatal("Error in SDL_CreateGPUTransferBuffer: {}", SDL_GetError());
 		}
 
-	} else {
-		return false;
+		assignTransferBuffer(tbuffer);
+
+		// put vertex data in transfer buffer
+		void* bufferData = SDL_MapGPUTransferBuffer(gpu.device, transferBuffer.get(), false);
+		std::memcpy(bufferData, instances->data(), bufferSize);
+		SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer.get());
+
+		// upload vertex buffer to GPU
+		SDL_GPUTransferBufferLocation location{
+			.transfer_buffer = transferBuffer.get(),
+			.offset = 0
+		};
+
+		SDL_GPUBufferRegion region{
+			.buffer = vertexBuffer.get(),
+			.offset = 0,
+			.size = static_cast<Uint32>(bufferSize)
+		};
+
+		SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
+		SDL_UploadToGPUBuffer(copyPass, &location, &region, false);
+		SDL_EndGPUCopyPass(copyPass);
+		gpuVersion = version;
 	}
+
+	return vertexBuffer.get();
 }

@@ -40,6 +40,16 @@ void OtRenderPipeline::setVertexDescription(OtVertexDescription* description) {
 
 
 //
+//	OtRenderPipeline::setInstanceDescription
+//
+
+void OtRenderPipeline::setInstanceDescription(OtVertexDescription* description) {
+	instanceDescription = description;
+	pipeline = nullptr;
+}
+
+
+//
 //	OtRenderPipeline::setRenderTargetType
 //
 
@@ -157,6 +167,7 @@ void OtRenderPipeline::clear() {
 	fragmentShaderSize = 0;
 
 	vertexDescription = nullptr;
+	instanceDescription = nullptr;
 	renderTargetType = RenderTargetType::rgba8d32;
 	culling = Culling::cw;
 	fill = true;
@@ -222,16 +233,41 @@ SDL_GPUGraphicsPipeline* OtRenderPipeline::getPipeline() {
 
 		// setup information
 		SDL_GPUVertexInputState vertexInputState{};
-		SDL_GPUVertexBufferDescription vertexBufferDescription{};
+		SDL_GPUVertexBufferDescription bufferDescriptions[2]{};
+		size_t descriptionCount = 0;
+
+		std::vector<SDL_GPUVertexAttribute> attributes;
 
 		if (vertexDescription) {
-			vertexBufferDescription.pitch = static_cast<Uint32>(vertexDescription->size);
-			vertexBufferDescription.input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX;
+			for (size_t i = 0; i < vertexDescription->members; i++) {
+				auto& attribute = attributes.emplace_back(vertexDescription->attributes[i]);
+				attribute.buffer_slot = static_cast<Uint32>(descriptionCount);
+				attribute.location = static_cast<Uint32>(i);
+			}
 
-			vertexInputState.vertex_buffer_descriptions = &vertexBufferDescription;
-			vertexInputState.num_vertex_buffers = 1;
-			vertexInputState.vertex_attributes = vertexDescription->attributes;
-			vertexInputState.num_vertex_attributes = static_cast<Uint32>(vertexDescription->members);
+			bufferDescriptions[descriptionCount].pitch = static_cast<Uint32>(vertexDescription->size);
+			bufferDescriptions[descriptionCount].input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX;
+			descriptionCount++;
+		}
+
+		if (instanceDescription) {
+			for (size_t i = 0; i < instanceDescription->members; i++) {
+				auto& attribute = attributes.emplace_back(instanceDescription->attributes[i]);
+				attribute.buffer_slot = static_cast<Uint32>(descriptionCount);
+				attribute.location = static_cast<Uint32>(attributes.size() - 1);
+			}
+
+			bufferDescriptions[descriptionCount].slot = static_cast<Uint32>(descriptionCount);
+			bufferDescriptions[descriptionCount].pitch = static_cast<Uint32>(instanceDescription->size);
+			bufferDescriptions[descriptionCount].input_rate = SDL_GPU_VERTEXINPUTRATE_INSTANCE;
+			descriptionCount++;
+		}
+
+		if (descriptionCount) {
+			vertexInputState.vertex_buffer_descriptions = bufferDescriptions;
+			vertexInputState.num_vertex_buffers = static_cast<Uint32>(descriptionCount);
+			vertexInputState.vertex_attributes = attributes.data();
+			vertexInputState.num_vertex_attributes = static_cast<Uint32>(attributes.size());
 		}
 
 		std::vector<SDL_GPUColorTargetDescription> targetDescriptions;
