@@ -51,7 +51,7 @@ void main() {
 	// ignore pixels without geometry
 	vec4 albedoSample = texture(lightingAlbedoTexture, vUv);
 
-	if (albedoSample.a == 0.0) {
+	if (albedoSample.a == 0.0f) {
 		discard;
 	}
 
@@ -59,7 +59,7 @@ void main() {
 	float depth = texture(lightingDepthTexture, vUv).x;
 
 	// determine world coordinates
-	vec4 p = invViewProjUniform * vec4(uvToClipSpace(vUv, depth), 1.0);
+	vec4 p = invViewProjUniform * vec4(uvToClipSpace(vUv, depth), 1.0f);
 	vec3 pos = p.xyz / p.w;
 
 	// determine view direction
