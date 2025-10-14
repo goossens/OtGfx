@@ -234,16 +234,9 @@ void OtRenderPass::setStencilReference(uint8_t reference) {
 //	OtRenderPass::setInstanceData
 //
 
-void OtRenderPass::setInstanceData(OtInstances& instances, size_t slot) {
+void OtRenderPass::setInstanceData(OtInstances& instances) {
 	OtAssert(open);
-
-	// bind the vertex buffer to the pass
-	SDL_GPUBufferBinding bufferBindings{
-		.buffer = instances.getBuffer(),
-		.offset = 0
-	};
-
-	SDL_BindGPUVertexBuffers(pass, static_cast<Uint32>(slot), &bufferBindings, 1);
+	instanceBuffer = instances.getBuffer();
 	instanceCount = instances.size();
 }
 
@@ -257,36 +250,57 @@ void OtRenderPass::render(size_t vertices, size_t instances) {
 	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(vertices), static_cast<Uint32>(instances), 0, 0);
 }
 
-void OtRenderPass::render(OtVertexBuffer& buffer) {
+void OtRenderPass::render(OtVertexBuffer& vertexBuffer) {
 	OtAssert(open);
 
-	// bind the vertex buffer to the pass
-	SDL_GPUBufferBinding bufferBindings{
-		.buffer = buffer.getBuffer(),
+	// bind the vertex buffer(s) to the pass
+	SDL_GPUBufferBinding bufferBindings[2];
+
+	bufferBindings[0] = SDL_GPUBufferBinding{
+		.buffer = vertexBuffer.getBuffer(),
 		.offset = 0
 	};
 
-	SDL_BindGPUVertexBuffers(pass, 0, &bufferBindings, 1);
+	if (instanceBuffer) {
+		bufferBindings[1] = SDL_GPUBufferBinding{
+			.buffer = instanceBuffer,
+			.offset = 0
+		};
+	}
+
+	SDL_BindGPUVertexBuffers(pass, 0, bufferBindings, instanceBuffer ? 2 : 1);
 
 	// render the triangles
-	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(buffer.getCount()), static_cast<Uint32>(instanceCount), 0, 0);
+	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(vertexBuffer.getCount()), static_cast<Uint32>(instanceCount), 0, 0);
+	instanceBuffer = nullptr;
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset, size_t count) {
 	OtAssert(open);
 
-	// bind the vertex buffer to the pass
-	SDL_GPUBufferBinding vertexBufferBindings{
+	// bind the vertex buffer(s) to the pass
+	SDL_GPUBufferBinding bufferBindings[2];
+
+	bufferBindings[0] = SDL_GPUBufferBinding{
 		.buffer = vertexBuffer.getBuffer(),
 		.offset = 0
 	};
 
+	if (instanceBuffer) {
+		bufferBindings[1] = SDL_GPUBufferBinding{
+			.buffer = instanceBuffer,
+			.offset = 0
+		};
+	}
+
+	SDL_BindGPUVertexBuffers(pass, 0, bufferBindings, instanceBuffer ? 2 : 1);
+
+	// bind the index buffer to the pass
 	SDL_GPUBufferBinding indexBufferBinding = {
 		.buffer = indexBuffer.getBuffer(),
 		.offset = 0
 	};
 
-	SDL_BindGPUVertexBuffers(pass, 0, &vertexBufferBindings, 1);
 	SDL_BindGPUIndexBuffer(pass, &indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
 
 	// render the triangles
@@ -294,6 +308,7 @@ void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuff
 	Uint32 firstIndex = static_cast<Uint32>(offset);
 	Uint32 numInstances = static_cast<Uint32>(instanceCount);
 	SDL_DrawGPUIndexedPrimitives(pass, numIndices, numInstances, firstIndex, 0, 0);
+	instanceBuffer = nullptr;
 }
 
 

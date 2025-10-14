@@ -65,7 +65,7 @@ public:
 	void setStencilReference(uint8_t reference);
 
 	// set instance data
-	void setInstanceData(OtInstances& instances, size_t slot=1);
+	void setInstanceData(OtInstances& instances);
 
 	// execute a rendering command
 	void render(size_t vertices, size_t instances=1);
@@ -83,5 +83,6 @@ private:
 
 	// state
 	bool open = false;
+	SDL_GPUBuffer* instanceBuffer = nullptr;
 	size_t instanceCount = 1;
 };

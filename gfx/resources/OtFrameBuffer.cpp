@@ -108,6 +108,7 @@ bool OtFrameBuffer::update(int w, int h) {
 		height = h;
 
 		// create/update render target information
+		colorTargetInfo = SDL_GPUColorTargetInfo{};
 		colorTargetInfo.texture = colorTexture.getTexture();
 
 		colorTargetInfo.clear_color = SDL_FColor{
@@ -120,6 +121,7 @@ bool OtFrameBuffer::update(int w, int h) {
 		colorTargetInfo.load_op = hasColorTexture() && clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
 		colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
+		depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo{};
 		depthStencilTargetInfo.texture = depthTexture.getTexture();
 		depthStencilTargetInfo.clear_depth = clearDepthValue;
 		depthStencilTargetInfo.load_op = hasDepthTexture() && clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;

@@ -99,8 +99,8 @@ private:
 	std::uint8_t clearStencilValue = 0;
 
 	// render target description
-	SDL_GPUColorTargetInfo colorTargetInfo{};
-	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo{};
+	SDL_GPUColorTargetInfo colorTargetInfo;
+	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
 	OtRenderTargetInfo info;
 
 	// get render target information

@@ -41,12 +41,12 @@ protected:
 	virtual bool isRenderingTransparent() { return false; }
 
 	virtual void renderOpaqueGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
-	virtual void renderOpaqueInstancedGeometry([[maybe_unused]] OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstancingComponent&) {}
-	virtual void renderOpaqueModel([[maybe_unused]] OtSceneRendererContext&, OtEntity, OtModelComponent&) {}
-	virtual void renderOpaqueInstancedModel([[maybe_unused]] OtSceneRendererContext&, OtEntity, OtModelComponent&, OtInstancingComponent&) {}
-	virtual void renderTerrain([[maybe_unused]] OtSceneRendererContext&, OtEntity, OtTerrainComponent&) {}
-	virtual void renderGrass([[maybe_unused]] OtSceneRendererContext&, OtEntity, OtGrassComponent&) {}
-	virtual void renderTransparentGeometry([[maybe_unused]] OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
+	virtual void renderOpaqueInstancedGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstancingComponent&) {}
+	virtual void renderOpaqueModel(OtSceneRendererContext&, OtEntity, OtModelComponent&) {}
+	virtual void renderOpaqueInstancedModel(OtSceneRendererContext&, OtEntity, OtModelComponent&, OtInstancingComponent&) {}
+	virtual void renderTerrain(OtSceneRendererContext&, OtEntity, OtTerrainComponent&) {}
+	virtual void renderGrass(OtSceneRendererContext&, OtEntity, OtGrassComponent&) {}
+	virtual void renderTransparentGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
 
 	// utility function for subclasses
 	void setCameraUniforms(OtSceneRendererContext& ctx, size_t uniformSlot);
