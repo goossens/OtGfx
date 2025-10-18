@@ -120,34 +120,25 @@ void OtRenderPass::bindPipeline(OtRenderPipeline& pipeline) {
 
 void OtRenderPass::bindVertexSampler(size_t slot, OtSampler& sampler, SDL_GPUTexture* texture) {
 	OtAssert(open);
-
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = texture,
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = texture;
+	binding.sampler = sampler.getSampler();
 	SDL_BindGPUVertexSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 }
 
 void OtRenderPass::bindVertexSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
 	OtAssert(open);
-
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = texture.getTexture(),
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = texture.getTexture();
+	binding.sampler = sampler.getSampler();
 	SDL_BindGPUVertexSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 }
 
 void OtRenderPass::bindVertexSampler(size_t slot, OtSampler& sampler, OtCubeMap& cubemap) {
 	OtAssert(open);
-
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = cubemap.getTexture(),
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = cubemap.getTexture();
+	binding.sampler = sampler.getSampler();
 	SDL_BindGPUVertexSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 }
 
@@ -158,34 +149,25 @@ void OtRenderPass::bindVertexSampler(size_t slot, OtSampler& sampler, OtCubeMap&
 
 void OtRenderPass::bindFragmentSampler(size_t slot, OtSampler& sampler, SDL_GPUTexture* texture) {
 	OtAssert(open);
-
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = texture,
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = texture;
+	binding.sampler = sampler.getSampler();
 	SDL_BindGPUFragmentSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 }
 
 void OtRenderPass::bindFragmentSampler(size_t slot, OtSampler& sampler, OtTexture& texture) {
 	OtAssert(open);
-
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = texture.getTexture(),
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = texture.getTexture();
+	binding.sampler = sampler.getSampler();
 	SDL_BindGPUFragmentSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 }
 
 void OtRenderPass::bindFragmentSampler(size_t slot, OtSampler& sampler, OtCubeMap& cubemap) {
 	OtAssert(open);
-
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = cubemap.getTexture(),
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = cubemap.getTexture();
+	binding.sampler = sampler.getSampler();
 	SDL_BindGPUFragmentSamplers(pass, static_cast<Uint32> (slot), &binding, 1);
 }
 
@@ -251,21 +233,13 @@ void OtRenderPass::render(size_t vertices, size_t instances) {
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer) {
-	OtAssert(open);
-
 	// bind the vertex buffer(s) to the pass
+	OtAssert(open);
 	SDL_GPUBufferBinding bufferBindings[2];
-
-	bufferBindings[0] = SDL_GPUBufferBinding{
-		.buffer = vertexBuffer.getBuffer(),
-		.offset = 0
-	};
+	bufferBindings[0] = SDL_GPUBufferBinding{vertexBuffer.getBuffer(), 0};
 
 	if (instanceBuffer) {
-		bufferBindings[1] = SDL_GPUBufferBinding{
-			.buffer = instanceBuffer,
-			.offset = 0
-		};
+		bufferBindings[1] = SDL_GPUBufferBinding{instanceBuffer, 0};
 	}
 
 	SDL_BindGPUVertexBuffers(pass, 0, bufferBindings, instanceBuffer ? 2 : 1);
@@ -276,31 +250,19 @@ void OtRenderPass::render(OtVertexBuffer& vertexBuffer) {
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset, size_t count) {
-	OtAssert(open);
-
 	// bind the vertex buffer(s) to the pass
+	OtAssert(open);
 	SDL_GPUBufferBinding bufferBindings[2];
-
-	bufferBindings[0] = SDL_GPUBufferBinding{
-		.buffer = vertexBuffer.getBuffer(),
-		.offset = 0
-	};
+	bufferBindings[0] = SDL_GPUBufferBinding{vertexBuffer.getBuffer(), 0};
 
 	if (instanceBuffer) {
-		bufferBindings[1] = SDL_GPUBufferBinding{
-			.buffer = instanceBuffer,
-			.offset = 0
-		};
+		bufferBindings[1] = SDL_GPUBufferBinding{instanceBuffer, 0};
 	}
 
 	SDL_BindGPUVertexBuffers(pass, 0, bufferBindings, instanceBuffer ? 2 : 1);
 
 	// bind the index buffer to the pass
-	SDL_GPUBufferBinding indexBufferBinding = {
-		.buffer = indexBuffer.getBuffer(),
-		.offset = 0
-	};
-
+	SDL_GPUBufferBinding indexBufferBinding = {indexBuffer.getBuffer(), 0};
 	SDL_BindGPUIndexBuffer(pass, &indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
 
 	// render the triangles

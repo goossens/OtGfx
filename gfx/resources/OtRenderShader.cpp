@@ -52,19 +52,12 @@ OtRenderShader::OtRenderShader(const uint32_t* code, size_t size, Stage stage) {
 		}
 
 		// cross compile to the appropriate shader format and create a shader object
-		SDL_ShaderCross_SPIRV_Info info{
-			.bytecode = (Uint8*) code,
-			.bytecode_size = size,
-			.entrypoint = "main",
-			.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage),
-			.props = 0
-		};
-
-		shader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(
-			OtGpu::instance().device,
-			&info,
-			&metadata->resource_info,
-			0);
+		SDL_ShaderCross_SPIRV_Info info{};
+		info.bytecode = (Uint8*) code;
+		info.bytecode_size = size;
+		info.entrypoint = "main";
+		info.shader_stage = static_cast<SDL_ShaderCross_ShaderStage>(stage);
+		shader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV(OtGpu::instance().device, &info, &metadata->resource_info, 0);
 
 		if (shader == nullptr) {
 			OtLogFatal("Error in SDL_ShaderCross_CompileGraphicsShaderFromSPIRV: {}", SDL_GetError());

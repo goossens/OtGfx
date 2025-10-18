@@ -68,37 +68,13 @@ public:
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = 0
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = sizeof(glm::vec4)
-			},
-			{
-				.location = 2,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = sizeof(glm::vec4) * 2
-			},
-			{
-				.location = 3,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset =  sizeof(glm::vec4) * 3
-			}
+			SDL_GPUVertexAttribute{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, 0},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4)},
+			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4) * 2},
+			{3, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4) * 3}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(glm::mat4),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
+		static OtVertexDescription description{sizeof(glm::mat4), sizeof(attributes) / sizeof(attributes[0]), attributes};
 
 		return &description;
 	}

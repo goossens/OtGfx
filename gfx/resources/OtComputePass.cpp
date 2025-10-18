@@ -26,11 +26,9 @@ void OtComputePass::addInputSampler(OtSampler& sampler, OtTexture& texture) {
 		OtLogFatal("Can't add texture without [sampler] usage to compute pass");
 	}
 
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = texture.getTexture(),
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = texture.getTexture();
+	binding.sampler = sampler.getSampler();
 	samplers.emplace_back(binding);
 }
 
@@ -40,11 +38,9 @@ void OtComputePass::addInputSampler(OtSampler& sampler, OtTexture& texture) {
 //
 
 void OtComputePass::addInputSampler(OtSampler& sampler, OtCubeMap& cubemap) {
-	SDL_GPUTextureSamplerBinding binding{
-		.texture = cubemap.getTexture(),
-		.sampler = sampler.getSampler()
-	};
-
+	SDL_GPUTextureSamplerBinding binding{};
+	binding.texture = cubemap.getTexture();
+	binding.sampler = sampler.getSampler();
 	samplers.emplace_back(binding);
 }
 
@@ -58,16 +54,8 @@ void OtComputePass::addOutputTexture(OtTexture& texture) {
 		OtLogFatal("Can't add output texture to compute pass without [write] usage");
 	}
 
-	SDL_GPUStorageTextureReadWriteBinding binding{
-		.texture = texture.getTexture(),
-		.mip_level = 0,
-		.layer = 0,
-		.cycle = false,
-		.padding1 = 0,
-		.padding2 = 0,
-		.padding3 = 0
-	};
-
+	SDL_GPUStorageTextureReadWriteBinding binding{};
+	binding.texture = texture.getTexture();
 	textures.emplace_back(binding);
 }
 
@@ -77,16 +65,8 @@ void OtComputePass::addOutputTexture(OtTexture& texture) {
 //
 
 void OtComputePass::addOutputCubeMap(OtCubeMap& cubemap) {
-	SDL_GPUStorageTextureReadWriteBinding binding{
-		.texture = cubemap.getTexture(),
-		.mip_level = 0,
-		.layer = 0,
-		.cycle = false,
-		.padding1 = 0,
-		.padding2 = 0,
-		.padding3 = 0
-	};
-
+	SDL_GPUStorageTextureReadWriteBinding binding{};
+	binding.texture = cubemap.getTexture();
 	textures.emplace_back(binding);
 }
 

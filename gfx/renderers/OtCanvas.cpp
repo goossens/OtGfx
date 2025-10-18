@@ -487,11 +487,6 @@ int OtCanvas::renderCreateTexture(int type, int w, int h, int imageFlags, const 
 	it->second.flip = imageFlags & NVG_IMAGE_FLIPY;
 	auto format = (type == NVG_TEXTURE_RGBA) ? OtTexture::Format::rgba8 : OtTexture::Format::r8;
 
-	if (format == OtTexture::Format::r8) {
-		id = id++;
-		id = id--;
-	}
-
 	if (data) {
 		texture.load(w, h, format, (void*) data);
 

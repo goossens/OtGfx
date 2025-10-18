@@ -51,44 +51,14 @@ struct OtVertex {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, position)
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, normal)
-			},
-			{
-				.location = 2,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, tangent)
-			},
-			{
-				.location = 3,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertex, bitangent)
-			},
-			{
-				.location = 4,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertex, uv)
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertex, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertex, normal)},
+			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertex, tangent)},
+			{3, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertex, bitangent)},
+			{4, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertex, uv)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertex),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertex), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };
@@ -110,26 +80,11 @@ struct OtVertexPosCol2D {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosCol2D, position),
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = offsetof(OtVertexPosCol2D, color),
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexPosCol2D, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, offsetof(OtVertexPosCol2D, color)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertexPosCol2D),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertexPosCol2D), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };
@@ -151,26 +106,11 @@ struct OtVertexPosUv2D {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosUv2D, position),
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosUv2D, uv),
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexPosUv2D, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexPosUv2D, uv)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertexPosUv2D),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertexPosUv2D), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };
@@ -193,26 +133,11 @@ struct OtVertexPosColor {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertexPosColor, position),
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = offsetof(OtVertexPosColor, color),
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexPosColor, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, offsetof(OtVertexPosColor, color)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertexPosColor),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertexPosColor), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };
@@ -233,20 +158,10 @@ struct OtVertexPos {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.offset = offsetof(OtVertexPos, position)
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexPos, position)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertexPos),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertexPos), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };
@@ -269,32 +184,12 @@ struct OtVertexPosUvCol2D {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosUvCol2D, position),
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.offset = offsetof(OtVertexPosUvCol2D, uv),
-			},
-			{
-				.location = 2,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = offsetof(OtVertexPosUvCol2D, color),
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexPosUvCol2D, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexPosUvCol2D, uv)},
+			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, offsetof(OtVertexPosUvCol2D, color)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertexPosUvCol2D),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertexPosUvCol2D), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };
@@ -316,26 +211,11 @@ struct OtVertexBones {
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
-			{
-				.location = 0,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = offsetof(OtVertexBones, indices),
-			},
-			{
-				.location = 1,
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.offset = offsetof(OtVertexBones, weights),
-			}
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, offsetof(OtVertexBones, indices)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, offsetof(OtVertexBones, weights)}
 		};
 
-		static OtVertexDescription description{
-			.size = sizeof(OtVertexBones),
-			.members = sizeof(attributes) / sizeof(attributes[0]),
-			.attributes = attributes
-		};
-
+		static OtVertexDescription description{sizeof(OtVertexBones), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };

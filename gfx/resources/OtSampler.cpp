@@ -80,25 +80,16 @@ SDL_GPUSampler* OtSampler::getSampler() {
 					? SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT
 					: SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
-		SDL_GPUSamplerCreateInfo info{
-			.min_filter = filter,
-			.mag_filter = filter,
-			.mipmap_mode = requestedFilter == Filter::nearest ? SDL_GPU_SAMPLERMIPMAPMODE_NEAREST : SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
-			.address_mode_u = addressModeX,
-			.address_mode_v = addressModeY,
-			.address_mode_w = addressModeX,
-			.mip_lod_bias = 0,
-			.max_anisotropy = requestedFilter == Filter::anisotropic ? 4.0f : 0.0f,
-			.compare_op = SDL_GPU_COMPAREOP_INVALID,
-			.min_lod = 0.0f,
-			.max_lod = 0.0f,
-			.enable_anisotropy = requestedFilter == Filter::anisotropic,
-			.enable_compare = false,
-			.padding1 = 0,
-			.padding2 = 0,
-			.props = 0
-		};
-
+		SDL_GPUSamplerCreateInfo info{};
+		info.min_filter = filter;
+		info.mag_filter = filter;
+		info.mipmap_mode = requestedFilter == Filter::nearest ? SDL_GPU_SAMPLERMIPMAPMODE_NEAREST : SDL_GPU_SAMPLERMIPMAPMODE_LINEAR;
+		info.address_mode_u = addressModeX;
+		info.address_mode_v = addressModeY;
+		info.address_mode_w = addressModeX;
+		info.mip_lod_bias = 0;
+		info.max_anisotropy = requestedFilter == Filter::anisotropic ? 4.0f : 0.0f;
+		info.enable_anisotropy = requestedFilter == Filter::anisotropic;
 		auto sdlSampler =SDL_CreateGPUSampler(OtGpu::instance().device, &info);
 
 		if (sdlSampler == nullptr) {

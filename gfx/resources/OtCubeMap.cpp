@@ -35,17 +35,15 @@ void OtCubeMap::create(int s, bool m) {
 	mip = m;
 
 	// create new cubemap
-	SDL_GPUTextureCreateInfo info{
-		.type = SDL_GPU_TEXTURETYPE_CUBE,
-		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-		.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE,
-		.width = static_cast<Uint32>(size),
-		.height = static_cast<Uint32>(size),
-		.layer_count_or_depth = 6,
-		.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1),
-		.sample_count = SDL_GPU_SAMPLECOUNT_1,
-		.props = 0
-	};
+	SDL_GPUTextureCreateInfo info{};
+	info.type = SDL_GPU_TEXTURETYPE_CUBE;
+	info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+	info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE;
+	info.width = static_cast<Uint32>(size);
+	info.height = static_cast<Uint32>(size);
+	info.layer_count_or_depth = 6;
+	info.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1);
+	info.sample_count = SDL_GPU_SAMPLECOUNT_1;
 
 	auto sdlCubemap = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
 
@@ -235,17 +233,15 @@ void OtCubeMap::loadHdrImage(const std::string& path, bool async) {
 
 void OtCubeMap::createCubemapFromSides() {
 	// create new cubemap
-	SDL_GPUTextureCreateInfo info{
-		.type = SDL_GPU_TEXTURETYPE_CUBE,
-		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-		.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
-		.width = static_cast<Uint32>(size),
-		.height = static_cast<Uint32>(size),
-		.layer_count_or_depth = 6,
-		.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1),
-		.sample_count = SDL_GPU_SAMPLECOUNT_1,
-		.props = 0
-	};
+	SDL_GPUTextureCreateInfo info{};
+	info.type = SDL_GPU_TEXTURETYPE_CUBE;
+	info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+	info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
+	info.width = static_cast<Uint32>(size);
+	info.height = static_cast<Uint32>(size);
+	info.layer_count_or_depth = 6;
+	info.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1);
+	info.sample_count = SDL_GPU_SAMPLECOUNT_1;
 
 	auto sdlCubemap = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
 
@@ -256,11 +252,9 @@ void OtCubeMap::createCubemapFromSides() {
 	assign(sdlCubemap);
 
 	// create a transfer buffer
-	SDL_GPUTransferBufferCreateInfo bufferInfo{
-		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = static_cast<Uint32>(bytesPerImage * 6),
-		.props = 0
-	};
+	SDL_GPUTransferBufferCreateInfo bufferInfo{};
+	bufferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+	bufferInfo.size = static_cast<Uint32>(bytesPerImage * 6);
 
 	auto& gpu = OtGpu::instance();
 	SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
@@ -278,24 +272,16 @@ void OtCubeMap::createCubemapFromSides() {
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 
 	for (size_t i = 0; i < 6; i++) {
-		SDL_GPUTextureTransferInfo transferInfo{
-			.transfer_buffer = transferBuffer,
-			.offset = static_cast<Uint32>(bytesPerImage * i),
-		.pixels_per_row = 0,
-		.rows_per_layer = 0
-		};
+		SDL_GPUTextureTransferInfo transferInfo{};
+		transferInfo.transfer_buffer = transferBuffer;
+		transferInfo.offset = static_cast<Uint32>(bytesPerImage * i);
 
-		SDL_GPUTextureRegion region{
-			.texture = cubemap.get(),
-			.mip_level = 0,
-			.layer = static_cast<Uint32>(i),
-			.x = 0,
-			.y = 0,
-			.z = 0,
-			.w = static_cast<Uint32>(size),
-			.h = static_cast<Uint32>(size),
-			.d = 1
-		};
+		SDL_GPUTextureRegion region{};
+		region.texture = cubemap.get();
+		region.layer = static_cast<Uint32>(i);
+		region.w = static_cast<Uint32>(size);
+		region.h = static_cast<Uint32>(size);
+		region.d = 1;
 
 		SDL_UploadToGPUTexture(copyPass, &transferInfo, &region, false);
 	}
@@ -319,17 +305,15 @@ void OtCubeMap::createCubemapFromHDR() {
 	inputTexture.load(*asyncImage);
 
 	// create a cubemap texture
-	SDL_GPUTextureCreateInfo info {
-		.type = SDL_GPU_TEXTURETYPE_CUBE,
-		.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
-		.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
-		.width = static_cast<Uint32>(size),
-		.height = static_cast<Uint32>(size),
-		.layer_count_or_depth = 6,
-		.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1),
-		.sample_count = SDL_GPU_SAMPLECOUNT_1,
-		.props = 0
-	};
+	SDL_GPUTextureCreateInfo info{};
+	info.type = SDL_GPU_TEXTURETYPE_CUBE;
+	info.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
+	info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
+	info.width = static_cast<Uint32>(size);
+	info.height = static_cast<Uint32>(size);
+	info.layer_count_or_depth = 6;
+	info.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1);
+	info.sample_count = SDL_GPU_SAMPLECOUNT_1;
 
 	auto sdlCubemap = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
 

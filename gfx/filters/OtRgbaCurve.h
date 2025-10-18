@@ -65,10 +65,10 @@ public:
 			glm::vec4 lut[256];
 			int32_t mode;
 		} uniforms {
-			.blackLevel = blackLevel,
-			.whiteLevel = whiteLevel,
-			.lut = {},
-			.mode =static_cast<int32_t>(mode)
+			blackLevel,
+			whiteLevel,
+			{},
+			static_cast<int32_t>(mode)
 		};
 
 		for (size_t i = 0; i < 256; i++) {

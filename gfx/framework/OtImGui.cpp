@@ -56,12 +56,10 @@ void OtFramework::initIMGUI() {
 	auto& gpu = OtGpu::instance();
 	ImGui_ImplSDL3_InitForSDLGPU(gpu.window);
 
-	ImGui_ImplSDLGPU3_InitInfo initInfo{
-		.Device = gpu.device,
-		.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu.device, gpu.window),
-		.MSAASamples = SDL_GPU_SAMPLECOUNT_1
-	};
-
+	ImGui_ImplSDLGPU3_InitInfo initInfo{};
+	initInfo.Device = gpu.device;
+	initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu.device, gpu.window);
+	initInfo.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
 	ImGui_ImplSDLGPU3_Init(&initInfo);
 
 	// setup our font
@@ -135,21 +133,11 @@ void OtFramework::endFrameIMGUI() {
 		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, gpu.pipelineCommandBuffer);
 
 		// setup Dear ImGui render target
-		SDL_GPUColorTargetInfo targetInfo{
-			.texture = gpu.swapchainTexture,
-			.mip_level = 0,
-			.layer_or_depth_plane = 0,
-			.clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f},
-			.load_op = SDL_GPU_LOADOP_CLEAR,
-			.store_op = SDL_GPU_STOREOP_STORE,
-			.resolve_texture = nullptr,
-			.resolve_mip_level = 0,
-			.resolve_layer = 0,
-			.cycle = false,
-			.cycle_resolve_texture = false,
-			.padding1 = 0,
-			.padding2 = 0
-		};
+		SDL_GPUColorTargetInfo targetInfo{};
+		targetInfo.texture = gpu.swapchainTexture;
+		targetInfo.clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
+		targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+		targetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
 		// run Dear ImGui render pass
 		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(gpu.pipelineCommandBuffer, &targetInfo, 1, nullptr);

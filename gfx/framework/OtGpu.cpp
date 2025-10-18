@@ -53,11 +53,9 @@ void OtGpu::init(SDL_Window* win, int w, int h) {
 	}
 
 	// create a transfer buffer to create the dummy textures
-	SDL_GPUTransferBufferCreateInfo bufferInfo {
-		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = sizeof(Uint32),
-		.props = 0
-	};
+	SDL_GPUTransferBufferCreateInfo bufferInfo{};
+	bufferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+	bufferInfo.size = sizeof(Uint32);
 
 	auto transferBuffer = SDL_CreateGPUTransferBuffer(device, &bufferInfo);
 
@@ -68,9 +66,9 @@ void OtGpu::init(SDL_Window* win, int w, int h) {
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(commandBuffer);
 
 	// create dummy textures
-	SDL_Color transparent{ .r = 0, .g = 0, .b = 0, .a = 0 };
-	SDL_Color black{ .r = 0, .g = 0, .b = 0, .a = 255 };
-	SDL_Color white{ .r = 255, .g = 255, .b = 255, .a = 255 };
+	SDL_Color transparent{0, 0, 0, 0};
+	SDL_Color black{0, 0, 0, 255};
+	SDL_Color white{255, 255, 255, 255};
 
 	transparentDummyTexture = createDummyTexture(copyPass, transferBuffer, transparent);
 	blackDummyTexture = createDummyTexture(copyPass, transferBuffer, black);
@@ -164,17 +162,15 @@ void OtGpu::flushAndRestartFrame() {
 
 SDL_GPUTexture* OtGpu::createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransferBuffer* buffer, SDL_Color pixel) {
 	// create new texture
-	SDL_GPUTextureCreateInfo textureInfo{
-		.type = SDL_GPU_TEXTURETYPE_2D,
-		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
-		.width = 1,
-		.height = 1,
-		.layer_count_or_depth = 1,
-		.num_levels = 1,
-		.sample_count = SDL_GPU_SAMPLECOUNT_1,
-		.props = 0
-	};
+	SDL_GPUTextureCreateInfo textureInfo{};
+	textureInfo.type = SDL_GPU_TEXTURETYPE_2D;
+	textureInfo.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+	textureInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ;
+	textureInfo.width = 1;
+	textureInfo.height = 1;
+	textureInfo.layer_count_or_depth = 1;
+	textureInfo.num_levels = 1;
+	textureInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
 
 	auto& gpu = OtGpu::instance();
 	SDL_GPUTexture* texture = SDL_CreateGPUTexture(gpu.device, &textureInfo);
@@ -189,24 +185,14 @@ SDL_GPUTexture* OtGpu::createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransfer
 	SDL_UnmapGPUTransferBuffer(gpu.device, buffer);
 
 	// transfer buffer to GPU
-	SDL_GPUTextureTransferInfo transferInfo {
-		.transfer_buffer = buffer,
-		.offset = 0,
-		.pixels_per_row = 0,
-		.rows_per_layer = 0
-	};
+	SDL_GPUTextureTransferInfo transferInfo{};
+	transferInfo.transfer_buffer = buffer;
 
-	SDL_GPUTextureRegion region {
-		.texture = texture,
-		.mip_level = 0,
-		.layer = 0,
-		.x = 0,
-		.y = 0,
-		.z = 0,
-		.w = 1,
-		.h = 1,
-		.d = 1
-	};
+	SDL_GPUTextureRegion region{};
+	region.texture = texture;
+	region.w = 1;
+	region.h = 1;
+	region.d = 1;
 
 	SDL_UploadToGPUTexture(pass, &transferInfo, &region, true);
 	return texture;
@@ -219,17 +205,15 @@ SDL_GPUTexture* OtGpu::createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransfer
 
 SDL_GPUTexture* OtGpu::createDummyCubeMap() {
 	// create new cubemap
-	SDL_GPUTextureCreateInfo info{
-		.type = SDL_GPU_TEXTURETYPE_CUBE,
-		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ,
-		.width = 1,
-		.height = 1,
-		.layer_count_or_depth = 6,
-		.num_levels = 1,
-		.sample_count = SDL_GPU_SAMPLECOUNT_1,
-		.props = 0
-	};
+	SDL_GPUTextureCreateInfo info{};
+	info.type = SDL_GPU_TEXTURETYPE_CUBE;
+	info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+	info.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ;
+	info.width = 1;
+	info.height = 1;
+	info.layer_count_or_depth = 6;
+	info.num_levels = 1;
+	info.sample_count = SDL_GPU_SAMPLECOUNT_1;
 
 	SDL_GPUTexture* cubemap = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
 

@@ -112,10 +112,10 @@ bool OtFrameBuffer::update(int w, int h) {
 		colorTargetInfo.texture = colorTexture.getTexture();
 
 		colorTargetInfo.clear_color = SDL_FColor{
-			.r = clearColorValue.r,
-			.g = clearColorValue.g,
-			.b = clearColorValue.b,
-			.a = clearColorValue.a
+			clearColorValue.r,
+			clearColorValue.g,
+			clearColorValue.b,
+			clearColorValue.a
 		};
 
 		colorTargetInfo.load_op = hasColorTexture() && clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;

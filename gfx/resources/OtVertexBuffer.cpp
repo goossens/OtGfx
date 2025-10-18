@@ -41,12 +41,9 @@ void OtVertexBuffer::set(void* data, size_t count, OtVertexDescription* descript
 	auto& gpu = OtGpu::instance();
 
 	if (!dynamic || size > currentBufferSize) {
-		SDL_GPUBufferCreateInfo bufferInfo{
-			.usage = SDL_GPU_BUFFERUSAGE_VERTEX,
-			.size = static_cast<Uint32>(size),
-			.props = 0
-		};
-
+		SDL_GPUBufferCreateInfo bufferInfo{};
+		bufferInfo.usage = SDL_GPU_BUFFERUSAGE_VERTEX;
+		bufferInfo.size = static_cast<Uint32>(size);
 		SDL_GPUBuffer* vbuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
 
 		if (!vbuffer) {
@@ -56,12 +53,9 @@ void OtVertexBuffer::set(void* data, size_t count, OtVertexDescription* descript
 		assignVertexBuffer(vbuffer);
 
 		// create a transfer buffer
-		SDL_GPUTransferBufferCreateInfo transferInfo{
-			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-			.size = static_cast<Uint32>(size),
-			.props = 0
-		};
-
+		SDL_GPUTransferBufferCreateInfo transferInfo{};
+		transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+		transferInfo.size = static_cast<Uint32>(size);
 		SDL_GPUTransferBuffer* tbuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
 
 		if (!tbuffer) {
@@ -77,16 +71,12 @@ void OtVertexBuffer::set(void* data, size_t count, OtVertexDescription* descript
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer.get());
 
 	// upload vertex buffer to GPU
-	SDL_GPUTransferBufferLocation location{
-		.transfer_buffer = transferBuffer.get(),
-		.offset = 0
-	};
+	SDL_GPUTransferBufferLocation location{};
+	location.transfer_buffer = transferBuffer.get();
 
-	SDL_GPUBufferRegion region{
-		.buffer = vertexBuffer.get(),
-		.offset = 0,
-		.size = static_cast<Uint32>(size)
-	};
+	SDL_GPUBufferRegion region{};
+	region.buffer = vertexBuffer.get();
+	region.size = static_cast<Uint32>(size);
 
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 	SDL_UploadToGPUBuffer(copyPass, &location, &region, dynamic);

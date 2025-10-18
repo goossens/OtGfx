@@ -67,13 +67,11 @@ SDL_GPUComputePipeline* OtComputePipeline::getPipeline() {
 		}
 
 		// cross compile to the appropriate shader format and create a pipeline object
-		SDL_ShaderCross_SPIRV_Info info{
-			.bytecode = (Uint8*) computeShaderCode,
-			.bytecode_size = computeShaderSize,
-			.entrypoint = "main",
-			.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE,
-			.props = 0
-		};
+		SDL_ShaderCross_SPIRV_Info info{};
+		info.bytecode = (Uint8*) computeShaderCode;
+		info.bytecode_size = computeShaderSize;
+		info.entrypoint = "main";
+		info.shader_stage = SDL_SHADERCROSS_SHADERSTAGE_COMPUTE;
 
 		auto computePipeline = SDL_ShaderCross_CompileComputePipelineFromSPIRV(OtGpu::instance().device, &info, metadata, 0);
 

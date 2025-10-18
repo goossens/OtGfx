@@ -49,33 +49,26 @@ OtImage& OtReadBackBuffer::readback(OtTexture& texture, int x, int y, int w, int
 	gpu.flushAndRestartFrame();
 
 	// create a transfer buffer
-	SDL_GPUTransferBufferCreateInfo bufferInfo{
-		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD,
-		.size = static_cast<Uint32>(texture.getBpp() * w * h),
-		.props = 0
-	};
+	SDL_GPUTransferBufferCreateInfo bufferInfo{};
+	bufferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD;
+	bufferInfo.size = static_cast<Uint32>(texture.getBpp() * w * h);
 
 	// transfer GPU texture back to CPU
 	auto transferBuffer = SDL_CreateGPUTransferBuffer(gpu.device, &bufferInfo);
 
-	SDL_GPUTextureRegion region{
-		.texture = texture.getTexture(),
-		.mip_level = 0,
-		.layer = 0,
-		.x = static_cast<Uint32>(x),
-		.y = static_cast<Uint32>(y),
-		.z = 0,
-		.w = static_cast<Uint32>(w),
-		.h = static_cast<Uint32>(h),
-		.d = 1
-	};
+	SDL_GPUTextureRegion region{};
+	region.texture = texture.getTexture();
+	region.x = static_cast<Uint32>(x);
+	region.y = static_cast<Uint32>(y);
+	region.w = static_cast<Uint32>(w);
+	region.h = static_cast<Uint32>(h);
+	region.d = 1;
 
-	SDL_GPUTextureTransferInfo transferInfo{
-		.transfer_buffer = transferBuffer,
-		.offset = 0,
-		.pixels_per_row = 0,
-		.rows_per_layer = 0
-	};
+	SDL_GPUTextureTransferInfo transferInfo{};
+	transferInfo.transfer_buffer = transferBuffer;
+	transferInfo.offset = 0;
+	transferInfo.pixels_per_row = 0;
+	transferInfo.rows_per_layer = 0;
 
 	auto commandBuffer = SDL_AcquireGPUCommandBuffer(gpu.device);
 	auto copyPass = SDL_BeginGPUCopyPass(commandBuffer);

@@ -41,12 +41,9 @@ void OtIndexBuffer::set(uint32_t* data, size_t count, bool dynamic) {
 	auto& gpu = OtGpu::instance();
 
 	if (!dynamic || size > currentBufferSize) {
-		SDL_GPUBufferCreateInfo bufferInfo{
-			.usage = SDL_GPU_BUFFERUSAGE_INDEX,
-			.size = static_cast<Uint32>(size),
-			.props = 0
-		};
-
+		SDL_GPUBufferCreateInfo bufferInfo{};
+		bufferInfo.usage = SDL_GPU_BUFFERUSAGE_INDEX;
+		bufferInfo.size = static_cast<Uint32>(size);
 		SDL_GPUBuffer* ibuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
 
 		if (!ibuffer) {
@@ -56,11 +53,9 @@ void OtIndexBuffer::set(uint32_t* data, size_t count, bool dynamic) {
 		assignIndexBuffer(ibuffer);
 
 		// create a transfer buffer
-		SDL_GPUTransferBufferCreateInfo transferInfo{
-			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-			.size = static_cast<Uint32>(size),
-			.props = 0
-		};
+		SDL_GPUTransferBufferCreateInfo transferInfo{};
+		transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+		transferInfo.size = static_cast<Uint32>(size);
 
 		SDL_GPUTransferBuffer* tbuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
 
@@ -77,16 +72,12 @@ void OtIndexBuffer::set(uint32_t* data, size_t count, bool dynamic) {
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer.get());
 
 	// upload index buffer to GPU
-	SDL_GPUTransferBufferLocation location{
-		.transfer_buffer = transferBuffer.get(),
-		.offset = 0
-	};
+	SDL_GPUTransferBufferLocation location{};
+	location.transfer_buffer = transferBuffer.get();
 
-	SDL_GPUBufferRegion region{
-		.buffer = indexBuffer.get(),
-		.offset = 0,
-		.size = static_cast<Uint32>(size)
-	};
+	SDL_GPUBufferRegion region{};
+	region.buffer = indexBuffer.get();
+	region.size = static_cast<Uint32>(size);
 
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 	SDL_UploadToGPUBuffer(copyPass, &location, &region, dynamic);

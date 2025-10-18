@@ -44,13 +44,13 @@ void OtInstanceDataBuffer::addElement(ElementFormat format) {
 		}
 
 	} else {
-		elements.emplace_back(SDL_GPUVertexAttribute{
-			.location = static_cast<Uint32>(elements.size()),
-			.buffer_slot = 0,
-			.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-			.offset = static_cast<Uint32>(dataSize)
-		});
+		SDL_GPUVertexAttribute attribute{};
+		attribute.location = static_cast<Uint32>(elements.size());
+		attribute.buffer_slot = 0;
+		attribute.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4;
+		attribute.offset = static_cast<Uint32>(dataSize);
 
+		elements.emplace_back(attribute);
 		dataSize += sizeof(glm::vec4);
  	}
 }
@@ -69,12 +69,9 @@ void OtInstanceDataBuffer::set(void* data, size_t count, bool dynamic) {
 	auto& gpu = OtGpu::instance();
 
 	if (!dynamic || count > currentBufferCount) {
-		SDL_GPUBufferCreateInfo bufferInfo{
-			.usage = SDL_GPU_BUFFERUSAGE_VERTEX,
-			.size = static_cast<Uint32>(bufferSize),
-			.props = 0
-		};
-
+		SDL_GPUBufferCreateInfo bufferInfo{};
+		bufferInfo.usage = SDL_GPU_BUFFERUSAGE_VERTEX;
+		bufferInfo.size = static_cast<Uint32>(bufferSize);
 		SDL_GPUBuffer* vbuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
 
 		if (!vbuffer) {
@@ -84,12 +81,9 @@ void OtInstanceDataBuffer::set(void* data, size_t count, bool dynamic) {
 		assignDataBuffer(vbuffer);
 
 		// create a transfer buffer
-		SDL_GPUTransferBufferCreateInfo transferInfo{
-			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-			.size = static_cast<Uint32>(bufferSize),
-			.props = 0
-		};
-
+		SDL_GPUTransferBufferCreateInfo transferInfo{};
+		transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+		transferInfo.size = static_cast<Uint32>(bufferSize);
 		SDL_GPUTransferBuffer* tbuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
 
 		if (!tbuffer) {
@@ -105,16 +99,13 @@ void OtInstanceDataBuffer::set(void* data, size_t count, bool dynamic) {
 	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer.get());
 
 	// upload instance buffer to GPU
-	SDL_GPUTransferBufferLocation location{
-		.transfer_buffer = transferBuffer.get(),
-		.offset = 0
-	};
+	SDL_GPUTransferBufferLocation location{};
+	location.transfer_buffer = transferBuffer.get();
 
-	SDL_GPUBufferRegion region{
-		.buffer = dataBuffer.get(),
-		.offset = 0,
-		.size = static_cast<Uint32>(bufferSize)
-	};
+	SDL_GPUBufferRegion region{};
+	region.buffer = dataBuffer.get();
+	region.offset = 0;
+	region.size = static_cast<Uint32>(bufferSize);
 
 	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
 	SDL_UploadToGPUBuffer(copyPass, &location, &region, dynamic);
