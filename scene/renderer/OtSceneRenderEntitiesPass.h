@@ -12,12 +12,12 @@
 //	Include files
 //
 
+#include "OtInstances.h"
 #include "OtSampler.h"
 #include "OtTextureAsset.h"
 
 #include "OtGeometryComponent.h"
 #include "OtGrassComponent.h"
-#include "OtInstancingComponent.h"
 #include "OtModelComponent.h"
 #include "OtSceneRendererContext.h"
 #include "OtTerrainComponent.h"
@@ -35,22 +35,23 @@ public:
 protected:
 	// render all entities in scene and call appropriate render functions (see below)
 	void renderEntities(OtSceneRendererContext& ctx);
+	void renderEntity(OtSceneRendererContext& ctx, OtEntity entity);
 
 	// subclasses must overwrite these methods if required (these are called by renderEntities)
 	virtual bool isRenderingOpaque() { return false; }
 	virtual bool isRenderingTransparent() { return false; }
 
 	virtual void renderOpaqueGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
-	virtual void renderOpaqueInstancedGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstancingComponent&) {}
+	virtual void renderOpaqueInstancedGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstances*) {}
 	virtual void renderOpaqueModel(OtSceneRendererContext&, OtEntity, OtModelComponent&) {}
-	virtual void renderOpaqueInstancedModel(OtSceneRendererContext&, OtEntity, OtModelComponent&, OtInstancingComponent&) {}
+	virtual void renderOpaqueInstancedModel(OtSceneRendererContext&, OtEntity, OtModelComponent&, OtInstances*) {}
 	virtual void renderTerrain(OtSceneRendererContext&, OtEntity, OtTerrainComponent&) {}
 	virtual void renderGrass(OtSceneRendererContext&, OtEntity, OtGrassComponent&) {}
 	virtual void renderTransparentGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
+	virtual void renderTransparentInstancedGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstances*) {}
 
 	// utility function for subclasses
 	void setCameraUniforms(OtSceneRendererContext& ctx, size_t uniformSlot);
-	void setClippingUniforms(OtSceneRendererContext& ctx, size_t uniformSlot);
 	void setLightingUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
 	void setShadowUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity);

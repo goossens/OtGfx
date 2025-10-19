@@ -53,7 +53,6 @@ void OtDeferredPass::renderGeometry(OtSceneRendererContext& ctx) {
 
 	// submit common uniforms
 	setCameraUniforms(ctx, 1);
-	setClippingUniforms(ctx, 1);
 
 	// render all entities
 	renderEntities(ctx);
@@ -99,7 +98,7 @@ void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtEntity 
 //	OtDeferredPass::renderOpaqueInstancedGeometry
 //
 
-void OtDeferredPass::renderOpaqueInstancedGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& geometry, OtInstancingComponent& instances) {
+void OtDeferredPass::renderOpaqueInstancedGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& geometry, OtInstances* instances) {
 	// bind pipeline
 	if (geometry.wireframe) {
 		ctx.pass->bindPipeline(instancedLinesPipeline);
@@ -114,7 +113,7 @@ void OtDeferredPass::renderOpaqueInstancedGeometry(OtSceneRendererContext& ctx, 
 	setMaterialUniforms(ctx, 0, 0, entity);
 
 	// render geometry
-	ctx.pass->setInstanceData(instances.asset->getInstances());
+	ctx.pass->setInstanceData(*instances);
 	ctx.pass->render(geometry.asset->getGeometry());
 }
 
@@ -140,9 +139,8 @@ void OtDeferredPass::renderDirectionalLight(OtSceneRendererContext& ctx) {
 	};
 
 	pass.setFragmentUniforms(0, &uniforms, sizeof(Uniforms));
-	setClippingUniforms(ctx, 1);
-	setLightingUniforms(ctx, 2, 5);
-	setShadowUniforms(ctx, 3, 8);
+	setLightingUniforms(ctx, 1, 5);
+	setShadowUniforms(ctx, 2, 8);
 
 	// bind samplers
 	pass.bindFragmentSampler(0, lightingAlbedoSampler, gbuffer.getAlbedoTexture());

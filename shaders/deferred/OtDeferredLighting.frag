@@ -16,14 +16,11 @@
 #version 450
 #extension GL_GOOGLE_include_directive : require
 
-#define CLIP_UNIFORMS 1
-#include "clip.glsl"
-
-#define LIGHTING_UNIFORMS 2
+#define LIGHTING_UNIFORMS 1
 #define LIGHTING_SAMPLERS 5
 #include "lighting.glsl"
 
-#define SHADOW_UNIFORMS 3
+#define SHADOW_UNIFORMS 2
 #define SHADOW_SAMPLERS 8
 #include "shadow.glsl"
 

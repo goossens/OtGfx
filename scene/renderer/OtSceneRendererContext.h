@@ -29,15 +29,8 @@
 
 class OtSceneRendererContext {
 public:
-	// constructors
-	OtSceneRendererContext(OtCamera c, OtScene* s, OtImageBasedLighting* i, OtCascadedShadowMap* sm, const glm::vec4& clp=glm::vec4(0.0f)) :
-			camera(c),
-			scene(s),
-			ibl(i),
-			csm(sm),
-			clippingPlane(clp) {
-		initialize();
-	}
+	// initialize context
+	void initialize(OtCamera c, OtScene* s, OtImageBasedLighting* i, OtCascadedShadowMap* sm);
 
 	// camera information
 	OtCamera camera;
@@ -46,16 +39,13 @@ public:
 	OtScene* scene;
 
 	// rendering pass
-	OtRenderPass* pass = nullptr;
+	OtRenderPass* pass;
 
 	// image base lighting
-	OtImageBasedLighting* ibl = nullptr;
+	OtImageBasedLighting* ibl;
 
 	// shadows
-	OtCascadedShadowMap* csm = nullptr;
-
-	// clipping plane
-	glm::vec4 clippingPlane;
+	OtCascadedShadowMap* csm;
 
 	// rendering flags
 	bool hasImageBasedLighting;
@@ -70,20 +60,16 @@ public:
 	bool hasWaterEntities;
 	bool hasGrassEntities;
 	bool hasParticlesEntities;
-	bool renderingShadow = false;
+	bool renderingShadow;
 
 	// directional light information
-	glm::vec3 directionalLightDirection = glm::vec3(0.0f);
-	glm::vec3 directionalLightColor = glm::vec3(0.0f);
-	float directionalLightAmbient = 0.0f;
-	bool renderDirectionalLight = false;
-	bool castShadow = false;
+	glm::vec3 directionalLightDirection;
+	glm::vec3 directionalLightColor;
+	float directionalLightAmbient;
+	bool renderDirectionalLight;
+	bool castShadow;
 
 	// key entities
 	OtEntity iblEntity = OtEntityNull;
 	OtEntity waterEntity = OtEntityNull;
-
-private:
-	// initialize context
-	void initialize();
 };

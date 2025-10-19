@@ -16,8 +16,14 @@
 //	OtSceneRendererContext::initialize
 //
 
-void OtSceneRendererContext::initialize() {
-	// reset flags
+void OtSceneRendererContext::initialize(OtCamera c, OtScene* s, OtImageBasedLighting* i, OtCascadedShadowMap* sm) {
+	// store provided properties
+	camera = c;
+	scene = s;
+	ibl = i;
+	csm = sm;
+
+	// reset state
 	hasImageBasedLighting = false;
 	hasDirectionalLighting = false;
 	hasPointLighting = false;

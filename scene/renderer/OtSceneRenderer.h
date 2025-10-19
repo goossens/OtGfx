@@ -39,6 +39,7 @@
 // #include "OtHighlightPass.h"
 // #include "OtPickingPass.h"
 #include "OtPostProcessingPass.h"
+#include "OtSceneRendererContext.h"
 
 
 //
@@ -68,6 +69,9 @@ public:
 private:
 	// give the debugger access to the inner circle
 	friend class OtSceneRendererDebug;
+
+	// rendering context
+	OtSceneRendererContext ctx;
 
 	// framebuffers
 	OtGbuffer deferredRenderingBuffer;

@@ -51,6 +51,9 @@ public:
 	inline size_t size() { return instances->size(); }
 	inline glm::mat4* data() { return instances->data(); }
 
+	// determine list of visible instances
+	bool determineVisibility(OtCamera& camera, OtAABB& aabb);
+
 	// version management
 	inline void setVersion(int v) { version = v; }
 	inline int getVersion() { return version; }
@@ -84,10 +87,12 @@ private:
 	std::shared_ptr<std::vector<glm::mat4>> instances;
 	int version = 0;
 
+	// list of visible instances
+	std::shared_ptr<std::vector<glm::mat4>> visibleInstances;
+
 	// the GPU resources
 	std::shared_ptr<SDL_GPUBuffer> vertexBuffer;
 	std::shared_ptr<SDL_GPUTransferBuffer> transferBuffer;
-	int gpuVersion = -1;
 
 	// memory manage SDL resource
 	void assignVertexBuffer(SDL_GPUBuffer* newBuffer);
