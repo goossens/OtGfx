@@ -57,7 +57,7 @@ void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtEnt
 		ctx.pass->bindPipeline(noCullingPipeline);
 	}
 
-	// set uniforms
+	// set vertex uniforms
 	struct Uniforms {
 		glm::mat4 modelMatrix;
 	} uniforms {
@@ -65,6 +65,8 @@ void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtEnt
 	};
 
 	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+
+	//set fragment uniforms
 	setMaterialUniforms(ctx, 0, 0, entity);
 
 	// render geometry

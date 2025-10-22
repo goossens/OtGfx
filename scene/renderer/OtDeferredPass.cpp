@@ -78,15 +78,16 @@ void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtEntity 
 		ctx.pass->bindPipeline(noCullingPipeline);
 	}
 
-	// set uniforms
+	// set vertex uniforms
 	struct Uniforms {
 		glm::mat4 modelMatrix;
 	} uniforms {
 		ctx.scene->getGlobalTransform(entity)
 	};
 
-	// set uniforms
 	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+
+	//set fragment uniforms
 	setMaterialUniforms(ctx, 0, 0, entity);
 
 	// render geometry
