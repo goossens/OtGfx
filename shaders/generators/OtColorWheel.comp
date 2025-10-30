@@ -20,7 +20,7 @@ vec3 colorPalette(float distance, float angle) {
 }
 
 float stableAtan2(float y, float x) {
-	return mix(PI / 2.0F - atan(x, y), atan(y, x), abs(x) > abs(y));
+	return mix(PI / 2.0f - atan(x, y), atan(y, x), abs(x) > abs(y));
 }
 
 void main() {
@@ -28,7 +28,6 @@ void main() {
 	ivec2 size = imageSize(outTexture);
 
 	if (coord.x >= size.x || coord.y >= size.y) {
-		return;
 	}
 
 	vec2 sizef = size;
