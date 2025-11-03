@@ -36,7 +36,7 @@ protected:
 	bool isRenderingOpaque() override { return false; }
 	bool isRenderingTransparent() override { return true; }
 
-	void renderTransparentGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& component) override;
+	void renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) override;
 
 private:
 	// properties

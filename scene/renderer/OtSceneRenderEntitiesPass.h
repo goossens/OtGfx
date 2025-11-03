@@ -16,9 +16,9 @@
 #include "OtSampler.h"
 #include "OtTextureAsset.h"
 
-#include "OtGeometryComponent.h"
+#include "OtGeometryRenderData.h"
 #include "OtGrassComponent.h"
-#include "OtModelComponent.h"
+#include "OtModelRenderData.h"
 #include "OtSceneRendererContext.h"
 #include "OtTerrainComponent.h"
 
@@ -37,20 +37,37 @@ protected:
 	void renderEntities(OtSceneRendererContext& ctx);
 	void renderEntity(OtSceneRendererContext& ctx, OtEntity entity);
 
+	virtual void renderOpaqueGeometry(OtSceneRendererContext&, OtGeometryRenderData&) {}
+	virtual void renderOpaqueModel(OtSceneRendererContext&, OtModelRenderData&) {}
+	virtual void renderTerrain(OtSceneRendererContext&, OtEntity, OtTerrainComponent&) {}
+	virtual void renderGrass(OtSceneRendererContext&, OtEntity, OtGrassComponent&) {}
+	virtual void renderTransparentGeometry(OtSceneRendererContext&, OtGeometryRenderData&) {}
+
 	// subclasses must overwrite these methods if required (these are called by renderEntities)
 	virtual bool isRenderingOpaque() { return false; }
 	virtual bool isRenderingTransparent() { return false; }
 
-	virtual void renderOpaqueGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
-	virtual void renderOpaqueInstancedGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstances*) {}
-	virtual void renderOpaqueModel(OtSceneRendererContext&, OtEntity, OtModelComponent&) {}
-	virtual void renderOpaqueInstancedModel(OtSceneRendererContext&, OtEntity, OtModelComponent&, OtInstances*) {}
-	virtual void renderTerrain(OtSceneRendererContext&, OtEntity, OtTerrainComponent&) {}
-	virtual void renderGrass(OtSceneRendererContext&, OtEntity, OtGrassComponent&) {}
-	virtual void renderTransparentGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&) {}
-	virtual void renderTransparentInstancedGeometry(OtSceneRendererContext&, OtEntity, OtGeometryComponent&, OtInstances*) {}
-
 	// utility function for subclasses
+	void renderOpaqueGeometryHelper(
+		OtSceneRendererContext& ctx,
+		OtGeometryRenderData& grd,
+		OtRenderPipeline& cullingPipeline,
+		OtRenderPipeline& noCullingPipeline,
+		OtRenderPipeline& linesPipeline,
+		OtRenderPipeline& instancedCullingPipeline,
+		OtRenderPipeline& instancedNoCullingPipeline,
+		OtRenderPipeline& instancedLinesPipeline);
+
+	void renderTransparentGeometryHelper(
+		OtSceneRendererContext& ctx,
+		OtGeometryRenderData& grd,
+		OtRenderPipeline& cullingPipeline,
+		OtRenderPipeline& noCullingPipeline,
+		OtRenderPipeline& linesPipeline,
+		OtRenderPipeline& instancedCullingPipeline,
+		OtRenderPipeline& instancedNoCullingPipeline,
+		OtRenderPipeline& instancedLinesPipeline);
+
 	void setCameraUniforms(OtSceneRendererContext& ctx, size_t uniformSlot);
 	void setLightingUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
 	void setShadowUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);

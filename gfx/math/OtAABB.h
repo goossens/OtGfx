@@ -54,6 +54,12 @@ public:
 	// transform bounding box
 	OtAABB transform(const glm::mat4& matrix);
 
+	// see if AABBs are identical
+	inline bool operator==(OtAABB& rhs) { return minp == rhs.minp && maxp == rhs.maxp; }
+	inline bool operator!=(OtAABB& rhs) { return !operator==(rhs); }
+	inline bool operator==(const OtAABB& rhs) const { return minp == rhs.minp && maxp == rhs.maxp; }
+	inline bool operator!=(const OtAABB& rhs) const { return !operator==(rhs); }
+
 	// debugging support
 	void debug();
 

@@ -29,7 +29,6 @@
 
 OtInstances::OtInstances() {
 	instances = std::make_shared<std::vector<glm::mat4>>();
-	visibleInstances = std::make_shared<std::vector<glm::mat4>>();
 }
 
 
@@ -39,7 +38,6 @@ OtInstances::OtInstances() {
 
 void OtInstances::clear() {
 	instances = std::make_shared<std::vector<glm::mat4>>();
-	visibleInstances = std::make_shared<std::vector<glm::mat4>>();
 	incrementVersion();
 }
 
@@ -99,16 +97,15 @@ void OtInstances::add(const glm::mat4 &instance, bool updateVersion) {
 
 
 //
-//	OtInstances::determineVisibility
+//	OtInstances::getVisible
 //
 
-bool OtInstances::determineVisibility(OtCamera& camera, OtAABB& aabb) {
+bool OtInstances::getVisible(OtCamera& camera, OtAABB& aabb, std::vector<glm::mat4>& visibleInstances) {
 	if (instances->size()) {
 		// filter instances based on visibility
 		struct InstanceReference {
 			InstanceReference(size_t i, float d) : index(i), distance(d) {}
 			size_t index;
-			glm::mat4 matrix;
 			float distance;
 		};
 
@@ -122,9 +119,6 @@ bool OtInstances::determineVisibility(OtCamera& camera, OtAABB& aabb) {
 			}
 		}
 
-		// clear list of visible instance
-		visibleInstances->clear();
-
 		if (instanceReferences.size()) {
 			// sort instances by distance to camera
 			std::sort(instanceReferences.begin(), instanceReferences.end(), [&](const InstanceReference& i1, const InstanceReference& i2) {
@@ -132,8 +126,10 @@ bool OtInstances::determineVisibility(OtCamera& camera, OtAABB& aabb) {
 			});
 
 			// extract list of matrices
+			visibleInstances.clear();
+
 			for (auto& instanceReference : instanceReferences) {
-				visibleInstances->emplace_back(instances->at(instanceReference.index));
+				visibleInstances.emplace_back(instances->at(instanceReference.index));
 			}
 
 			return true;
@@ -145,85 +141,4 @@ bool OtInstances::determineVisibility(OtCamera& camera, OtAABB& aabb) {
 	} else {
 		return false;
 	}
-}
-
-
-//
-//	OtInstances::assignVertexBuffer
-//
-
-void OtInstances::assignVertexBuffer(SDL_GPUBuffer* newBuffer) {
-	vertexBuffer = std::shared_ptr<SDL_GPUBuffer>(
-		newBuffer,
-		[](SDL_GPUBuffer* oldBuffer) {
-			SDL_ReleaseGPUBuffer(OtGpu::instance().device, oldBuffer);
-		});
-}
-
-
-//
-//	OtInstances::assignTransferBuffer
-//
-
-void OtInstances::assignTransferBuffer(SDL_GPUTransferBuffer* newBuffer) {
-	transferBuffer = std::shared_ptr<SDL_GPUTransferBuffer>(
-		newBuffer,
-		[](SDL_GPUTransferBuffer* oldBuffer) {
-			SDL_ReleaseGPUTransferBuffer(OtGpu::instance().device, oldBuffer);
-		});
-}
-
-
-//
-//	OtInstances::getBuffer
-//
-
-SDL_GPUBuffer* OtInstances::getBuffer() {
-	// update GPU buffer
-	auto bufferSize = sizeof(glm::mat4) * visibleInstances->size();
-
-	SDL_GPUBufferCreateInfo bufferInfo{};
-	bufferInfo.usage = SDL_GPU_BUFFERUSAGE_VERTEX;
-	bufferInfo.size = static_cast<Uint32>(bufferSize);
-
-	auto& gpu = OtGpu::instance();
-	SDL_GPUBuffer* vbuffer = SDL_CreateGPUBuffer(gpu.device, &bufferInfo);
-
-	if (!vbuffer) {
-		OtLogFatal("Error in SDL_CreateGPUBuffer: {}", SDL_GetError());
-	}
-
-	assignVertexBuffer(vbuffer);
-
-	// create a transfer buffer
-	SDL_GPUTransferBufferCreateInfo transferInfo{};
-	transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-	transferInfo.size = static_cast<Uint32>(bufferSize);
-	SDL_GPUTransferBuffer* tbuffer = SDL_CreateGPUTransferBuffer(gpu.device, &transferInfo);
-
-	if (!tbuffer) {
-		OtLogFatal("Error in SDL_CreateGPUTransferBuffer: {}", SDL_GetError());
-	}
-
-	assignTransferBuffer(tbuffer);
-
-	// put vertex data in transfer buffer
-	void* bufferData = SDL_MapGPUTransferBuffer(gpu.device, transferBuffer.get(), false);
-	std::memcpy(bufferData, visibleInstances->data(), bufferSize);
-	SDL_UnmapGPUTransferBuffer(gpu.device, transferBuffer.get());
-
-	// upload vertex buffer to GPU
-	SDL_GPUTransferBufferLocation location{};
-	location.transfer_buffer = transferBuffer.get();
-
-	SDL_GPUBufferRegion region{};
-	region.buffer = vertexBuffer.get();
-	region.size = static_cast<Uint32>(bufferSize);
-
-	SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(gpu.copyCommandBuffer);
-	SDL_UploadToGPUBuffer(copyPass, &location, &region, false);
-	SDL_EndGPUCopyPass(copyPass);
-
-	// return raw buffer pointer
-	return vertexBuffer.get();
 }

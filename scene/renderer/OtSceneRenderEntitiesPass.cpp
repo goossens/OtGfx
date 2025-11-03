@@ -28,38 +28,56 @@ void OtSceneRenderEntitiesPass::renderEntities(OtSceneRendererContext& ctx) {
 	if (isRenderingOpaque() && ctx.hasOpaqueEntities) {
 		// render geometries
 		if (ctx.hasOpaqueGeometries) {
-			ctx.scene->view<OtGeometryComponent>().each([&](auto entity, auto&) {
-				renderEntity(ctx, entity);
-			});
+			for (auto entity : ctx.opaqueGeometryEntities) {
+				auto& grd = ctx.geometryRenderData[entity];
+				auto& camera = grd.cameras[ctx.cameraID];
+
+				if (camera.visible) {
+					renderOpaqueGeometry(ctx, grd);
+				}
+			}
 		}
 
 		// render models
 		if (ctx.hasOpaqueModels) {
-			ctx.scene->view<OtModelComponent>().each([&](auto entity, auto&) {
-				renderEntity(ctx, entity);
-			});
+			for (auto entity : ctx.modelEntities) {
+				auto& mrd = ctx.modelRenderData[entity];
+
+				if (mrd.visible[ctx.cameraID]) {
+					renderOpaqueModel(ctx, mrd);
+				}
+			}
 		}
 
 		// render terrain
 		if (ctx.hasTerrainEntities) {
-			ctx.scene->view<OtTerrainComponent>().each([&](auto entity, auto&) {
-				renderEntity(ctx, entity);
+			ctx.scene->view<OtTerrainComponent>().each([&](auto entity, auto& terrain) {
+				if (!ctx.renderingShadow || terrain.terrain->isCastingShadow()) {
+					renderTerrain(ctx, entity, terrain);
+				}
 			});
 		}
 
 		// render grass
 		if (ctx.hasGrassEntities) {
-			ctx.scene->view<OtGrassComponent>().each([&](auto entity, auto&) {
-				renderEntity(ctx, entity);
+			ctx.scene->view<OtGrassComponent>().each([&](auto entity, auto& grass) {
+				if (!ctx.renderingShadow || grass.grass->castShadow) {
+					renderGrass(ctx, entity, grass);
+				}
 			});
 		}
 	}
 
 	// render all transparent geometries
-	if (isRenderingTransparent() && ctx.hasTransparentEntities) {
-		ctx.scene->view<OtGeometryComponent>().each([&](auto entity, auto&) {
-			renderEntity(ctx, entity);
-		});
+	if (isRenderingTransparent() && ctx.hasTransparentGeometries) {
+		for (auto entity : ctx.transparentGeometryEntities) {
+			auto& grd = ctx.geometryRenderData[entity];
+			auto& camera = grd.cameras[ctx.cameraID];
+
+			if (camera.visible) {
+				renderTransparentGeometry(ctx, grd);
+			}
+		}
 	}
 }
 
@@ -71,54 +89,27 @@ void OtSceneRenderEntitiesPass::renderEntities(OtSceneRendererContext& ctx) {
 void OtSceneRenderEntitiesPass::renderEntity(OtSceneRendererContext& ctx, OtEntity entity) {
 	// render geometry (if required)
 	if (ctx.scene->hasComponent<OtGeometryComponent>(entity)) {
-		auto& geometry = ctx.scene->getComponent<OtGeometryComponent>(entity);
+		auto& grd = ctx.geometryRenderData[entity];
+		auto& camera = grd.cameras[ctx.cameraID];
 
-		if (geometry.asset.isReady() && (!ctx.renderingShadow || geometry.castShadow)) {
-			// see if entity is visible
-			auto globalTransform = ctx.scene->getGlobalTransform(entity);
-			auto aabb = geometry.asset->getGeometry().getAABB().transform(globalTransform);
+		if (camera.visible) {
+			auto& geometry = ctx.scene->getComponent<OtGeometryComponent>(entity);
 
-			// is this a case of instancing?
-			if (ctx.scene->hasComponent<OtInstancingComponent>(entity)) {
-				auto& instancing = ctx.scene->getComponent<OtInstancingComponent>(entity);
-				auto instances = &instancing.asset->getInstances();
-
-				if (!instancing.asset.isNull() && instances->determineVisibility(ctx.camera, aabb)) {
-					if (geometry.transparent) {
-						renderTransparentInstancedGeometry(ctx, entity, geometry, instances);
-
-					} else {
-						renderOpaqueInstancedGeometry(ctx, entity, geometry, instances);
-					}
-				}
+			if (geometry.transparent) {
+				renderTransparentGeometry(ctx, grd);
 
 			} else {
-				// see if geometry is visible
-				if (ctx.camera.isVisibleAABB(aabb)) {
-					if (geometry.transparent) {
-						renderTransparentGeometry(ctx, entity, geometry);
-
-					} else {
-						renderOpaqueGeometry(ctx, entity, geometry);
-					}
-				}
+				renderOpaqueGeometry(ctx, grd);
 			}
 		}
 	}
 
 	// render model (if required)
 	if (ctx.scene->hasComponent<OtModelComponent>(entity)) {
-		auto& model = ctx.scene->getComponent<OtModelComponent>(entity);
+		auto& mrd = ctx.modelRenderData[entity];
 
-		if (model.asset.isReady() && (!ctx.renderingShadow || model.castShadow)) {
-			// see if model is visible
-			auto globalTransform = ctx.scene->getGlobalTransform(entity);
-			auto aabb = model.asset->getModel().getAABB().transform(globalTransform);
-
-			// see if model is visible
-			if (ctx.camera.isVisibleAABB(aabb)) {
-				renderOpaqueModel(ctx, entity, model);
-			}
+		if (mrd.visible[ctx.cameraID]) {
+			renderOpaqueModel(ctx, mrd);
 		}
 	}
 
@@ -138,6 +129,132 @@ void OtSceneRenderEntitiesPass::renderEntity(OtSceneRendererContext& ctx, OtEnti
 		if (!ctx.renderingShadow || grass.grass->castShadow) {
 			renderGrass(ctx, entity, grass);
 		}
+	}
+}
+
+
+//
+//	OtSceneRenderEntitiesPass::renderOpaqueGeometryHelper
+//
+
+void OtSceneRenderEntitiesPass::renderOpaqueGeometryHelper(
+	OtSceneRendererContext& ctx,
+	OtGeometryRenderData& grd,
+	OtRenderPipeline& cullingPipeline,
+	OtRenderPipeline& noCullingPipeline,
+	OtRenderPipeline& linesPipeline,
+	OtRenderPipeline& instancedCullingPipeline,
+	OtRenderPipeline& instancedNoCullingPipeline,
+	OtRenderPipeline& instancedLinesPipeline) {
+
+	// do we have instances?
+	if (grd.instances) {
+		// bind pipeline
+		if (grd.component->wireframe) {
+			ctx.pass->bindPipeline(instancedLinesPipeline);
+
+		} else if (grd.component->cullBack) {
+			ctx.pass->bindPipeline(instancedCullingPipeline);
+
+		} else {
+			ctx.pass->bindPipeline(instancedNoCullingPipeline);
+		}
+
+		setMaterialUniforms(ctx, 0, 0, grd.entity);
+
+		// render geometry
+		ctx.pass->setInstanceData(grd.cameras[ctx.cameraID].idb);
+		ctx.pass->render(grd.component->asset->getGeometry());
+
+	} else {
+		// bind pipeline
+		if (grd.component->wireframe) {
+			ctx.pass->bindPipeline(linesPipeline);
+
+		} else if (grd.component->cullBack) {
+			ctx.pass->bindPipeline(cullingPipeline);
+
+		} else {
+			ctx.pass->bindPipeline(noCullingPipeline);
+		}
+
+		// set vertex uniforms
+		struct Uniforms {
+			glm::mat4 modelMatrix;
+		} uniforms {
+			ctx.scene->getGlobalTransform(grd.entity)
+		};
+
+		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+
+		//set fragment uniforms
+		setMaterialUniforms(ctx, 0, 0, grd.entity);
+
+		// render geometry
+		ctx.pass->render(grd.component->asset->getGeometry());
+	}
+}
+
+
+//
+//	OtSceneRenderEntitiesPass::renderTransparentGeometryHelper
+//
+
+void OtSceneRenderEntitiesPass::renderTransparentGeometryHelper(
+	OtSceneRendererContext& ctx,
+	OtGeometryRenderData& grd,
+	OtRenderPipeline& cullingPipeline,
+	OtRenderPipeline& noCullingPipeline,
+	OtRenderPipeline& linesPipeline,
+	OtRenderPipeline& instancedCullingPipeline,
+	OtRenderPipeline& instancedNoCullingPipeline,
+	OtRenderPipeline& instancedLinesPipeline) {
+
+	// do we have instances?
+	if (grd.instances) {
+		// bind pipeline
+		if (grd.component->wireframe) {
+			ctx.pass->bindPipeline(instancedLinesPipeline);
+
+		} else if (grd.component->cullBack) {
+			ctx.pass->bindPipeline(instancedCullingPipeline);
+
+		} else {
+			ctx.pass->bindPipeline(instancedNoCullingPipeline);
+		}
+
+		setMaterialUniforms(ctx, 0, 0, grd.entity);
+
+		// render geometry
+		ctx.pass->setInstanceData(grd.cameras[ctx.cameraID].idb);
+		ctx.pass->render(grd.component->asset->getGeometry());
+
+	}else {
+		// bind pipeline
+		if (grd.component->wireframe) {
+			ctx.pass->bindPipeline(linesPipeline);
+
+		} else if (grd.component->cullBack) {
+			ctx.pass->bindPipeline(cullingPipeline);
+
+		} else {
+			ctx.pass->bindPipeline(noCullingPipeline);
+		}
+
+		// set vertex uniforms
+		struct Uniforms {
+			glm::mat4 modelMatrix;
+		} uniforms {
+			ctx.scene->getGlobalTransform(grd.entity)
+		};
+
+		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+
+		//set fragment uniforms
+		setMaterialUniforms(ctx, 0, 0, grd.entity);
+
+		// render geometry
+		ctx.pass->render(grd.component->asset->getGeometry());
 	}
 }
 
@@ -189,16 +306,16 @@ void OtSceneRenderEntitiesPass::setLightingUniforms(OtSceneRendererContext& ctx,
 		ctx.directionalLightAmbient,
 		ctx.directionalLightColor,
 		static_cast<uint32_t>(ctx.hasImageBasedLighting),
-		ctx.hasImageBasedLighting ? ctx.ibl->maxEnvLevel : 0
+		ctx.hasImageBasedLighting ? ctx.ibl.maxEnvLevel : 0
 	};
 
 	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
 
 	// submit the IBL samplers
 	if (ctx.hasImageBasedLighting) {
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblBrdfLutSampler, ctx.ibl->iblBrdfLut);
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblIrradianceMapSampler, ctx.ibl->iblIrradianceMap);
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblEnvironmentMapSampler, ctx.ibl->iblEnvironmentMap);
+		ctx.pass->bindFragmentSampler(samplerSlot++, iblBrdfLutSampler, ctx.ibl.iblBrdfLut);
+		ctx.pass->bindFragmentSampler(samplerSlot++, iblIrradianceMapSampler, ctx.ibl.iblIrradianceMap);
+		ctx.pass->bindFragmentSampler(samplerSlot++, iblEnvironmentMapSampler, ctx.ibl.iblEnvironmentMap);
 
 	} else {
 		auto& gpu = OtGpu::instance();
@@ -227,26 +344,26 @@ void OtSceneRenderEntitiesPass::setShadowUniforms(OtSceneRendererContext& ctx, s
 	} uniforms {
 		ctx.camera.viewMatrix,
 		{
-			ctx.csm->getCamera(0).viewProjectionMatrix,
-			ctx.csm->getCamera(1).viewProjectionMatrix,
-			ctx.csm->getCamera(2).viewProjectionMatrix,
-			ctx.csm->getCamera(3).viewProjectionMatrix
+			ctx.csm.getCamera(0).viewProjectionMatrix,
+			ctx.csm.getCamera(1).viewProjectionMatrix,
+			ctx.csm.getCamera(2).viewProjectionMatrix,
+			ctx.csm.getCamera(3).viewProjectionMatrix
 		},
-		ctx.csm->getDistance(0),
-		ctx.csm->getDistance(1),
-		ctx.csm->getDistance(2),
-		ctx.csm->getDistance(3),
-		1.0f / ctx.csm->getSize(),
+		ctx.csm.getDistance(0),
+		ctx.csm.getDistance(1),
+		ctx.csm.getDistance(2),
+		ctx.csm.getDistance(3),
+		1.0f / ctx.csm.getSize(),
 		static_cast<uint32_t>(ctx.castShadow)
 	};
 
 	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
 
 	// set textures
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap0Sampler, ctx.csm->getDepthTexture(0));
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap1Sampler, ctx.csm->getDepthTexture(1));
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap2Sampler, ctx.csm->getDepthTexture(2));
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap3Sampler, ctx.csm->getDepthTexture(3));
+	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap0Sampler, ctx.csm.getDepthTexture(0));
+	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap1Sampler, ctx.csm.getDepthTexture(1));
+	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap2Sampler, ctx.csm.getDepthTexture(2));
+	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap3Sampler, ctx.csm.getDepthTexture(3));
 }
 
 

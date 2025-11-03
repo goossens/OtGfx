@@ -29,15 +29,9 @@ OtSceneRenderer::OtSceneRenderer() {
 
 ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	// reset rendering context
-	ctx.initialize(camera, scene, &ibl, &csm);
 	OtMeasureStopWatch stopwatch;
-
-	// update image based lighting (if required)
-	if (ctx.hasImageBasedLighting) {
-		ibl.update(ctx.scene->getComponent<OtIblComponent>(ctx.iblEntity));
-	}
-
-	iblPassTime = stopwatch.lap();
+	ctx.initialize(scene, camera);
+	ctxTime = stopwatch.lap();
 
 	// generate shadow maps (if required)
 	if (ctx.castShadow) {
@@ -60,7 +54,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	opaquePassTime = stopwatch.lap();
 
 	// render transparent entities
-	if (ctx.hasTransparentEntities) {
+	if (ctx.hasTransparentGeometries) {
 		forwardPass.render(ctx);
 	}
 

@@ -51,8 +51,8 @@ public:
 	inline size_t size() { return instances->size(); }
 	inline glm::mat4* data() { return instances->data(); }
 
-	// determine list of visible instances
-	bool determineVisibility(OtCamera& camera, OtAABB& aabb);
+	// get list of visible instances
+	bool getVisible(OtCamera& camera, OtAABB& aabb, std::vector<glm::mat4>& visibleInstances);
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -68,37 +68,8 @@ public:
 		return !operator==(rhs);
 	}
 
-	// get vertex description
-	static inline OtVertexDescription* getDescription() {
-		static SDL_GPUVertexAttribute attributes[] = {
-			SDL_GPUVertexAttribute{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, 0},
-			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4)},
-			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4) * 2},
-			{3, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4) * 3}
-		};
-
-		static OtVertexDescription description{sizeof(glm::mat4), sizeof(attributes) / sizeof(attributes[0]), attributes};
-
-		return &description;
-	}
-
 private:
 	// list of transformations (for the instances)
 	std::shared_ptr<std::vector<glm::mat4>> instances;
 	int version = 0;
-
-	// list of visible instances
-	std::shared_ptr<std::vector<glm::mat4>> visibleInstances;
-
-	// the GPU resources
-	std::shared_ptr<SDL_GPUBuffer> vertexBuffer;
-	std::shared_ptr<SDL_GPUTransferBuffer> transferBuffer;
-
-	// memory manage SDL resource
-	void assignVertexBuffer(SDL_GPUBuffer* newBuffer);
-	void assignTransferBuffer(SDL_GPUTransferBuffer* newBuffer);
-
-	// get accesss to the raw buffer handle
-	friend class OtRenderPass;
-	SDL_GPUBuffer* getBuffer();
 };

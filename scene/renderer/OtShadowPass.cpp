@@ -42,7 +42,7 @@ OtShadowPass::OtShadowPass() {
 
 void OtShadowPass::render(OtSceneRendererContext& ctx) {
 	// update shadowmaps
-	ctx.csm->update(ctx.camera, ctx.directionalLightDirection);
+	ctx.csm.update(ctx.camera, ctx.directionalLightDirection);
 
 	// save context part the we will temporarily overwrite
 	auto camera = ctx.camera;
@@ -52,9 +52,9 @@ void OtShadowPass::render(OtSceneRendererContext& ctx) {
 	for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
 		// setup pass to render entities as opaque blobs
 		OtRenderPass pass;
-		pass.start(ctx.csm->getFrameBuffer(i));
+		pass.start(ctx.csm.getFrameBuffer(i));
 
-		ctx.camera = ctx.csm->getCamera(i);
+		ctx.camera = ctx.csm.getCamera(i);
 		ctx.renderingShadow = true;
 		ctx.pass = &pass;
 
@@ -73,27 +73,14 @@ void OtShadowPass::render(OtSceneRendererContext& ctx) {
 //	OtShadowPass::renderOpaqueGeometry
 //
 
-void OtShadowPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& component) {
-	// bind pipeline
-	if (component.wireframe) {
-		ctx.pass->bindPipeline(opaqueLinesPipeline);
-
-	} else if (component.cullBack) {
-		ctx.pass->bindPipeline(opaqueCullingPipeline);
-
-	} else {
-		ctx.pass->bindPipeline(opaqueNoCullingPipeline);
-	}
-
-	// set uniforms
-	struct Uniforms {
-		glm::mat4 modelMatrix;
-	} uniforms {
-		ctx.scene->getGlobalTransform(entity)
-	};
-
-	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
-
-	// render geometry
-	ctx.pass->render(component.asset->getGeometry());
+void OtShadowPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
+	renderOpaqueGeometryHelper(
+		ctx,
+		grd,
+		opaqueCullingPipeline,
+		opaqueNoCullingPipeline,
+		opaqueLinesPipeline,
+		instancedOpaqueCullingPipeline,
+		instancedOpaqueNoCullingPipeline,
+		instancedOpaqueLinesPipeline);
 }

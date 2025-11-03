@@ -219,3 +219,27 @@ struct OtVertexBones {
 		return &description;
 	}
 };
+
+
+
+//
+//	OtVertexMatrix
+//
+
+struct OtVertexMatrix {
+	// vertex elements
+	glm::mat4 matrix;
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, 0},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4)},
+			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4) * 2},
+			{3, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4, sizeof(glm::vec4) * 3}
+		};
+
+		static OtVertexDescription description{sizeof(OtVertexMatrix), sizeof(attributes) / sizeof(attributes[0]), attributes};
+		return &description;
+	}
+};

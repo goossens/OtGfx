@@ -216,10 +216,10 @@ void OtRenderPass::setStencilReference(uint8_t reference) {
 //	OtRenderPass::setInstanceData
 //
 
-void OtRenderPass::setInstanceData(OtInstances& instances) {
+void OtRenderPass::setInstanceData(OtVertexBuffer& idb) {
 	OtAssert(open);
-	instanceBuffer = instances.getBuffer();
-	instanceCount = instances.size();
+	instanceBuffer = idb.getBuffer();
+	instanceCount = idb.getCount();
 }
 
 
@@ -247,6 +247,7 @@ void OtRenderPass::render(OtVertexBuffer& vertexBuffer) {
 	// render the triangles
 	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(vertexBuffer.getCount()), static_cast<Uint32>(instanceCount), 0, 0);
 	instanceBuffer = nullptr;
+	instanceCount = 1;
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset, size_t count) {
@@ -271,6 +272,7 @@ void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuff
 	Uint32 numInstances = static_cast<Uint32>(instanceCount);
 	SDL_DrawGPUIndexedPrimitives(pass, numIndices, numInstances, firstIndex, 0, 0);
 	instanceBuffer = nullptr;
+	instanceCount = 1;
 }
 
 

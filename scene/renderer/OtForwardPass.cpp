@@ -45,32 +45,16 @@ void OtForwardPass::render(OtSceneRendererContext& ctx) {
 //	OtForwardPass::renderTransparentGeometry
 //
 
-void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& component) {
-	// bind pipeline
-	if (component.wireframe) {
-		ctx.pass->bindPipeline(linesPipeline);
-
-	} else if (component.cullBack) {
-		ctx.pass->bindPipeline(cullingPipeline);
-
-	} else {
-		ctx.pass->bindPipeline(noCullingPipeline);
-	}
-
-	// set vertex uniforms
-	struct Uniforms {
-		glm::mat4 modelMatrix;
-	} uniforms {
-		ctx.scene->getGlobalTransform(entity)
-	};
-
-	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
-
-	//set fragment uniforms
-	setMaterialUniforms(ctx, 0, 0, entity);
-
-	// render geometry
-	ctx.pass->render(component.asset->getGeometry());
+void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
+	renderTransparentGeometryHelper(
+		ctx,
+		grd,
+		cullingPipeline,
+		noCullingPipeline,
+		linesPipeline,
+		instancedCullingPipeline,
+		instancedNoCullingPipeline,
+		instancedLinesPipeline);
 }
 
 

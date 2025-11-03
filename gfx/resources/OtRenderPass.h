@@ -23,7 +23,6 @@
 #include "OtGbuffer.h"
 #include "OtGeometry.h"
 #include "OtIndexBuffer.h"
-#include "OtInstances.h"
 #include "OtMesh.h"
 #include "OtRenderPipeline.h"
 #include "OtSampler.h"
@@ -65,7 +64,7 @@ public:
 	void setStencilReference(uint8_t reference);
 
 	// set instance data
-	void setInstanceData(OtInstances& instances);
+	void setInstanceData(OtVertexBuffer& buffer);
 
 	// execute a rendering command
 	void render(size_t vertices, size_t instances=1);

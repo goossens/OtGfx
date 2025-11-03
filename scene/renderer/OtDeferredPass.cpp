@@ -16,7 +16,6 @@
 #include "OtRenderPipeline.h"
 
 #include "OtDeferredPass.h"
-#include "OtInstances.h"
 #include "OtVertex.h"
 
 #include "OtDeferredVert.h"
@@ -30,7 +29,7 @@
 //	OtDeferredPass::render
 //
 
-void OtDeferredPass::render(OtSceneRendererContext & ctx) {
+void OtDeferredPass::render(OtSceneRendererContext& ctx) {
 	// run the geometry and lighting passes
 	renderGeometry(ctx);
 	renderDirectionalLight(ctx);
@@ -66,56 +65,16 @@ void OtDeferredPass::renderGeometry(OtSceneRendererContext& ctx) {
 //	OtDeferredPass::renderOpaqueGeometry
 //
 
-void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& geometry) {
-	// bind pipeline
-	if (geometry.wireframe) {
-		ctx.pass->bindPipeline(linesPipeline);
-
-	} else if (geometry.cullBack) {
-		ctx.pass->bindPipeline(cullingPipeline);
-
-	} else {
-		ctx.pass->bindPipeline(noCullingPipeline);
-	}
-
-	// set vertex uniforms
-	struct Uniforms {
-		glm::mat4 modelMatrix;
-	} uniforms {
-		ctx.scene->getGlobalTransform(entity)
-	};
-
-	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
-
-	//set fragment uniforms
-	setMaterialUniforms(ctx, 0, 0, entity);
-
-	// render geometry
-	ctx.pass->render(geometry.asset->getGeometry());
-}
-
-
-//
-//	OtDeferredPass::renderOpaqueInstancedGeometry
-//
-
-void OtDeferredPass::renderOpaqueInstancedGeometry(OtSceneRendererContext& ctx, OtEntity entity, OtGeometryComponent& geometry, OtInstances* instances) {
-	// bind pipeline
-	if (geometry.wireframe) {
-		ctx.pass->bindPipeline(instancedLinesPipeline);
-
-	} else if (geometry.cullBack) {
-		ctx.pass->bindPipeline(instancedCullingPipeline);
-
-	} else {
-		ctx.pass->bindPipeline(instancedNoCullingPipeline);
-	}
-
-	setMaterialUniforms(ctx, 0, 0, entity);
-
-	// render geometry
-	ctx.pass->setInstanceData(*instances);
-	ctx.pass->render(geometry.asset->getGeometry());
+void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
+	renderOpaqueGeometryHelper(
+		ctx,
+		grd,
+		cullingPipeline,
+		noCullingPipeline,
+		linesPipeline,
+		instancedCullingPipeline,
+		instancedNoCullingPipeline,
+		instancedLinesPipeline);
 }
 
 
@@ -193,18 +152,18 @@ void OtDeferredPass::initializePipelines() {
 	instancedCullingPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedCullingPipeline.setVertexDescription(OtVertex::getDescription());
-	instancedCullingPipeline.setInstanceDescription(OtInstances::getDescription());
+	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 
 	instancedNoCullingPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedNoCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedNoCullingPipeline.setVertexDescription(OtVertex::getDescription());
-	instancedCullingPipeline.setInstanceDescription(OtInstances::getDescription());
+	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	instancedNoCullingPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	instancedLinesPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedLinesPipeline.setVertexDescription(OtVertex::getDescription());
-	instancedCullingPipeline.setInstanceDescription(OtInstances::getDescription());
+	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	instancedLinesPipeline.setCulling(OtRenderPipeline::Culling::none);
 	instancedLinesPipeline.setFill(false);
 

@@ -77,9 +77,6 @@ private:
 	OtGbuffer deferredRenderingBuffer;
 	OtFrameBuffer compositeBuffer{OtTexture::Format::rgba16, OtTexture::Format::d32};
 
-	OtCascadedShadowMap csm;
-	OtImageBasedLighting ibl;
-
 	// rendering passes
 	OtShadowPass shadowPass;
 	OtBackgroundPass backgroundPass{compositeBuffer};
@@ -88,22 +85,23 @@ private:
 	// OtSkyPass skyPass{compositeBuffer};
 	// OtWaterPass waterPass{compositeBuffer};
 	// OtParticlesPass particlePass{compositeBuffer};
-	// OtGridPass gridPass{compositeBuffer};
-	// OtHighlightPass highlightPass{compositeBuffer};
-	// OtPickingPass pickingPass;
 	OtPostProcessingPass postProcessingPass{compositeBuffer};
+	// OtGridPass gridPass;
+	// OtHighlightPass highlightPass;
+	// OtPickingPass pickingPass;
 
 	// timings
-	float iblPassTime;
+	float ctxTime;
 	float shadowPassTime;
 	float backgroundPassTime;
 	float opaquePassTime;
 	float transparentPassTime;
-	float waterPassTime;
 	float skyPassTime;
+	float waterPassTime;
 	float particlePassTime;
-	float editorPassTime;
 	float postProcessingTime;
+	float editorPassTime;
+	float renderTime;
 
 	// support for selected entities and entity picking
 	OtEntity selectedEntity = OtEntityNull;
