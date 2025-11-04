@@ -12,7 +12,10 @@
 //	Include files
 //
 
+#include <memory>
+
 #include "OtInstances.h"
+#include "OtMaterial.h"
 #include "OtSampler.h"
 #include "OtTextureAsset.h"
 
@@ -48,7 +51,7 @@ protected:
 	virtual bool isRenderingTransparent() { return false; }
 
 	// utility function for subclasses
-	void renderOpaqueGeometryHelper(
+	void renderGeometryHelper(
 		OtSceneRendererContext& ctx,
 		OtGeometryRenderData& grd,
 		OtRenderPipeline& cullingPipeline,
@@ -58,38 +61,19 @@ protected:
 		OtRenderPipeline& instancedNoCullingPipeline,
 		OtRenderPipeline& instancedLinesPipeline);
 
-	void renderTransparentGeometryHelper(
+	void renderModelHelper(
 		OtSceneRendererContext& ctx,
-		OtGeometryRenderData& grd,
-		OtRenderPipeline& cullingPipeline,
-		OtRenderPipeline& noCullingPipeline,
-		OtRenderPipeline& linesPipeline,
-		OtRenderPipeline& instancedCullingPipeline,
-		OtRenderPipeline& instancedNoCullingPipeline,
-		OtRenderPipeline& instancedLinesPipeline);
+		OtModelRenderData& mrd,
+		OtRenderPipeline& staticPipeline,
+		OtRenderPipeline& animatedPipeline);
 
 	void setCameraUniforms(OtSceneRendererContext& ctx, size_t uniformSlot);
 	void setLightingUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
 	void setShadowUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
+	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material);
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity);
 
 private:
-	// properties
-	OtSampler iblBrdfLutSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler iblIrradianceMapSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler iblEnvironmentMapSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-
-	OtSampler shadowMap0Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler shadowMap1Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler shadowMap2Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler shadowMap3Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-
-	OtSampler albedoSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler normalSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler metallicRoughnessSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler emissiveSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler aoSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-
 	// local support functions
 	void bindFragmentSampler(OtSceneRendererContext& ctx, size_t slot, OtSampler& sampler, OtAsset<OtTextureAsset>& texture);
 };

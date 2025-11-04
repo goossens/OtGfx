@@ -9,7 +9,9 @@
 //	Include files
 //
 
+#include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <vector>
 
 #include "OtGpu.h"
@@ -134,10 +136,10 @@ void OtSceneRenderEntitiesPass::renderEntity(OtSceneRendererContext& ctx, OtEnti
 
 
 //
-//	OtSceneRenderEntitiesPass::renderOpaqueGeometryHelper
+//	OtSceneRenderEntitiesPass::renderGeometryHelper
 //
 
-void OtSceneRenderEntitiesPass::renderOpaqueGeometryHelper(
+void OtSceneRenderEntitiesPass::renderGeometryHelper(
 	OtSceneRendererContext& ctx,
 	OtGeometryRenderData& grd,
 	OtRenderPipeline& cullingPipeline,
@@ -160,11 +162,8 @@ void OtSceneRenderEntitiesPass::renderOpaqueGeometryHelper(
 			ctx.pass->bindPipeline(instancedNoCullingPipeline);
 		}
 
-		setMaterialUniforms(ctx, 0, 0, grd.entity);
-
-		// render geometry
+		// setup instance data
 		ctx.pass->setInstanceData(grd.cameras[ctx.cameraID].idb);
-		ctx.pass->render(grd.component->asset->getGeometry());
 
 	} else {
 		// bind pipeline
@@ -186,79 +185,64 @@ void OtSceneRenderEntitiesPass::renderOpaqueGeometryHelper(
 		};
 
 		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
-
-		//set fragment uniforms
-		setMaterialUniforms(ctx, 0, 0, grd.entity);
-
-		// render geometry
-		ctx.pass->render(grd.component->asset->getGeometry());
 	}
+
+	// render geometry
+	setMaterialUniforms(ctx, 0, 0, grd.entity);
+	ctx.pass->render(grd.component->asset->getGeometry());
 }
 
 
 //
-//	OtSceneRenderEntitiesPass::renderTransparentGeometryHelper
+//	OtSceneRenderEntitiesPass::renderModelHelper
 //
 
-void OtSceneRenderEntitiesPass::renderTransparentGeometryHelper(
+void OtSceneRenderEntitiesPass::renderModelHelper(
 	OtSceneRendererContext& ctx,
-	OtGeometryRenderData& grd,
-	OtRenderPipeline& cullingPipeline,
-	OtRenderPipeline& noCullingPipeline,
-	OtRenderPipeline& linesPipeline,
-	OtRenderPipeline& instancedCullingPipeline,
-	OtRenderPipeline& instancedNoCullingPipeline,
-	OtRenderPipeline& instancedLinesPipeline) {
+	OtModelRenderData& mrd,
+	OtRenderPipeline& staticPipeline,
+	OtRenderPipeline& animatedPipeline) {
 
-	// do we have instances?
-	if (grd.instances) {
-		// bind pipeline
-		if (grd.component->wireframe) {
-			ctx.pass->bindPipeline(instancedLinesPipeline);
+	// process all render commands
+	auto globalTransform = ctx.scene->getGlobalTransform(mrd.entity);
+	auto renderList = mrd.model->getRenderList(globalTransform);
 
-		} else if (grd.component->cullBack) {
-			ctx.pass->bindPipeline(instancedCullingPipeline);
+	for (auto& cmd : renderList) {
+		// handle animations
+		if (cmd.animation) {
+			// bind pipeline
+			ctx.pass->bindPipeline(animatedPipeline);
 
-		} else {
-			ctx.pass->bindPipeline(instancedNoCullingPipeline);
-		}
+			// set vertex uniforms
+			struct Uniforms {
+				glm::mat4 models[64];
+			} uniforms;
 
-		setMaterialUniforms(ctx, 0, 0, grd.entity);
+			std::memcpy(&uniforms, cmd.transforms.data(), std::min(cmd.transforms.size(), 64ul) * sizeof(glm::mat4));
+			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
 
-		// render geometry
-		ctx.pass->setInstanceData(grd.cameras[ctx.cameraID].idb);
-		ctx.pass->render(grd.component->asset->getGeometry());
-
-	}else {
-		// bind pipeline
-		if (grd.component->wireframe) {
-			ctx.pass->bindPipeline(linesPipeline);
-
-		} else if (grd.component->cullBack) {
-			ctx.pass->bindPipeline(cullingPipeline);
+			// bind animation data
+			ctx.pass->setAnimationData(cmd.mesh->getBonesBuffer());
 
 		} else {
-			ctx.pass->bindPipeline(noCullingPipeline);
+			// bind pipeline
+			ctx.pass->bindPipeline(staticPipeline);
+
+			// set vertex uniforms
+			struct Uniforms {
+				glm::mat4 modelMatrix;
+			} uniforms {
+				cmd.transforms[0]
+			};
+
+			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
 		}
 
-		// set vertex uniforms
-		struct Uniforms {
-			glm::mat4 modelMatrix;
-		} uniforms {
-			ctx.scene->getGlobalTransform(grd.entity)
-		};
-
-		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
-
-		//set fragment uniforms
-		setMaterialUniforms(ctx, 0, 0, grd.entity);
-
 		// render geometry
-		ctx.pass->render(grd.component->asset->getGeometry());
+		setMaterialUniforms(ctx, 0, 0, cmd.material);
+		ctx.pass->render(cmd.mesh->getVertexBuffer(), cmd.mesh->getIndexBuffer());
 	}
 }
-
-
 //
 //	OtSceneRenderEntitiesPass::setCameraUniforms
 //
@@ -313,15 +297,15 @@ void OtSceneRenderEntitiesPass::setLightingUniforms(OtSceneRendererContext& ctx,
 
 	// submit the IBL samplers
 	if (ctx.hasImageBasedLighting) {
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblBrdfLutSampler, ctx.ibl.iblBrdfLut);
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblIrradianceMapSampler, ctx.ibl.iblIrradianceMap);
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblEnvironmentMapSampler, ctx.ibl.iblEnvironmentMap);
+		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblBrdfLutSampler, ctx.ibl.iblBrdfLut);
+		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblIrradianceMapSampler, ctx.ibl.iblIrradianceMap);
+		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblEnvironmentMapSampler, ctx.ibl.iblEnvironmentMap);
 
 	} else {
 		auto& gpu = OtGpu::instance();
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblBrdfLutSampler, gpu.transparentDummyTexture);
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblIrradianceMapSampler, gpu.dummyCubeMap);
-		ctx.pass->bindFragmentSampler(samplerSlot++, iblEnvironmentMapSampler, gpu.dummyCubeMap);
+		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblBrdfLutSampler, gpu.transparentDummyTexture);
+		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblIrradianceMapSampler, gpu.dummyCubeMap);
+		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblEnvironmentMapSampler, gpu.dummyCubeMap);
 	}
 }
 
@@ -360,10 +344,10 @@ void OtSceneRenderEntitiesPass::setShadowUniforms(OtSceneRendererContext& ctx, s
 	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
 
 	// set textures
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap0Sampler, ctx.csm.getDepthTexture(0));
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap1Sampler, ctx.csm.getDepthTexture(1));
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap2Sampler, ctx.csm.getDepthTexture(2));
-	ctx.pass->bindFragmentSampler(samplerSlot++, shadowMap3Sampler, ctx.csm.getDepthTexture(3));
+	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap0Sampler, ctx.csm.getDepthTexture(0));
+	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap1Sampler, ctx.csm.getDepthTexture(1));
+	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap2Sampler, ctx.csm.getDepthTexture(2));
+	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap3Sampler, ctx.csm.getDepthTexture(3));
 }
 
 
@@ -371,17 +355,7 @@ void OtSceneRenderEntitiesPass::setShadowUniforms(OtSceneRendererContext& ctx, s
 //	OtSceneRenderEntitiesPass::setMaterialUniforms
 //
 
-void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity) {
-	// get current material
-	std::shared_ptr<OtMaterial> material;
-
-	if (ctx.scene->hasComponent<OtMaterialComponent>(entity)) {
-		material = ctx.scene->getComponent<OtMaterialComponent>(entity).material;
-
-	} else {
-		material = std::make_shared<OtMaterial>();
-	}
-
+void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material) {
 	// set uniforms
 	struct Uniforms {
 		glm::vec4 albedoColor;
@@ -414,11 +388,26 @@ void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx,
 	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
 
 	// set textures
-	bindFragmentSampler(ctx, samplerSlot++, albedoSampler, material->albedoTexture);
-	bindFragmentSampler(ctx, samplerSlot++, metallicRoughnessSampler, material->metallicRoughnessTexture);
-	bindFragmentSampler(ctx, samplerSlot++, emissiveSampler, material->emissiveTexture);
-	bindFragmentSampler(ctx, samplerSlot++, aoSampler, material->aoTexture);
-	bindFragmentSampler(ctx, samplerSlot++, normalSampler, material->normalTexture);
+	bindFragmentSampler(ctx, samplerSlot++, ctx.albedoSampler, material->albedoTexture);
+	bindFragmentSampler(ctx, samplerSlot++, ctx.metallicRoughnessSampler, material->metallicRoughnessTexture);
+	bindFragmentSampler(ctx, samplerSlot++, ctx.emissiveSampler, material->emissiveTexture);
+	bindFragmentSampler(ctx, samplerSlot++, ctx.aoSampler, material->aoTexture);
+	bindFragmentSampler(ctx, samplerSlot++, ctx.normalSampler, material->normalTexture);
+}
+
+
+//
+//	OtSceneRenderEntitiesPass::setMaterialUniforms
+//
+
+void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity) {
+	setMaterialUniforms(
+		ctx,
+		uniformSlot,
+		samplerSlot,
+		ctx.scene->hasComponent<OtMaterialComponent>(entity)
+			? ctx.scene->getComponent<OtMaterialComponent>(entity).material
+			: std::make_shared<OtMaterial>());
 }
 
 

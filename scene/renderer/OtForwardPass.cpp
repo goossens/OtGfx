@@ -46,7 +46,7 @@ void OtForwardPass::render(OtSceneRendererContext& ctx) {
 //
 
 void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
-	renderTransparentGeometryHelper(
+	renderGeometryHelper(
 		ctx,
 		grd,
 		cullingPipeline,

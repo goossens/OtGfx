@@ -14,7 +14,6 @@
 
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
-#include "OtSampler.h"
 
 #include "OtSceneRenderEntitiesPass.h"
 
@@ -38,7 +37,7 @@ protected:
 	bool isRenderingTransparent() override { return false; }
 
 	void renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) override;
-	// void renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) override;
+	void renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) override;
 	// void renderTerrain(OtSceneRendererContext& ctx, OtEntity entity, OtTerrainComponent& terrain)  override;
 	// void renderGrass(OtSceneRendererContext& ctx, OtEntity entity, OtGrassComponent& grass)  override;
 
@@ -61,12 +60,6 @@ private:
 
 	OtRenderPipeline directionalLightPipeline;
 	OtRenderPipeline pointLightPipeline;
-
-	OtSampler lightingAlbedoSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler lightingNormalSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler lightingPbrSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler lightingEmissiveSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
-	OtSampler lightingDepthSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 
 	// support functions
 	void renderGeometry(OtSceneRendererContext& ctx);

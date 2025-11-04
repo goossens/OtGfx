@@ -74,7 +74,7 @@ void OtShadowPass::render(OtSceneRendererContext& ctx) {
 //
 
 void OtShadowPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
-	renderOpaqueGeometryHelper(
+	renderGeometryHelper(
 		ctx,
 		grd,
 		opaqueCullingPipeline,

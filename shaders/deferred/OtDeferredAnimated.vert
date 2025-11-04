@@ -37,7 +37,7 @@ void main() {
 		modelMatrix[int(aIndices.z)] * pos * aWeights.z +
 		modelMatrix[int(aIndices.w)] * pos * aWeights.w;
 
-	vUv = vUv;
+	vUv = aUv;
 	vPosition = worldPos.xyz;
 	vNormal = (modelMatrix[0] * vec4(aNormal, 0.0f)).xyz;
 	vTangent = (modelMatrix[0] * vec4(aTangent, 0.0f)).xyz;

@@ -24,7 +24,7 @@ layout (location = 0) out vec3 vPosition;
 layout (location = 1) out vec3 vNormal;
 layout (location = 2) out vec3 vTangent;
 layout (location = 3) out vec3 vBitangent;
-layout (location = 4) out vec3 vUv;
+layout (location = 4) out vec2 vUv;
 
 layout(std140, set=1, binding=0) uniform UBO {
 	mat4 modelMatrix;
@@ -33,7 +33,7 @@ layout(std140, set=1, binding=0) uniform UBO {
 void main() {
 	mat4 instanceMatrix = modelMatrix * mat4(data0, data1, data2, data3);
 
-	vUv = vUv;
+	vUv = aUv;
 	vPosition = (instanceMatrix * vec4(aPosition, 1.0f)).xyz;
 	vNormal = (instanceMatrix * vec4(aNormal, 0.0f)).xyz;
 	vTangent = (instanceMatrix * vec4(aTangent, 0.0f)).xyz;

@@ -58,31 +58,6 @@ public:
 	inline bool hasRootNode() { return rootNode != std::numeric_limits<size_t>::max(); }
 	inline size_t getRootNode() { return rootNode; }
 
-private:
-	friend class OtModel;
-
-	// properties
-	std::string name;
-	std::vector<OtVertex> vertices;
-	std::vector<uint32_t> indices;
-
-	std::vector<Bone> bones;
-	std::unordered_map<std::string, size_t> boneIndex;
-	std::vector<OtVertexBones> vertexBones;
-	size_t rootNode = std::numeric_limits<size_t>::max();
-
-	// material reference (index in model)
-	size_t material;
-
-	// bounding box
-	OtAABB aabb;
-
-	// buffers for rendering
-	OtVertexBuffer vertexBuffer;
-	OtVertexBuffer vertexBonesBuffer;
-	OtIndexBuffer indexBuffer;
-	bool refreshBuffers = false;
-
 	// access buffers
 	inline OtVertexBuffer& getVertexBuffer() {
 		if (refreshBuffers) {
@@ -107,6 +82,31 @@ private:
 
 		return indexBuffer;
 	}
+
+private:
+	friend class OtModel;
+
+	// properties
+	std::string name;
+	std::vector<OtVertex> vertices;
+	std::vector<uint32_t> indices;
+
+	std::vector<Bone> bones;
+	std::unordered_map<std::string, size_t> boneIndex;
+	std::vector<OtVertexBones> vertexBones;
+	size_t rootNode = std::numeric_limits<size_t>::max();
+
+	// material reference (index in model)
+	size_t material;
+
+	// bounding box
+	OtAABB aabb;
+
+	// buffers for rendering
+	OtVertexBuffer vertexBuffer;
+	OtVertexBuffer vertexBonesBuffer;
+	OtIndexBuffer indexBuffer;
+	bool refreshBuffers = false;
 
 	// house keeping function
 	void updateBuffers();

@@ -46,10 +46,10 @@ void main() {
 	}
 
 	// determine PBR parameters
-	float metallic = hasMetallicRoughnessTexture ? texture(metallicRoughnessTexture, uv).b * metallicFactor : metallicFactor;
-	float roughness = hasMetallicRoughnessTexture ? texture(metallicRoughnessTexture, uv).g * roughnessFactor : roughnessFactor;
-	vec3 emissive = hasEmissiveTexture ? texture(emissiveTexture, uv).rgb * emissiveColor.rgb : emissiveColor.rgb;
-	float ao = hasAoTexture ? texture(aoTexture, uv).r * aoFactor : aoFactor;
+	float metallic = (hasMetallicRoughnessTexture ? texture(metallicRoughnessTexture, uv).b : 1.0f) * metallicFactor;
+	float roughness = (hasMetallicRoughnessTexture ? texture(metallicRoughnessTexture, uv).g : 1.0f) * roughnessFactor;
+	vec3 emissive = (hasEmissiveTexture ? texture(emissiveTexture, uv).rgb : vec3(1.0f)) * emissiveColor;
+	float ao = (hasAoTexture ? texture(aoTexture, uv).r : 1.0f) * aoFactor;
 
 	// store information in gbuffer
 	fragColor = vec4(albedo, 1.0f);

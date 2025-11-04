@@ -50,8 +50,6 @@ private:
 	OtRenderPipeline instancedNoCullingPipeline;
 	OtRenderPipeline instancedLinesPipeline;
 
-	OtRenderPipeline animatedPipeline;
-
 	// support functions
 	void initializePipelines();
 };

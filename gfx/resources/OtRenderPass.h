@@ -66,6 +66,9 @@ public:
 	// set instance data
 	void setInstanceData(OtVertexBuffer& buffer);
 
+	// set animation data
+	void setAnimationData(OtVertexBuffer& buffer);
+
 	// execute a rendering command
 	void render(size_t vertices, size_t instances=1);
 	void render(OtVertexBuffer& buffer);
@@ -82,6 +85,7 @@ private:
 
 	// state
 	bool open = false;
+	SDL_GPUBuffer* animationBuffer = nullptr;
 	SDL_GPUBuffer* instanceBuffer = nullptr;
 	size_t instanceCount = 1;
 };

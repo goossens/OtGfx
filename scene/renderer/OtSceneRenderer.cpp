@@ -35,7 +35,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// generate shadow maps (if required)
 	if (ctx.castShadow) {
-		shadowPass.render(ctx);
+//		shadowPass.render(ctx);
 	}
 
 	shadowPassTime = stopwatch.lap();

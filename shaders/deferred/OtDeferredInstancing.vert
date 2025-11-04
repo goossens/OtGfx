@@ -33,7 +33,7 @@ layout(std140, set=1, binding=0) uniform UBO {
 void main() {
 	mat4 instanceMatrix = modelMatrix * mat4(data0, data1, data2, data3);
 
-	vUv = vUv;
+	vUv = aUv;
 	vPosition = (instanceMatrix * vec4(aPosition, 1.0f)).xyz;
 	vNormal = (instanceMatrix * vec4(aNormal, 0.0f)).xyz;
 	vTangent = (instanceMatrix * vec4(aTangent, 0.0f)).xyz;

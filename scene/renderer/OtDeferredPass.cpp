@@ -19,6 +19,7 @@
 #include "OtVertex.h"
 
 #include "OtDeferredVert.h"
+#include "OtDeferredAnimatedVert.h"
 #include "OtDeferredInstancingVert.h"
 #include "OtDeferredPbrFrag.h"
 #include "OtDeferredLightingVert.h"
@@ -66,7 +67,7 @@ void OtDeferredPass::renderGeometry(OtSceneRendererContext& ctx) {
 //
 
 void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
-	renderOpaqueGeometryHelper(
+	renderGeometryHelper(
 		ctx,
 		grd,
 		cullingPipeline,
@@ -75,6 +76,19 @@ void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometr
 		instancedCullingPipeline,
 		instancedNoCullingPipeline,
 		instancedLinesPipeline);
+}
+
+
+//
+//	OtDeferredPass::renderOpaqueModel
+//
+
+void OtDeferredPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) {
+	renderModelHelper(
+		ctx,
+		mrd,
+		cullingPipeline,
+		animatedPipeline);
 }
 
 
@@ -103,11 +117,11 @@ void OtDeferredPass::renderDirectionalLight(OtSceneRendererContext& ctx) {
 	setShadowUniforms(ctx, 2, 8);
 
 	// bind samplers
-	pass.bindFragmentSampler(0, lightingAlbedoSampler, gbuffer.getAlbedoTexture());
-	pass.bindFragmentSampler(1, lightingNormalSampler, gbuffer.getNormalTexture());
-	pass.bindFragmentSampler(2, lightingPbrSampler, gbuffer.getPbrTexture());
-	pass.bindFragmentSampler(3, lightingEmissiveSampler, gbuffer.getEmissiveTexture());
-	pass.bindFragmentSampler(4, lightingDepthSampler, gbuffer.getDepthTexture());
+	pass.bindFragmentSampler(0, ctx.lightingAlbedoSampler, gbuffer.getAlbedoTexture());
+	pass.bindFragmentSampler(1, ctx.lightingNormalSampler, gbuffer.getNormalTexture());
+	pass.bindFragmentSampler(2, ctx.lightingPbrSampler, gbuffer.getPbrTexture());
+	pass.bindFragmentSampler(3, ctx.lightingEmissiveSampler, gbuffer.getEmissiveTexture());
+	pass.bindFragmentSampler(4, ctx.lightingDepthSampler, gbuffer.getDepthTexture());
 
 	pass.render(3, 1);
 	pass.end();
@@ -157,15 +171,20 @@ void OtDeferredPass::initializePipelines() {
 	instancedNoCullingPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedNoCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedNoCullingPipeline.setVertexDescription(OtVertex::getDescription());
-	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
+	instancedNoCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	instancedNoCullingPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	instancedLinesPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedLinesPipeline.setVertexDescription(OtVertex::getDescription());
-	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
+	instancedLinesPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	instancedLinesPipeline.setCulling(OtRenderPipeline::Culling::none);
 	instancedLinesPipeline.setFill(false);
+
+	animatedPipeline.setShaders(OtDeferredAnimatedVert, sizeof(OtDeferredAnimatedVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
+	animatedPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
+	animatedPipeline.setVertexDescription(OtVertex::getDescription());
+	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
 
 	directionalLightPipeline.setShaders(OtDeferredLightingVert, sizeof(OtDeferredLightingVert), OtDeferredLightingFrag, sizeof(OtDeferredLightingFrag));
 	directionalLightPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);

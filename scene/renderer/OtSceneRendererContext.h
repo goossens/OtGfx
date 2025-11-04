@@ -27,6 +27,7 @@
 #include "OtGeometryRenderData.h"
 #include "OtImageBasedLighting.h"
 #include "OtModelRenderData.h"
+#include "OtSampler.h"
 #include "OtScene.h"
 #include "OtTerrain.h"
 
@@ -96,4 +97,26 @@ public:
 	float directionalLightAmbient;
 	bool renderDirectionalLight;
 	bool castShadow;
+
+	// properties
+	OtSampler iblBrdfLutSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler iblIrradianceMapSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler iblEnvironmentMapSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+
+	OtSampler shadowMap0Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler shadowMap1Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler shadowMap2Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler shadowMap3Sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+
+	OtSampler albedoSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler normalSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler metallicRoughnessSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler emissiveSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler aoSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+
+	OtSampler lightingAlbedoSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler lightingNormalSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler lightingPbrSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler lightingEmissiveSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+	OtSampler lightingDepthSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 };
