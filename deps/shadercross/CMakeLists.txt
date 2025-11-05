@@ -11,8 +11,11 @@ set(IMGUIFD_SOURCES
 	${shadercross_SOURCE_DIR}/src/SDL_shadercross.c)
 
 add_library(shadercross STATIC ${IMGUIFD_SOURCES})
-
 target_include_directories(shadercross PUBLIC ${shadercross_SOURCE_DIR}/include)
 target_link_libraries(shadercross SDL3-static spirv-cross-c spirv-cross-core)
+
+if(CMAKE_GENERATOR STREQUAL Xcode)
+	set_target_properties(shadercross PROPERTIES XCODE_ATTRIBUTE_GCC_WARN_64_TO_32_BIT_CONVERSION "NO")
+endif()
 
 set_target_properties(shadercross PROPERTIES FOLDER deps)
