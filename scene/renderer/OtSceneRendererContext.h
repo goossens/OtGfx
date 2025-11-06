@@ -119,4 +119,6 @@ public:
 	OtSampler lightingPbrSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 	OtSampler lightingEmissiveSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 	OtSampler lightingDepthSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
+
+	OtSampler cubemapSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
 };

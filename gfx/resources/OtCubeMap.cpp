@@ -147,7 +147,7 @@ void OtCubeMap::loadJSON(const std::string& path, bool async) {
 		}
 
 		if (surface->format != SDL_PIXELFORMAT_RGBA32) {
-			SDL_Surface *next = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+			SDL_Surface* next = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
 			SDL_DestroySurface(surface);
 			surface = next;
 		}

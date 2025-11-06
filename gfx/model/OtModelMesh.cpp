@@ -47,7 +47,7 @@ void OtModelMesh::load(const aiMesh* mesh, OtModelNodes& nodes) {
 			hasBitangents ? toVec3(mesh->mBitangents[i]) : glm::vec3());
 	}
 
-	// clear and reserve index space
+	// reserve index space
 	indices.clear();
 	indices.reserve(mesh->mNumFaces * 3);
 

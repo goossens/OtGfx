@@ -123,7 +123,7 @@ void OtDeferredPass::renderDirectionalLight(OtSceneRendererContext& ctx) {
 	pass.bindFragmentSampler(3, ctx.lightingEmissiveSampler, gbuffer.getEmissiveTexture());
 	pass.bindFragmentSampler(4, ctx.lightingDepthSampler, gbuffer.getDepthTexture());
 
-	pass.render(3, 1);
+	pass.render(3);
 	pass.end();
 }
 
