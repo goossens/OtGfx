@@ -35,7 +35,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// generate shadow maps (if required)
 	if (ctx.castShadow) {
-//		shadowPass.render(ctx);
+		shadowPass.render(ctx);
 	}
 
 	shadowPassTime = stopwatch.lap();
@@ -45,12 +45,6 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	backgroundPass.render(ctx);
 	backgroundPassTime = stopwatch.lap();
 
-	// render sky (if required)
-	if (ctx.hasSkyEntities) {
-		skyPass.render(ctx);
-	}
-
-	skyPassTime = stopwatch.lap();
 	// render opaque entities
 	if (ctx.hasOpaqueEntities) {
 		deferredRenderingBuffer.update(camera.width, camera.height);
@@ -72,6 +66,13 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	}
 
 	waterPassTime = stopwatch.lap();
+
+	// render sky (if required)
+	if (ctx.hasSkyEntities) {
+		skyPass.render(ctx);
+	}
+
+	skyPassTime = stopwatch.lap();
 
 	// render particles
 	if (ctx.hasParticlesEntities) {

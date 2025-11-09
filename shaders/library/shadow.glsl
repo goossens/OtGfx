@@ -15,11 +15,14 @@
 // uniforms
 layout(std140, set=3, binding=SHADOW_UNIFORMS) uniform ShadowUniforms {
 	mat4 viewTransform;
-	mat4 shadowViewProjTransform[4];
-	float cascade0Distance;
-	float cascade1Distance;
-	float cascade2Distance;
-	float cascade3Distance;
+	mat4 shadowViewProjTransform0;
+	mat4 shadowViewProjTransform1;
+	mat4 shadowViewProjTransform2;
+	mat4 shadowViewProjTransform3;
+	float cascadeDistance0;
+	float cascadeDistance1;
+	float cascadeDistance2;
+	float cascadeDistance3;
 	float shadowTexelSize;
 	bool shadowEnabled;
 };
@@ -59,7 +62,7 @@ float getCascadeShadow(sampler2D shadowmap, vec2 shadowCoord, float depth, float
 	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5f,  0.5f) * offset, depth, bias);
 	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5f,  1.5f) * offset, depth, bias);
 
-	return shadow / 16.0;
+	return shadow / 16.0f;
 }
 
 // get shadow value at specified position and distance from camera
@@ -70,25 +73,25 @@ float getShadow(vec3 wordPosition, vec3 viewPosition, float NdotL) {
 		float bias = max(0.05f * (1.0f - NdotL), 0.005f);
 
 		// determine cascade and calculate shadow
-		if (-viewPosition.z < cascade0Distance) {
-			vec4 pos = shadowViewProjTransform[0] * vec4(wordPosition, 1.0f);
-			pos = pos / pos.w;
-			return getCascadeShadow(shadowMap0, clipToUvSpace(pos.xyz), pos.z, bias * (1.0f / (cascade0Distance * 0.5f)));
+		if (-viewPosition.z < cascadeDistance0) {
+			vec4 pos = shadowViewProjTransform0 * vec4(wordPosition, 1.0f);
+			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
+			return getCascadeShadow(shadowMap0, uv, pos.z, bias * (1.0f / (cascadeDistance0 * 0.5f)));
 
-		} else if (-viewPosition.z < cascade1Distance) {
-			vec4 pos = shadowViewProjTransform[1] * vec4(wordPosition, 1.0f);
-			pos = pos / pos.w;
-			return getCascadeShadow(shadowMap1, clipToUvSpace(pos.xyz), pos.z, bias * (1.0f / (cascade1Distance * 0.5f)));
+		} else if (-viewPosition.z < cascadeDistance1) {
+			vec4 pos = shadowViewProjTransform1 * vec4(wordPosition, 1.0f);
+			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
+			return getCascadeShadow(shadowMap1, uv, pos.z, bias * (1.0f / (cascadeDistance1 * 0.5f)));
 
-		} else if (-viewPosition.z < cascade2Distance) {
-			vec4 pos = shadowViewProjTransform[2] * vec4(wordPosition, 1.0f);
-			pos = pos / pos.w;
-			return getCascadeShadow(shadowMap2, clipToUvSpace(pos.xyz), pos.z, bias * (1.0f / (cascade2Distance * 0.5f)));
+		} else if (-viewPosition.z < cascadeDistance2) {
+			vec4 pos = shadowViewProjTransform2 * vec4(wordPosition, 1.0f);
+			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
+			return getCascadeShadow(shadowMap2, uv, pos.z, bias * (1.0f / (cascadeDistance2 * 0.5f)));
 
-		} else if (-viewPosition.z < cascade3Distance) {
-			vec4 pos = shadowViewProjTransform[3] * vec4(wordPosition, 1.0f);
-			pos = pos / pos.w;
-			return getCascadeShadow(shadowMap3, clipToUvSpace(pos.xyz), pos.z, bias * (1.0f / (cascade3Distance * 0.5f)));
+		} else if (-viewPosition.z < cascadeDistance3) {
+			vec4 pos = shadowViewProjTransform3 * vec4(wordPosition, 1.0f);
+			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
+			return getCascadeShadow(shadowMap3, uv, pos.z, bias * (1.0f / (cascadeDistance3 * 0.5f)));
 
 		} else {
 			return 1.0f;

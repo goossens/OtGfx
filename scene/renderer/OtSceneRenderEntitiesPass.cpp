@@ -32,9 +32,8 @@ void OtSceneRenderEntitiesPass::renderEntities(OtSceneRendererContext& ctx) {
 		if (ctx.hasOpaqueGeometries) {
 			for (auto entity : ctx.opaqueGeometryEntities) {
 				auto& grd = ctx.geometryRenderData[entity];
-				auto& camera = grd.cameras[ctx.cameraID];
 
-				if (camera.visible) {
+				if (grd.cameras[ctx.cameraID].visible) {
 					renderOpaqueGeometry(ctx, grd);
 				}
 			}
@@ -74,9 +73,8 @@ void OtSceneRenderEntitiesPass::renderEntities(OtSceneRendererContext& ctx) {
 	if (isRenderingTransparent() && ctx.hasTransparentGeometries) {
 		for (auto entity : ctx.transparentGeometryEntities) {
 			auto& grd = ctx.geometryRenderData[entity];
-			auto& camera = grd.cameras[ctx.cameraID];
 
-			if (camera.visible) {
+			if (grd.cameras[ctx.cameraID].visible) {
 				renderTransparentGeometry(ctx, grd);
 			}
 		}
@@ -318,28 +316,20 @@ void OtSceneRenderEntitiesPass::setShadowUniforms(OtSceneRendererContext& ctx, s
 	// set uniforms
 	struct Uniforms {
 		glm::mat4 viewTransform;
-		glm::mat4 shadowViewProjTransform[4];
-		float cascade0Distance;
-		float cascade1Distance;
-		float cascade2Distance;
-		float cascade3Distance;
+		glm::mat4 shadowViewProjTransform[OtCascadedShadowMap::maxCascades];
+		float cascadeDistance[OtCascadedShadowMap::maxCascades];
 		float shadowTexelSize;
 		uint32_t shadowEnabled;
-	} uniforms {
-		ctx.camera.viewMatrix,
-		{
-			ctx.csm.getCamera(0).viewProjectionMatrix,
-			ctx.csm.getCamera(1).viewProjectionMatrix,
-			ctx.csm.getCamera(2).viewProjectionMatrix,
-			ctx.csm.getCamera(3).viewProjectionMatrix
-		},
-		ctx.csm.getDistance(0),
-		ctx.csm.getDistance(1),
-		ctx.csm.getDistance(2),
-		ctx.csm.getDistance(3),
-		1.0f / ctx.csm.getSize(),
-		static_cast<uint32_t>(ctx.castShadow)
-	};
+	} uniforms;
+
+	uniforms.viewTransform = ctx.camera.viewMatrix;
+	uniforms.shadowTexelSize = 1.0f / ctx.csm.getSize();
+	uniforms.shadowEnabled = static_cast<uint32_t>(ctx.castShadow);
+
+	for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
+		uniforms.shadowViewProjTransform[i] = ctx.csm.getCamera(i).viewProjectionMatrix;
+		uniforms.cascadeDistance[i] = ctx.csm.getDistance(i);
+	}
 
 	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
 

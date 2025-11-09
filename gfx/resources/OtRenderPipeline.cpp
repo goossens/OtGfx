@@ -305,7 +305,7 @@ SDL_GPUGraphicsPipeline* OtRenderPipeline::getPipeline() {
 			targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,	blendState});
 			targetDescriptions.emplace_back(SDL_GPUColorTargetDescription{SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, blendState});
 
-		} else {
+		} else if (getTextureFormat() != SDL_GPU_TEXTUREFORMAT_INVALID) {
 			SDL_GPUColorTargetBlendState blendState{};
 			blendState.src_color_blendfactor = getBlendFactor(colorSrcFactor);
 			blendState.dst_color_blendfactor = getBlendFactor(colorDstFactor);
@@ -395,6 +395,7 @@ SDL_GPUTextureFormat OtRenderPipeline::getTextureFormat() {
 		case RenderTargetType::rgba16d32: return SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
 		case RenderTargetType::rgba32d32: return SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT;
 		case RenderTargetType::rgba8d24s8: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+		case RenderTargetType::d32: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_INVALID;
 	}
 
@@ -418,6 +419,7 @@ bool OtRenderPipeline::hasDepthStencilFormat() {
 		case RenderTargetType::rgba16d32: return true;
 		case RenderTargetType::rgba32d32: return true;
 		case RenderTargetType::rgba8d24s8: return true;
+		case RenderTargetType::d32: return true;
 		case RenderTargetType::gBuffer: return true;
 	}
 
@@ -441,6 +443,7 @@ SDL_GPUTextureFormat OtRenderPipeline::getDepthStencilFormat() {
 		case RenderTargetType::rgba16d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		case RenderTargetType::rgba32d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		case RenderTargetType::rgba8d24s8: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT;
+		case RenderTargetType::d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		case RenderTargetType::gBuffer: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 	}
 

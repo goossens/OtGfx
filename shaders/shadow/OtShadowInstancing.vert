@@ -20,11 +20,15 @@ layout(location = 6) in vec4 data1;
 layout(location = 7) in vec4 data2;
 layout(location = 8) in vec4 data3;
 
+layout(location = 0) out vec2 vUv;
+
 layout(std140, set=1, binding=0) uniform UBO {
 	mat4 modelMatrix;
 };
 
 void main() {
+	vUv = aUv;
+
 	mat4 instanceMatrix = modelMatrix * mat4(data0, data1, data2, data3);
 	vec3 pos = (instanceMatrix * vec4(aPosition, 1.0)).xyz;
 	gl_Position = viewProjectionMatrix * vec4(pos, 1.0);

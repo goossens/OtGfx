@@ -43,7 +43,7 @@ public:
 	void clear();
 
 	// see if framebuffer is valid
-	inline bool isValid() { return valid; }
+	inline bool isValid() { return colorTextureType != OtTexture::Format::none || depthTextureType != OtTexture::Format::none; }
 
 	// set clear properties
 	void setClearColor(bool flag, const glm::vec4& value=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -83,9 +83,6 @@ private:
 	int width = -1;
 	int height = -1;
 
-	// state
-	bool valid = false;
-
 	// resources
 	OtTexture colorTexture;
 	OtTexture depthTexture;
@@ -102,6 +99,8 @@ private:
 	SDL_GPUColorTargetInfo colorTargetInfo;
 	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
 	OtRenderTargetInfo info;
+
+	void updateRenderTargetInformation();
 
 	// get render target information
 	friend class OtRenderPass;

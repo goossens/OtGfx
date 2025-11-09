@@ -51,6 +51,7 @@ public:
 	OtMaterial* material;
 	glm::mat4 globalTransform;
 	OtAABB worldAabb;
+	bool castShadow;
 	bool changed;
 
 	OtInstances* instances = nullptr;
@@ -63,7 +64,8 @@ public:
 		OtVertexBuffer idb;
 	};
 
-	std::array<CameraView, OtCascadedShadowMap::maxCascades + 3> cameras;
+	std::array<CameraView, 3 + OtCascadedShadowMap::maxCascades> cameras;
+	inline bool isShadowCamera(size_t id) { return id >= 3; }
 
 	// miscellaneous
 	static inline OtMaterial dummyMaterial;

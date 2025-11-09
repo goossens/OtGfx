@@ -21,6 +21,7 @@ void OtFrameBuffer::initialize(OtTexture::Format c, OtTexture::Format d) {
 		clear();
 		colorTextureType = c;
 		depthTextureType = d;
+		updateRenderTargetInformation();
 	}
 }
 
@@ -37,7 +38,6 @@ void OtFrameBuffer::clear() {
 	// clear other fields
 	width = -1;
 	height = -1;
-	valid = false;
 }
 
 
@@ -48,7 +48,7 @@ void OtFrameBuffer::clear() {
 void OtFrameBuffer::setClearColor(bool flag, const glm::vec4& value) {
 	clearColorTexture = flag;
 	clearColorValue = value;
-	valid = false;
+	updateRenderTargetInformation();
 }
 
 
@@ -59,7 +59,7 @@ void OtFrameBuffer::setClearColor(bool flag, const glm::vec4& value) {
 void OtFrameBuffer::setClearDepth(bool flag, float value) {
 	clearDepthTexture = flag;
 	clearDepthValue = value;
-	valid = false;
+	updateRenderTargetInformation();
 }
 
 
@@ -70,7 +70,7 @@ void OtFrameBuffer::setClearDepth(bool flag, float value) {
 void OtFrameBuffer::setClearStencil(bool flag, uint8_t value) {
 	clearStencilTexture = flag;
 	clearStencilValue = value;
-	valid = false;
+	updateRenderTargetInformation();
 }
 
 
@@ -80,7 +80,7 @@ void OtFrameBuffer::setClearStencil(bool flag, uint8_t value) {
 
 bool OtFrameBuffer::update(int w, int h) {
 	// update framebuffer if required
-	if (!valid || w != width || h != height) {
+	if (w != width || h != height) {
 		// clear old resources
 		clear();
 
@@ -108,37 +108,44 @@ bool OtFrameBuffer::update(int w, int h) {
 		height = h;
 
 		// create/update render target information
-		colorTargetInfo = SDL_GPUColorTargetInfo{};
-		colorTargetInfo.texture = colorTexture.getTexture();
-
-		colorTargetInfo.clear_color = SDL_FColor{
-			clearColorValue.r,
-			clearColorValue.g,
-			clearColorValue.b,
-			clearColorValue.a
-		};
-
-		colorTargetInfo.load_op = hasColorTexture() && clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
-		colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-
-		depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo{};
-		depthStencilTargetInfo.texture = depthTexture.getTexture();
-		depthStencilTargetInfo.clear_depth = clearDepthValue;
-		depthStencilTargetInfo.load_op = hasDepthTexture() && clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
-		depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-		depthStencilTargetInfo.stencil_load_op = hasStencilTexture() && clearStencilTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
-		depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
-		depthStencilTargetInfo.clear_stencil = static_cast<Uint8>(clearStencilValue);
-
-		info.colorTargetInfo = hasColorTexture() ? &colorTargetInfo : nullptr;
-		info.numColorTargets = hasColorTexture() ? 1 : 0;
-		info.depthStencilTargetInfo = hasDepthTexture() ? &depthStencilTargetInfo : nullptr;
-
-		// set state
-		valid = true;
+		updateRenderTargetInformation();
 		return true;
 
 	} else {
 		return false;
 	}
 }
+
+
+//
+//	OtFrameBuffer::updateRenderTargetInformation
+//
+
+void OtFrameBuffer::updateRenderTargetInformation() {
+	colorTargetInfo = SDL_GPUColorTargetInfo{};
+	colorTargetInfo.texture = colorTexture.getTexture();
+
+	colorTargetInfo.clear_color = SDL_FColor{
+		clearColorValue.r,
+		clearColorValue.g,
+		clearColorValue.b,
+		clearColorValue.a
+	};
+
+	colorTargetInfo.load_op = hasColorTexture() && clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+
+	depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo{};
+	depthStencilTargetInfo.texture = depthTexture.getTexture();
+	depthStencilTargetInfo.clear_depth = clearDepthValue;
+	depthStencilTargetInfo.load_op = hasDepthTexture() && clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+	depthStencilTargetInfo.stencil_load_op = hasStencilTexture() && clearStencilTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+	depthStencilTargetInfo.clear_stencil = static_cast<Uint8>(clearStencilValue);
+
+	info.colorTargetInfo = hasColorTexture() ? &colorTargetInfo : nullptr;
+	info.numColorTargets = hasColorTexture() ? 1 : 0;
+	info.depthStencilTargetInfo = hasDepthTexture() ? &depthStencilTargetInfo : nullptr;
+}
+

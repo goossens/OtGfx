@@ -25,7 +25,9 @@
 class OtShadowPass : public OtSceneRenderEntitiesPass {
 public:
 	// constructor
-	OtShadowPass();
+	OtShadowPass() {
+		initializePipelines();
+	}
 
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
@@ -36,18 +38,30 @@ private:
 	OtRenderPipeline opaqueNoCullingPipeline;
 	OtRenderPipeline opaqueLinesPipeline;
 
-	OtRenderPipeline instancedOpaqueCullingPipeline;
-	OtRenderPipeline instancedOpaqueNoCullingPipeline;
-	OtRenderPipeline instancedOpaqueLinesPipeline;
+	OtRenderPipeline opaqueInstancedCullingPipeline;
+	OtRenderPipeline opaqueInstancedNoCullingPipeline;
+	OtRenderPipeline opaqueInstancedLinesPipeline;
 
-	OtRenderPipeline animatedOpaquePipeline;
+	OtRenderPipeline animatedPipeline;
 
 	OtRenderPipeline terrainPipeline;
 	OtRenderPipeline grassPipeline;
+
+	OtRenderPipeline transparentCullingPipeline;
+	OtRenderPipeline transparentNoCullingPipeline;
+	OtRenderPipeline transparentLinesPipeline;
+
+	OtRenderPipeline transparentInstancedCullingPipeline;
+	OtRenderPipeline transparentInstancedNoCullingPipeline;
+	OtRenderPipeline transparentInstancedLinesPipeline;
 
 	// support functions
 	bool isRenderingOpaque() override { return true; }
 	bool isRenderingTransparent() override { return true; }
 
 	void renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) override;
+	void renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) override;
+	void renderTransparentGeometry(OtSceneRendererContext&ctx , OtGeometryRenderData& grd) override;
+
+	void initializePipelines();
 };

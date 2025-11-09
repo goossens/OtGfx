@@ -56,7 +56,7 @@ void OtCascadedShadowMap::update(OtCamera& camera, const glm::vec3& lightDirecti
 	}
 
 	// determine frustum corners in clip space
-	static glm::vec3 frustumCorners[] = {
+	glm::vec3 frustumCorners[] = {
 		// near face
 		{  1.0f,  1.0f, 0.0f },
 		{ -1.0f,  1.0f, 0.0f },

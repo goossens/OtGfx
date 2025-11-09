@@ -39,6 +39,7 @@ public:
 		rgba8d24s8,
 		rgba16d32,
 		rgba32d32,
+		d32,
 		gBuffer
 	};
 

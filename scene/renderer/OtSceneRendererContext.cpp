@@ -215,10 +215,9 @@ void OtSceneRendererContext::initialize(OtScene* s, OtCamera c) {
 		grd.analyzeCamera(getMainCameraID(), camera);
 
 		if (castShadow) {
-			grd.analyzeCamera(getShadowCameraID(0), csm.getCamera(0));
-			grd.analyzeCamera(getShadowCameraID(1), csm.getCamera(1));
-			grd.analyzeCamera(getShadowCameraID(2), csm.getCamera(2));
-			grd.analyzeCamera(getShadowCameraID(3), csm.getCamera(3));
+			for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
+				grd.analyzeCamera(getShadowCameraID(i), csm.getCamera(i));
+			}
 		}
 
 		if (waterEntity != OtEntityNull) {
@@ -251,10 +250,9 @@ void OtSceneRendererContext::initialize(OtScene* s, OtCamera c) {
 		mrd.analyzeCamera(getMainCameraID(), camera);
 
 		if (castShadow) {
-			mrd.analyzeCamera(getShadowCameraID(0), csm.getCamera(0));
-			mrd.analyzeCamera(getShadowCameraID(1), csm.getCamera(1));
-			mrd.analyzeCamera(getShadowCameraID(2), csm.getCamera(2));
-			mrd.analyzeCamera(getShadowCameraID(3), csm.getCamera(3));
+			for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
+				mrd.analyzeCamera(getShadowCameraID(i), csm.getCamera(i));
+			}
 		}
 
 		currentEntities.emplace(entity);
