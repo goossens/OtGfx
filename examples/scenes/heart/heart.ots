@@ -1,0 +1,184 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 1223536663
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						12.0,
+						-13.199999809265137,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.5671269297599792,
+						3.5236403942108154,
+						120.0
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 500.0,
+					"fov": 50.0,
+					"mainCamera": true,
+					"near": 1.0
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Light",
+					"uuid": 2146993424
+				},
+				{
+					"ambient": 0.05000000074505806,
+					"azimuth": 240.0,
+					"castShadow": false,
+					"color": [
+						0.6460176706314087,
+						0.5516876578330994,
+						0.5516876578330994
+					],
+					"component": "Directional Light",
+					"elevation": 5.0
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Heart",
+					"uuid": 449063505
+				},
+				{
+					"castShadow": true,
+					"component": "Geometry",
+					"cullBack": false,
+					"path": "virtual:heart",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						22.100000381469727,
+						-31.0,
+						1.5199999809265137
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						25.100000381469727,
+						-29.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							0.8461074233055115,
+							0.4131098687648773,
+							0.9336283206939697,
+							1.0
+						],
+						"albedoTexture": "",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"emissiveTexture": "",
+						"metallic": 0.8299999833106995,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5600000023841858,
+						"scale": 1.0
+					}
+				},
+				{
+					"component": "Nodes",
+					"path": "assets/heart.otn",
+					"settings": {
+						"1210579916": {
+							"value": 31.0
+						},
+						"790235078": {
+							"value": 0.20000000298023224
+						}
+					}
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 500.0,
+			"fov": 50.0,
+			"near": 1.0,
+			"pitch": 12.0,
+			"position": [
+				0.5671269297599792,
+				3.5236403942108154,
+				120.0
+			],
+			"speed": 3.0,
+			"yaw": 13.199999809265137
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.7099999785423279,
+		"contrast": 1.0,
+		"exposure": 0.8199999928474426,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": false,
+		"godrays": false,
+		"tonemap": 3
+	}
+}

@@ -1,0 +1,237 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 2649160705
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-24.100000381469727,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						2.0,
+						5.0
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 16.0,
+					"fov": 60.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Light",
+					"uuid": 232087389
+				},
+				{
+					"ambient": 0.05000000074505806,
+					"azimuth": 67.0,
+					"castShadow": true,
+					"color": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"component": "Directional Light",
+					"elevation": 63.099998474121094
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Floor",
+					"uuid": 3013357444
+				},
+				{
+					"castShadow": false,
+					"component": "Geometry",
+					"cullBack": true,
+					"path": "assets/grid.obj",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						12.0,
+						1.0,
+						12.0
+					],
+					"translation": [
+						0.0,
+						-2.0999999046325684,
+						0.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							1.0,
+							1.0,
+							1.0,
+							1.0
+						],
+						"albedoTexture": "",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 1.0
+					}
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Sphere",
+					"uuid": 2230698124
+				},
+				{
+					"castShadow": true,
+					"component": "Geometry",
+					"cullBack": true,
+					"path": "assets/sphere.obj",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.699999988079071,
+						1.2999999523162842,
+						0.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							0.9159291982650757,
+							0.8978171944618225,
+							0.5065980553627014,
+							1.0
+						],
+						"albedoTexture": "",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 1.0
+					}
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 100.0,
+			"fov": 60.0,
+			"near": 0.009999999776482582,
+			"pitch": -24.603736877441406,
+			"position": [
+				0.0,
+				2.0,
+				5.0
+			],
+			"speed": 3.0,
+			"yaw": 0.7755398750305176
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.800000011920929,
+		"contrast": 1.059999942779541,
+		"exposure": 1.1799999475479126,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": false,
+		"godrays": false,
+		"tonemap": 3
+	}
+}

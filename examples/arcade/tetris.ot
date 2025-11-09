@@ -1,0 +1,483 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+var input = import("input");
+var game = import("game");
+
+// constants
+var colors = [
+	"#000", "#bbb",
+	"#b33", "#3b3", "#33b",
+	"#bb3", "#b3b", "#3bb",
+	"#b60"
+];
+
+var rows = 18;
+var columns = 24;
+
+class Field : Object {
+	// constants
+	var size = 9.0 / rows;
+
+	var minoMargin = 0.15 * size;
+	var lineMargin = minoMargin;
+
+	var xoffset = 15.75 - size * columns;
+	var yoffset = 0.05;
+
+	var left = xoffset - lineMargin - minoMargin;
+	var right = xoffset + size * columns + lineMargin;
+
+	function __init__(this, vd) {
+		// create a field of minos
+		this.minos = [];
+
+		vd.pushStyle();
+		vd.setWidth(1.2);
+		vd.setColor(colors[0]);
+
+		for y in range(rows - 1, 0, -1) {
+			for x in range(columns) {
+				this.minos.append(vd.addRectangle(
+					size * x + xoffset,
+					size * y + yoffset,
+					size - minoMargin,
+					size - minoMargin));
+			}
+		}
+
+		this.colors = [].fill(rows * columns, 0);
+
+		// mark playing field borders
+		vd.setWidth(3.0);
+		vd.setColor("#47f");
+		this.leftLine = vd.addLine(left, 9.0 - lineMargin, left, lineMargin);
+		this.rightLine = vd.addLine(right, 9.0 - lineMargin, right, lineMargin);
+
+		vd.popStyle();
+	}
+
+	function hide(this, vd) {
+		// hide all minos
+		for mino in this.minos {
+			vd.disableShape(mino);
+		}
+
+		// hide lines
+		vd.disableShape(this.leftLine);
+		vd.disableShape(this.rightLine);
+	}
+
+	function show(this, vd) {
+		// show all minos
+		for mino in this.minos {
+			vd.enableShape(mino);
+		}
+
+		// show lines
+		vd.enableShape(this.leftLine);
+		vd.enableShape(this.rightLine);
+	}
+
+	function clear(this, vd) {
+		// clear all minos
+		for mino in this.minos {
+			vd.updateColor(mino, colors[0]);
+		}
+
+		// reset color matrix (used to track occupancy)
+		this.colors = [].fill(rows * columns, 0);
+	}
+
+	function renderTetrimino(this, vd, tetrimino, x , y, color) {
+		// render a tetromino at a specifie location
+		// (using color 0 effectively clears the tetrimino)
+		for r in range(4) {
+			for c in range(4) {
+				if (y + r >= 0 && tetrimino[r * 4 + c]) {
+					var offset = (y + r) * columns + x + c;
+					vd.updateColor(this.minos[offset], colors[color]);
+					this.colors[offset] = color;
+				}
+			}
+		}
+	}
+
+	function isOccupied(this, x, y) {
+		// see if a specified mino is occupied
+		return this.colors[y * columns + x] != 0;
+	}
+
+	function isAllowed(this, tetrimino, x, y) {
+		// see a tetromino can occupy the specified location
+		for r in range(4) {
+			// ignore rows that haven't become visible yet
+			if (y + r >= 0) {
+				for c in range(4) {
+					if (tetrimino[r * 4 + c]) {
+						var sx = x + c;
+						var sy = y + r;
+
+						// offscreen locations are not allowed
+						if (sx < 0 || sx >= columns || sy >= rows) {
+							return false;
+
+						// occupied positions aren't allowed either
+						} elif (this.isOccupied(sx, sy)) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	function removeRow(this, vd, row) {
+		// remove the specified row by moving rows above it down
+		for y in range(row, 1, -1) {
+			var offsetFrom = (y - 1) * columns;
+			var offsetTo = y * columns;
+
+			for x in range(columns) {
+				var color = this.colors[offsetFrom++];
+				vd.updateColor(this.minos[offsetTo], colors[color]);
+				this.colors[offsetTo++] = color;
+			}
+		}
+
+		// clear the top row
+		for x in range(columns) {
+			vd.updateColor(this.minos[x], colors[0]);
+			this.colors[x] = 0;
+		}
+	}
+
+	function removeCompleteRows(this, vd) {
+		// keep track of points scored
+		var score = 0;
+
+		// process all rows
+		for y in range(rows - 1, 0, -1) {
+			// see if row is complete
+			var complete = true;
+			var x = 0;
+
+			while (complete && x < columns) {
+				if (!this.isOccupied(x++, y)) {
+					complete = false;
+				}
+			}
+
+			// remove the row if it's complete and give some points
+			if (complete) {
+				this.removeRow(vd, y);
+				score += 10;
+			}
+		}
+
+		// return the points collected
+		return score;
+	}
+}
+
+class Scoreboard : Object {
+	function __init__(this, vd) {
+		// reset point count
+		this.points = 0;
+
+		// create title
+		vd.pushStyle();
+		vd.setColor("#47f");
+		vd.setWidth(2);
+		vd.addText(0.25, 8.0, 1.0, "Tetris");
+
+		// create score display
+		vd.setColor("#2b5");
+		vd.setWidth(1);
+		this.scoreTitle = vd.addText(0.65, 5.5, 0.7, "Score");
+		this.scoreDisplay = vd.addSevenSegment(0.85, 5.2, 0.7, "000");
+
+		// create next tetrimino display
+		vd.setColor("#b52");
+		this.nextTitle = vd.addText(0.8, 2.5, 0.7, "Next");
+		this.minos = [];
+
+		for y in range(4) {
+			for x in range(4) {
+				this.minos.append(vd.addRectangle(1.0 + 0.3 * x,  2.0 - 0.3 * y, 0.25, 0.25));
+			}
+		}
+
+		vd.popStyle();
+	}
+
+	function clear(this, vd) {
+		// reset point count
+		this.points = 0;
+		vd.updateSevenSegmentString(this.scoreDisplay, "%03i".format(this.points));
+	}
+
+	function addPoints(this, vd, points) {
+		// add point to the scoreboard
+		this.points += points;
+		vd.updateSevenSegmentString(this.scoreDisplay, "%03i".format(this.points));
+	}
+
+	function setNextTetromino(this, vd, tetromino) {
+		// render the shape of the next tetromino
+		for index in range(16) {
+			vd.updateColor(this.minos[index], tetromino[index] == 0 ? "#000" : "#b52");
+		}
+	}
+
+	function show(this, vd) {
+		vd.enableShape(this.scoreTitle);
+		vd.enableShape(this.scoreDisplay);
+		vd.enableShape(this.nextTitle);
+
+		for mino in this.minos {
+			vd.enableShape(mino);
+		}
+	}
+
+	function hide(this, vd) {
+		vd.disableShape(this.scoreTitle);
+		vd.disableShape(this.scoreDisplay);
+		vd.disableShape(this.nextTitle);
+
+		for mino in this.minos {
+			vd.disableShape(mino);
+		}
+	}
+}
+
+class Tetris : game.Game {
+	var name = "Tetris";
+
+	function __init__(this) {
+		// initialize superclass
+		super.__init__(this);
+
+		// load the tetrominos
+		function loadTetrimino(id) {
+			this.tetrominos.append(io.readJSON(Path(__DIR__, "assets", "tetris-" + id + ".json")));
+		}
+
+		this.tetrominos = [];
+		loadTetrimino("i");
+		loadTetrimino("l1");
+		loadTetrimino("l2");
+		loadTetrimino("o");
+		loadTetrimino("s");
+		loadTetrimino("t");
+		loadTetrimino("z1");
+		loadTetrimino("z2");
+
+		// pick the first tetronino
+		this.nextTetromino = this.tetrominos[this.tetrominos.size().random()];
+		this.nextRotation = 4.random();
+
+		// create the field
+		this.field = Field(this);
+
+		// create scoreboard
+		this.scoreboard = Scoreboard(this);
+
+		// create the messages
+		this.startupMessage = this.createMessage(6.5, [
+			"Welcome to the Game of Tetris",
+			"Hit spacebar or mouse button to start...",
+			"Hit left/right keys to move tetromino...",
+			"Hit R to rotate and F to drop tetromino...",
+			"Hit P to pause game...",
+			"Hit ESC to return to the menu..."
+		]);
+
+		this.pauseMessage = this.createMessage(5, [
+			"Game Paused",
+			"Hit spacebar or mouse button to continue..."
+		]);
+
+		this.gameOverMessage = this.createMessage(5, [
+			"GAME OVER!",
+			"Hit spacebar or mouse button to continue..."
+		]);
+	}
+
+	function onSelect(this) {
+		this.field.clear(this);
+	}
+
+	function onShowSplash(this) {
+		this.scoreboard.hide(this);
+		this.field.hide(this);
+		this.showMessage(this.startupMessage);
+	}
+
+	function onHideSplash(this) {
+		this.hideMessage(this.startupMessage);
+		this.field.show(this);
+		this.scoreboard.show(this);
+	}
+
+	function onStart(this) {
+		this.time = os.clock();
+		this.scoreboard.clear(this);
+		this.newTetromino();
+	}
+
+	function onPause(this) {
+		this.scoreboard.hide(this);
+		this.field.hide(this);
+		this.showMessage(this.pauseMessage);
+	}
+
+	function onResume(this) {
+		this.hideMessage(this.pauseMessage);
+		this.field.show(this);
+		this.scoreboard.show(this);
+		this.time = os.clock();
+	}
+
+	function onUpdate(this) {
+		// handle keyboard inputs
+		if (input.isButtonPressed(input.keyP)) {
+			this.pause();
+
+		} elif (input.isButtonPressed(input.keyLeftArrow)) {
+			this.moveTetromino(-1, 0);
+
+		} elif (input.isButtonPressed(input.keyRightArrow)) {
+			this.moveTetromino(1, 0);
+
+		} elif (input.isButtonPressed(input.keyUpArrow) || input.isButtonPressed(input.keyR)) {
+			this.rotateTetromino();
+
+		} elif (input.isButtonPressed(input.keyDownArrow) || input.isButtonPressed(input.keyF)) {
+			this.interval = 0.08;
+		}
+
+		// see if we need to drop the current tetromino
+		var time = os.clock();
+
+		if (time - this.time > this.interval) {
+			if (!this.moveTetromino(0, 1)) {
+				if (this.y < 0) {
+					this.gameover();
+
+				} else {
+					this.scoreboard.addPoints(this, 1 + this.field.removeCompleteRows(this));
+					this.newTetromino();
+				}
+			}
+
+			this.time = time;
+		}
+	}
+
+	function onStop(this) {
+		this.scoreboard.hide(this);
+		this.field.hide(this);
+	}
+
+	function onShowGameOver(this) {
+		this.showMessage(this.gameOverMessage);
+	}
+
+	function onHideGameOver(this) {
+		this.hideMessage(this.gameOverMessage);
+	}
+
+	function newTetromino(this) {
+		// make next tetromino the current one
+		this.currentTetromino = this.nextTetromino;
+		this.rotation = this.nextRotation;
+		this.tetromino = this.currentTetromino[this.rotation];
+		this.color = 1 + (colors.size() - 1).random();
+
+		// put it in the launch position
+		this.x = (columns - 4) / 2;
+		this.y = -4;
+
+		// pick a new random tetromino with random orientation
+		this.nextTetromino = this.tetrominos[this.tetrominos.size().random()];
+		this.nextRotation = 4.random();
+
+		// (re)set drop speed
+		this.interval = 0.5;
+
+		// report next tetrimino to scoreboard
+		this.scoreboard.setNextTetromino(this, this.nextTetromino[this.nextRotation]);
+	}
+
+	function hideTetromino(this) {
+		this.field.renderTetrimino(this, this.tetromino, this.x, this.y, 0);
+	}
+
+	function showTetromino(this) {
+			this.field.renderTetrimino(this, this.tetromino, this.x, this.y, this.color);
+	}
+
+	function moveTetromino(this, x, y) {
+		this.hideTetromino();
+
+		if (this.field.isAllowed(this.tetromino, this.x + x, this.y + y)) {
+			this.x += x;
+			this.y += y;
+			this.showTetromino();
+			return true;
+
+		} else {
+			this.showTetromino();
+			return false;
+		}
+	}
+
+	function rotateTetromino(this) {
+		this.hideTetromino();
+		var rotation = (this.rotation + 1) % 4;
+		var tetromino = this.currentTetromino[rotation];
+
+		if (this.field.isAllowed(tetromino, this.x, this.y)) {
+			this.rotation = rotation;
+			this.tetromino = tetromino;
+		}
+
+		this.showTetromino();
+	}
+
+	function renderIcon(this, vd, x, y, w, h) {
+		function addMino(mx, my, color) {
+			vd.setColor(colors[color]);
+			vd.addRectangle(0.22 * mx + x,  0.22 * my + y, 0.18, 0.18);
+		}
+
+		vd.pushStyle();
+			addMino(5, 0, 4);
+			addMino(6, 0, 4);
+			addMino(7, 0, 4);
+			addMino(6, 1, 4);
+
+			addMino(1, 2, 5);
+			addMino(1, 3, 5);
+			addMino(1, 4, 5);
+			addMino(2, 4, 5);
+
+			addMino(2, 3, 2);
+			addMino(3, 3, 2);
+			addMino(3, 4, 2);
+			addMino(4, 4, 2);
+
+			addMino(9, 4, 6);
+			addMino(10, 4, 6);
+			addMino(11, 4, 6);
+			addMino(12, 4, 6);
+
+		vd.popStyle();
+	}
+}

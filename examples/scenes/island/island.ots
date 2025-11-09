@@ -1,0 +1,228 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 2486935567
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-26.200000762939453,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						66.0,
+						172.3000030517578
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 514.0,
+					"fov": 60.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Sky",
+					"uuid": 769720788
+				},
+				{
+					"azimuth": 142.8249969482422,
+					"castShadow": true,
+					"cirrus": 0.421999990940094,
+					"component": "Sky",
+					"cumulus": 0.6209999918937683,
+					"elevation": 24.020999908447266,
+					"mieCoefficient": 5.0,
+					"mieScattering": 0.9900000095367432,
+					"rayleighCoefficient": 3.5,
+					"speed": 1.8370000123977661
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Island",
+					"uuid": 2028805799
+				},
+				{
+					"castShadow": true,
+					"component": "Geometry",
+					"cullBack": false,
+					"path": "virtual:island",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							1.0,
+							1.0,
+							1.0,
+							1.0
+						],
+						"albedoTexture": "assets/rock.jpg",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 15.100000381469727
+					}
+				},
+				{
+					"component": "Nodes",
+					"path": "assets/island.otn",
+					"settings": {
+						"178414412": {
+							"value": [
+								200.0,
+								58.0,
+								200.0
+							]
+						},
+						"2320418202": {
+							"value": 0.5
+						},
+						"2758978105": {
+							"value": 300
+						},
+						"2819818999": {
+							"value": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"2842695751": {
+							"value": 7
+						},
+						"2893673049": {
+							"value": 0.5
+						},
+						"3704143381": {
+							"value": 1.7000000476837158
+						},
+						"4257377701": {
+							"value": [
+								0.0,
+								8.0,
+								33.0
+							]
+						},
+						"846135667": {
+							"value": 6
+						}
+					}
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Water",
+					"uuid": 2088255789
+				},
+				{
+					"ao": 0.44999998807907104,
+					"color": [
+						0.45344191789627075,
+						0.534967839717865,
+						0.8539823293685913
+					],
+					"component": "Water",
+					"depthFactor": 1.0,
+					"distance": 500.0,
+					"level": 15.0,
+					"metallic": 0.10000000149011612,
+					"normals": "assets/water.jpg",
+					"reflectivity": 0.4699999988079071,
+					"roughness": 0.30000001192092896,
+					"scale": 48.36000061035156,
+					"speed": 2.5799999237060547,
+					"useRefractance": false
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 2000.0,
+			"fov": 60.0,
+			"near": 1.0,
+			"pitch": 0.9196246266365051,
+			"position": [
+				0.0,
+				20.0,
+				200.0
+			],
+			"speed": 3.0,
+			"yaw": -2.0
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.800000011920929,
+		"contrast": 1.0,
+		"exposure": 1.0499999523162842,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": true,
+		"godrays": false,
+		"tonemap": 3
+	}
+}

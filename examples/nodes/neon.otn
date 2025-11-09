@@ -111,7 +111,7 @@
 					"type": "texture"
 				}
 			],
-			"path": "nodes/assets/neon.ot",
+			"path": "assets/neon.ot",
 			"title": "Canvas Generator",
 			"type": "Canvas Generator",
 			"x": 7.0,

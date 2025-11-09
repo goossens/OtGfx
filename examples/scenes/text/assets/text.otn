@@ -1,0 +1,231 @@
+{
+	"links": [
+		{
+			"from": 1820132736,
+			"id": 1566555099,
+			"to": 2376471301
+		},
+		{
+			"from": 3757291389,
+			"id": 2810814009,
+			"to": 3380124045
+		},
+		{
+			"from": 2873823255,
+			"id": 2160878527,
+			"to": 3195650876
+		},
+		{
+			"from": 4048718069,
+			"id": 2920632154,
+			"to": 729637025
+		},
+		{
+			"from": 3521990454,
+			"id": 2178711956,
+			"to": 2381672726
+		},
+		{
+			"from": 2547115557,
+			"id": 1069569191,
+			"to": 3761969199
+		},
+		{
+			"from": 143155056,
+			"id": 3271718652,
+			"to": 605994486
+		},
+		{
+			"from": 2219369368,
+			"id": 2802977211,
+			"to": 2781239163
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 2625173197,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 1820132736,
+					"name": "Font",
+					"type": "font"
+				}
+			],
+			"path": "roboto.ttf",
+			"title": "Font Input",
+			"type": "Font Input",
+			"x": 67.0,
+			"y": 77.0
+		},
+		{
+			"id": 1509100340,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 4048718069,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Size",
+			"type": "Float Input",
+			"value": 12.0,
+			"x": 67.0,
+			"y": 246.0
+		},
+		{
+			"id": 240854171,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3521990454,
+					"name": "Value",
+					"type": "string"
+				}
+			],
+			"title": "Text",
+			"type": "String Input",
+			"value": "Test",
+			"x": 67.0,
+			"y": 160.0
+		},
+		{
+			"id": 2590841629,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 143155056,
+					"name": "Value",
+					"type": "bool"
+				}
+			],
+			"title": "Center",
+			"type": "Boolean Input",
+			"value": true,
+			"x": 67.0,
+			"y": 328.0
+		},
+		{
+			"id": 325703201,
+			"inputs": [
+				{
+					"id": 2376471301,
+					"name": "Font",
+					"type": "font"
+				},
+				{
+					"id": 2381672726,
+					"name": "Text",
+					"type": "string"
+				},
+				{
+					"id": 729637025,
+					"name": "Size",
+					"type": "float"
+				},
+				{
+					"id": 605994486,
+					"name": "Center",
+					"type": "bool"
+				}
+			],
+			"outputs": [
+				{
+					"id": 3757291389,
+					"name": "Shape",
+					"type": "shape"
+				}
+			],
+			"title": "Text to Shape",
+			"type": "Text to Shape",
+			"x": 408.0,
+			"y": 52.0
+		},
+		{
+			"id": 1210579916,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 2547115557,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Depth",
+			"type": "Float Input",
+			"value": 3.0,
+			"x": 67.0,
+			"y": 410.0
+		},
+		{
+			"id": 2418679538,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 2219369368,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Tolerance",
+			"type": "Float Input",
+			"value": 0.20000000298023224,
+			"x": 67.0,
+			"y": 488.0
+		},
+		{
+			"id": 3232750156,
+			"inputs": [
+				{
+					"id": 3380124045,
+					"name": "Shape",
+					"type": "shape"
+				},
+				{
+					"id": 3761969199,
+					"name": "Depth",
+					"type": "float"
+				},
+				{
+					"id": 2781239163,
+					"name": "Tolerance",
+					"type": "float"
+				}
+			],
+			"outputs": [
+				{
+					"id": 2873823255,
+					"name": "Geometry",
+					"type": "geometry"
+				}
+			],
+			"title": "Extrude Shape",
+			"type": "Extrude Shape",
+			"x": 665.0,
+			"y": 174.0
+		},
+		{
+			"id": 2601550030,
+			"inputs": [
+				{
+					"id": 3195650876,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 2302637727,
+					"name": "Name",
+					"type": "string",
+					"value": "text"
+				}
+			],
+			"outputs": [],
+			"title": "Save Geometry to Virtual",
+			"type": "Save Geometry to Virtual",
+			"x": 925.0,
+			"y": 174.0
+		}
+	]
+}

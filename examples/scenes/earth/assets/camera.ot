@@ -1,0 +1,41 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+var input = import("input");
+var math = import("math");
+var scene = import("scene");
+
+class camera : scene.Entity {
+	function create(this) {
+		this.radius = 4.0;
+		this.pitch = 0.0;
+		this.yaw = 0.0;
+	}
+
+	function update(this) {
+		if (input.isButtonDown(input.mouseLeft)) {
+			var drag = input.getMouseDrag();
+
+			if (drag.x != 0.0 || drag.y != 0.0) {
+				this.pitch += drag.y * 0.15;
+				this.yaw -= drag.x * 0.3;
+
+				var pitchRad = this.pitch.radians();
+				var yawRad = this.yaw.radians();
+
+				var position = math.Vec3(
+					this.radius * pitchRad.cos() * yawRad.sin(),
+					this.radius * pitchRad.sin(),
+					this.radius * pitchRad.cos() * yawRad.cos()
+				);
+
+				var transform = this.getTransformComponent();
+				transform.setTranslation(position);
+				transform.setRotation(math.Vec3(-this.pitch, this.yaw, 0.0));
+			}
+		}
+	}
+}

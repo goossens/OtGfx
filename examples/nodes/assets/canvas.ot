@@ -1,0 +1,46 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+var canvas = import("canvas");
+
+class Generator : canvas.Canvas {
+	function __init__(this) {
+		this.logo = this.loadImage(__DIR__.join("logo.png"), 0);
+		this.font = this.loadFont(__DIR__.join("roboto.ttf"));
+	}
+
+	function generate(this) {
+		this.beginPath();
+		this.roundedRect(120, 120, 200, 200, 10);
+		this.fillColor("#ffc0ff");
+		this.fill();
+		this.strokeColor("#000000");
+		this.strokeWidth(15);
+		this.stroke();
+
+		this.beginPath();
+		this.moveTo(160, 160);
+		this.lineTo(280, 160);
+		this.lineTo(220, 220);
+		this.closePath();
+		this.fillColor("#7f00c0");
+		this.fill();
+		this.strokeColor("#000000");
+		this.strokeWidth(15);
+		this.stroke();
+
+		var w = this.getImageWidth(this.logo);
+		var h = this.getImageHeight(this.logo);
+
+		this.drawImage(this.logo, 160, 400, w / 4.0, h / 4.0);
+		this.drawImage(this.logo, 300, 400, w / 2.0, h / 2.0);
+		this.drawImage(this.logo, 500, 400);
+
+		this.fontFace(this.font);
+		this.fontSize(100);
+		this.text(160, 900, "ObjectTalk");
+	}
+}

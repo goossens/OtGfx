@@ -1,0 +1,59 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+var http = import("http");
+
+print();
+print("Running HTTP server");
+
+function info(req, res, next) {
+	res.send("info");
+}
+
+var router = http.Router()
+	.static("/static", __DIR__.join("static"))
+	.get("/info", info)
+
+	.use(function(req, res, next) {
+		res.setHeader("hello", "world");
+		next();
+	})
+
+	.get("/info2", function(req, res, next) {
+		res.sendJson({
+			"id": 12,
+			"name": "john",
+			"amount": 12.3,
+			"data" : [2, 3, 4, 5]
+		});
+	})
+
+	.get("/info3", function(req, res, next) {
+		res.sendJson(req.getHeaders());
+	})
+
+	.get("/info4", function(req, res, next) {
+		next();
+	})
+
+	.all("/debug", function(req, res, next) {
+		res.send(req.debug());
+	})
+
+	.get("/file", function(req, res, next) {
+		res.sendFile(Path(__DIR__, "static", "test.txt"));
+	})
+
+	.get("/stop", function(req, res, next) {
+		res.send("Server stopping");
+		os.stopServer();
+	});
+
+var server = http.Server(router).listen("0.0.0.0", 80);
+os.runServer();
+
+print();
+print("Stopped HTTP server");

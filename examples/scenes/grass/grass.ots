@@ -1,0 +1,217 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 3605789201
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-30.0,
+						30.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						1.600000023841858,
+						1.2999999523162842,
+						3.299999952316284
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 10.0,
+					"fov": 60.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Light",
+					"uuid": 2412049699
+				},
+				{
+					"ambient": 0.30000001192092896,
+					"azimuth": 87.0,
+					"castShadow": true,
+					"color": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"component": "Directional Light",
+					"elevation": 52.70000076293945
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Ground",
+					"uuid": 2485643096
+				},
+				{
+					"castShadow": false,
+					"component": "Geometry",
+					"cullBack": true,
+					"path": "virtual:ground",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						4.0,
+						4.0,
+						4.0
+					],
+					"translation": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							1.0,
+							1.0,
+							1.0,
+							1.0
+						],
+						"albedoTexture": "assets/brown_mud_leaves_01_diff_1k.jpg",
+						"ao": 1.0,
+						"aoTexture": "assets/brown_mud_leaves_01_ao_1k.png",
+						"emissive": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "assets/brown_mud_leaves_01_nor_gl_1k.png",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 3.0
+					}
+				},
+				{
+					"component": "Nodes",
+					"path": "assets/ground.otn",
+					"settings": {}
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Grass",
+					"uuid": 2636405566
+				},
+				{
+					"component": "Grass",
+					"grass": {
+						"baseColor": [
+							0.1324431598186493,
+							0.32300883531570435,
+							0.09433001279830933
+						],
+						"bladeCurve": 0.6499999761581421,
+						"bladeHeight": 0.4000000059604645,
+						"bladePointiness": 0.0,
+						"bladeSegments": 4,
+						"bladeWidth": 0.017000000923871994,
+						"blades": 10000,
+						"castShadow": true,
+						"colorVariation": 0.5600000023841858,
+						"heightVariation": 0.3499999940395355,
+						"patchDepth": 4.0,
+						"patchWidth": 4.0,
+						"tipColor": [
+							0.48366275429725647,
+							0.5265486836433411,
+							0.15377084910869598
+						],
+						"widthVariation": 0.33000001311302185,
+						"windDirection": 90.0,
+						"windStrength": 0.15000000596046448,
+						"windVariation": 0.20000000298023224
+					}
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 10.0,
+			"fov": 60.0,
+			"near": 0.10000000149011612,
+			"pitch": -30.0,
+			"position": [
+				1.600000023841858,
+				1.2999999523162842,
+				3.299999952316284
+			],
+			"speed": 3.0,
+			"yaw": -30.0
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.800000011920929,
+		"contrast": 1.0,
+		"exposure": 1.7999999523162842,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": false,
+		"godrays": false,
+		"tonemap": 3
+	}
+}

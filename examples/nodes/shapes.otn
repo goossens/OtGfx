@@ -1,0 +1,248 @@
+{
+	"links": [
+		{
+			"from": 2554285984,
+			"id": 3992194556,
+			"to": 4119941361
+		},
+		{
+			"from": 3119975211,
+			"id": 3469349317,
+			"to": 2764411236
+		},
+		{
+			"from": 1015283801,
+			"id": 3966663434,
+			"to": 3746061458
+		},
+		{
+			"from": 482522280,
+			"id": 1580063265,
+			"to": 2646704178
+		},
+		{
+			"from": 812531869,
+			"id": 1687256330,
+			"to": 2915250374
+		},
+		{
+			"from": 3119975211,
+			"id": 429424177,
+			"to": 4255235843
+		},
+		{
+			"from": 1015283801,
+			"id": 2026231665,
+			"to": 2923961712
+		},
+		{
+			"from": 2554285984,
+			"id": 1939937135,
+			"to": 2241928552
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 3866103533,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3119975211,
+					"name": "Shape",
+					"type": "shape"
+				}
+			],
+			"path": "assets/heart.ot",
+			"title": "Shape Generator",
+			"type": "Shape Generator",
+			"x": 43.0,
+			"y": 125.0
+		},
+		{
+			"id": 1273660806,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 812531869,
+					"name": "Shape",
+					"type": "shape"
+				}
+			],
+			"path": "assets/hole.ot",
+			"title": "Shape Generator",
+			"type": "Shape Generator",
+			"x": 43.0,
+			"y": 236.0
+		},
+		{
+			"id": 1405573252,
+			"inputs": [
+				{
+					"id": 4255235843,
+					"name": "A",
+					"type": "shape"
+				},
+				{
+					"id": 2915250374,
+					"name": "B",
+					"type": "shape"
+				}
+			],
+			"outputs": [
+				{
+					"id": 482522280,
+					"name": "Output",
+					"type": "shape"
+				}
+			],
+			"title": "Merge Shapes",
+			"type": "Merge Shapes",
+			"x": 442.0,
+			"y": 212.0
+		},
+		{
+			"id": 2972530100,
+			"inputs": [
+				{
+					"id": 2646704178,
+					"name": "Input",
+					"type": "shape"
+				},
+				{
+					"id": 3857878709,
+					"name": "Translate",
+					"type": "vector2",
+					"value": [
+						100.0,
+						0.0
+					]
+				},
+				{
+					"id": 3009524288,
+					"name": "Rotate",
+					"type": "float",
+					"value": 0.0
+				},
+				{
+					"id": 1934493382,
+					"name": "Scale",
+					"type": "vector2",
+					"value": [
+						2.0,
+						2.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 2554285984,
+					"name": "Output",
+					"type": "shape"
+				}
+			],
+			"title": "Shape Transform",
+			"type": "Shape Transform",
+			"x": 645.0,
+			"y": 398.0
+		},
+		{
+			"id": 4057788996,
+			"inputs": [
+				{
+					"id": 4119941361,
+					"name": "Input",
+					"type": "shape"
+				}
+			],
+			"outputs": [],
+			"title": "Save Shape to File",
+			"type": "Save Shape to File",
+			"x": 1168.0,
+			"y": 245.0
+		},
+		{
+			"id": 1502717984,
+			"inputs": [
+				{
+					"id": 2241928552,
+					"name": "Shape",
+					"type": "shape"
+				},
+				{
+					"id": 3149591694,
+					"name": "Color",
+					"type": "color",
+					"value": [
+						0.0,
+						0.0,
+						1.0,
+						1.0
+					]
+				},
+				{
+					"id": 225816278,
+					"name": "Outline",
+					"type": "bool",
+					"value": false
+				}
+			],
+			"outputs": [
+				{
+					"id": 1015283801,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"title": "Shape to Image",
+			"type": "Shape to Image",
+			"x": 960.0,
+			"y": 406.0
+		},
+		{
+			"id": 2743362932,
+			"inputs": [
+				{
+					"id": 2923961712,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"outputs": [],
+			"title": "Image Probe",
+			"type": "Image Probe",
+			"x": 1168.0,
+			"y": 321.0
+		},
+		{
+			"id": 4187570850,
+			"inputs": [
+				{
+					"id": 2764411236,
+					"name": "Shape",
+					"type": "shape"
+				}
+			],
+			"outputs": [],
+			"title": "Shape Probe",
+			"type": "Shape Probe",
+			"x": 1168.0,
+			"y": 11.0
+		},
+		{
+			"id": 1775110685,
+			"inputs": [
+				{
+					"id": 3746061458,
+					"name": "Input",
+					"type": "image"
+				}
+			],
+			"outputs": [],
+			"title": "Save Image to File",
+			"type": "Save Image to File",
+			"x": 1168.0,
+			"y": 547.0
+		}
+	]
+}

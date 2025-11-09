@@ -1,0 +1,290 @@
+{
+	"links": [
+		{
+			"from": 2138079152,
+			"id": 991072836,
+			"to": 1832054022
+		},
+		{
+			"from": 3612936401,
+			"id": 2059597713,
+			"to": 4176607593
+		},
+		{
+			"from": 398949678,
+			"id": 2327481933,
+			"to": 2591656379
+		},
+		{
+			"from": 4224501250,
+			"id": 2916653529,
+			"to": 3034294933
+		},
+		{
+			"from": 3348868259,
+			"id": 795605833,
+			"to": 3477936987
+		},
+		{
+			"from": 362673415,
+			"id": 3320651208,
+			"to": 1587798896
+		},
+		{
+			"from": 1712230651,
+			"id": 3158019285,
+			"to": 3783536367
+		},
+		{
+			"from": 1712230651,
+			"id": 2554687665,
+			"to": 387969279
+		},
+		{
+			"from": 948421980,
+			"id": 639585586,
+			"to": 2538487069
+		},
+		{
+			"from": 948421980,
+			"id": 4232418373,
+			"to": 2347066354
+		},
+		{
+			"from": 3612936401,
+			"id": 1595183049,
+			"to": 912086187
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 37376410,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3348868259,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Float Input",
+			"type": "Float Input",
+			"value": 2.0,
+			"x": 65.0,
+			"y": 148.0
+		},
+		{
+			"id": 2507790077,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 362673415,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Float Input",
+			"type": "Float Input",
+			"value": 1.0,
+			"x": 65.0,
+			"y": 235.0
+		},
+		{
+			"id": 87380946,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3612936401,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Float Input",
+			"type": "Float Input",
+			"value": 5.0,
+			"x": 64.0,
+			"y": 324.0
+		},
+		{
+			"id": 2144673360,
+			"inputs": [
+				{
+					"id": 3477936987,
+					"name": "A",
+					"type": "float"
+				},
+				{
+					"id": 1587798896,
+					"name": "B",
+					"type": "float"
+				}
+			],
+			"operator": 0,
+			"outputs": [
+				{
+					"id": 1712230651,
+					"name": "Result",
+					"type": "float"
+				}
+			],
+			"title": "Binary Float",
+			"type": "Binary Float",
+			"x": 220.0,
+			"y": 130.0
+		},
+		{
+			"id": 1919832317,
+			"inputs": [
+				{
+					"id": 3783536367,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"outputs": [],
+			"title": "Float Probe",
+			"type": "Float Probe",
+			"x": 388.0,
+			"y": 103.0
+		},
+		{
+			"id": 3315532145,
+			"inputs": [
+				{
+					"id": 387969279,
+					"name": "A",
+					"type": "float"
+				},
+				{
+					"id": 912086187,
+					"name": "B",
+					"type": "float"
+				}
+			],
+			"operator": 1,
+			"outputs": [
+				{
+					"id": 948421980,
+					"name": "Result",
+					"type": "float"
+				}
+			],
+			"title": "Binary Float",
+			"type": "Binary Float",
+			"x": 397.0,
+			"y": 204.0
+		},
+		{
+			"id": 3233810296,
+			"inputs": [
+				{
+					"id": 2347066354,
+					"name": "A",
+					"type": "float"
+				}
+			],
+			"operator": 0,
+			"outputs": [
+				{
+					"id": 2138079152,
+					"name": "Result",
+					"type": "float"
+				}
+			],
+			"title": "Unary Float",
+			"type": "Unary Float",
+			"x": 619.0,
+			"y": 298.0
+		},
+		{
+			"id": 1110028080,
+			"inputs": [
+				{
+					"id": 1832054022,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"outputs": [],
+			"title": "Float Probe",
+			"type": "Float Probe",
+			"x": 793.0,
+			"y": 324.0
+		},
+		{
+			"id": 1000952904,
+			"inputs": [
+				{
+					"id": 2538487069,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"outputs": [],
+			"title": "Float Probe",
+			"type": "Float Probe",
+			"x": 620.0,
+			"y": 205.0
+		},
+		{
+			"id": 3402501913,
+			"inputs": [
+				{
+					"id": 4176607593,
+					"name": "A",
+					"type": "float"
+				}
+			],
+			"operator": 16,
+			"outputs": [
+				{
+					"id": 398949678,
+					"name": "Result",
+					"type": "float"
+				}
+			],
+			"title": "Unary Float",
+			"type": "Unary Float",
+			"x": 364.0,
+			"y": 408.0
+		},
+		{
+			"id": 2823060043,
+			"inputs": [
+				{
+					"id": 2591656379,
+					"name": "A",
+					"type": "float"
+				}
+			],
+			"operator": 12,
+			"outputs": [
+				{
+					"id": 4224501250,
+					"name": "Result",
+					"type": "float"
+				}
+			],
+			"title": "Unary Float",
+			"type": "Unary Float",
+			"x": 615.0,
+			"y": 470.0
+		},
+		{
+			"id": 870515000,
+			"inputs": [
+				{
+					"id": 3034294933,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"outputs": [],
+			"title": "Float Probe",
+			"type": "Float Probe",
+			"x": 789.0,
+			"y": 479.0
+		}
+	]
+}

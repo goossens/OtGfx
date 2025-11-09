@@ -1,0 +1,23 @@
+#!/usr/local/bin/ot
+
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+class A : Object {
+	function someMethod(this, value) {
+		print("A.someMethod(", value, ")");
+	}
+}
+
+class B : A {
+	function someMethod(this, value) {
+		super.someMethod(this, value);
+		print("B.someMethod(", value, ")");
+	}
+}
+
+var b = B();
+b.someMethod(2);

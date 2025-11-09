@@ -1,0 +1,28 @@
+#!/usr/local/bin/ot
+
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+try {
+	var a = 1;
+	var b = 2 / 0;
+	var c = 4;
+
+} catch error {
+	print("Caught an exception: ", error);
+}
+
+print("Recovered from exception");
+print();
+
+try {
+	throw "this is completely wrong";
+
+} catch error {
+	print("Caught another exception: ", error);
+}
+
+print("Recovered from another exception");

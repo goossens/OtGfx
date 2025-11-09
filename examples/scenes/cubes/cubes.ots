@@ -1,0 +1,329 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 3204018985
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-25.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						1.5,
+						3.5
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 100.0,
+					"fov": 60.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Light",
+					"uuid": 536276296
+				},
+				{
+					"ambient": 0.04899999871850014,
+					"azimuth": 160.0,
+					"castShadow": false,
+					"color": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"component": "Directional Light",
+					"elevation": 30.0
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Geometry",
+					"uuid": 3459683369
+				},
+				{
+					"component": "Nodes",
+					"path": "assets/cube.otn",
+					"settings": {}
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Cube 1",
+					"uuid": 2430172498
+				},
+				{
+					"castShadow": true,
+					"component": "Geometry",
+					"cullBack": true,
+					"path": "virtual:cube",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						-2.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							0.8044281601905823,
+							0.8451327085494995,
+							0.3851710855960846,
+							1.0
+						],
+						"albedoTexture": "",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.026548683643341064,
+							0.026548683643341064,
+							0.026548683643341064
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 1.0
+					}
+				},
+				{
+					"component": "Script",
+					"path": "assets/rotator.ot"
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Cube 2",
+					"uuid": 2633785743
+				},
+				{
+					"castShadow": true,
+					"component": "Geometry",
+					"cullBack": true,
+					"path": "virtual:cube",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							0.28451716899871826,
+							0.4334903061389923,
+							0.7654867172241211,
+							1.0
+						],
+						"albedoTexture": "",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.01732710376381874,
+							0.01868547685444355,
+							0.022123873233795166
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 1.0
+					}
+				},
+				{
+					"component": "Script",
+					"path": "assets/rotator.ot"
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Cube 3",
+					"uuid": 3742618790
+				},
+				{
+					"castShadow": true,
+					"component": "Geometry",
+					"cullBack": true,
+					"path": "virtual:cube",
+					"transparent": false,
+					"wireframe": false
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						2.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"component": "Material",
+					"material": {
+						"albedo": [
+							0.8893805146217346,
+							0.29121309518814087,
+							0.29121309518814087,
+							1.0
+						],
+						"albedoTexture": "",
+						"ao": 1.0,
+						"aoTexture": "",
+						"emissive": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"emissiveTexture": "",
+						"metallic": 0.5,
+						"metallicRoughnessTexture": "",
+						"normalTexture": "",
+						"offset": [
+							0.0,
+							0.0
+						],
+						"roughness": 0.5,
+						"scale": 1.0
+					}
+				},
+				{
+					"component": "Script",
+					"path": "assets/rotator.ot"
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 50.0,
+			"fov": 60.0,
+			"near": 0.10000000149011612,
+			"pitch": -20.0,
+			"position": [
+				0.0,
+				2.0,
+				5.0
+			],
+			"speed": 3.0,
+			"yaw": 0.0
+		},
+		"gizmo": {
+			"enabled": true,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.800000011920929,
+		"contrast": 1.0499999523162842,
+		"exposure": 1.2100000381469727,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": true,
+		"godrays": false,
+		"tonemap": 3
+	}
+}

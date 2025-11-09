@@ -1,0 +1,1076 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 2548702117
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-4.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						-2.299999952316284,
+						4.400000095367432
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 100.0,
+					"fov": 56.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Light",
+					"uuid": 897607119
+				},
+				{
+					"ambient": 0.03999999910593033,
+					"azimuth": 22.100000381469727,
+					"castShadow": true,
+					"color": [
+						0.45098039507865906,
+						0.25246578454971313,
+						0.09196462482213974
+					],
+					"component": "Directional Light",
+					"elevation": 8.399999618530273
+				}
+			]
+		},
+		{
+			"children": [
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Left",
+							"uuid": 2396579673
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:wall",
+							"transparent": false,
+							"wireframe": false
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								0.0,
+								90.0,
+								0.0
+							],
+							"scale": [
+								4.0,
+								4.0,
+								4.0
+							],
+							"translation": [
+								-2.0,
+								-2.0,
+								0.0
+							]
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									1.0,
+									1.0,
+									1.0,
+									1.0
+								],
+								"albedoTexture": "assets/wall/albedo.jpg",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.0,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "assets/wall/normals.jpg",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 1.0,
+								"scale": 1.0
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Back",
+							"uuid": 634174959
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:wall",
+							"transparent": false,
+							"wireframe": false
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"scale": [
+								4.0,
+								4.0,
+								4.0
+							],
+							"translation": [
+								0.0,
+								-2.0,
+								-2.0
+							]
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									1.0,
+									1.0,
+									1.0,
+									1.0
+								],
+								"albedoTexture": "assets/wall/albedo.jpg",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.0,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "assets/wall/normals.jpg",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 1.0,
+								"scale": 1.0
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Right",
+							"uuid": 1401126317
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:wall",
+							"transparent": false,
+							"wireframe": false
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								0.0,
+								-90.0,
+								0.0
+							],
+							"scale": [
+								4.0,
+								4.0,
+								4.0
+							],
+							"translation": [
+								2.0,
+								-2.0,
+								0.0
+							]
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									1.0,
+									1.0,
+									1.0,
+									1.0
+								],
+								"albedoTexture": "assets/wall/albedo.jpg",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.0,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "assets/wall/normals.jpg",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 1.0,
+								"scale": 1.0
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Floor",
+							"uuid": 1238961594
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:wall",
+							"transparent": false,
+							"wireframe": false
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								-90.0,
+								0.0,
+								0.0
+							],
+							"scale": [
+								4.0,
+								4.0,
+								4.0
+							],
+							"translation": [
+								0.0,
+								-4.0,
+								0.0
+							]
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									1.0,
+									1.0,
+									1.0,
+									1.0
+								],
+								"albedoTexture": "assets/wall/albedo.jpg",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.0,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "assets/wall/normals.jpg",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 1.0,
+								"scale": 1.0
+							}
+						}
+					]
+				}
+			],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Walls",
+					"uuid": 1763250769
+				},
+				{
+					"component": "Nodes",
+					"path": "assets/wall.otn",
+					"settings": {}
+				}
+			]
+		},
+		{
+			"children": [
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Firewood",
+							"uuid": 2618592115
+						},
+						{
+							"castShadow": true,
+							"component": "Model",
+							"model": "assets/firewood/Firewood1.gltf"
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								-5.199999809265137,
+								3.5999999046325684,
+								0.0
+							],
+							"scale": [
+								2.0,
+								2.0,
+								2.0
+							],
+							"translation": [
+								0.0,
+								-3.799999952316284,
+								0.699999988079071
+							]
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Flames",
+							"uuid": 2654667679
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"scale": [
+								1.2000000476837158,
+								1.5,
+								1.5
+							],
+							"translation": [
+								0.0,
+								-3.4000000953674316,
+								0.6000000238418579
+							]
+						},
+						{
+							"color": [
+								0.11764705926179886,
+								0.0784313753247261,
+								0.019607843831181526
+							],
+							"component": "Point Light",
+							"offset": [
+								0.0,
+								0.09000000357627869,
+								-0.03999999910593033
+							],
+							"radius": 0.9200000166893005
+						},
+						{
+							"component": "Particles",
+							"settings": {
+								"alpha": [
+									[
+										0.0,
+										0.824999988079071
+									],
+									[
+										1.0,
+										0.4125000238418579
+									],
+									[
+										-10000.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									]
+								],
+								"atlas": "assets/firewood/flames.png",
+								"atlasColumns": 8,
+								"atlasRows": 8,
+								"gravity": 0.0,
+								"lifeSpanHigh": 2.7890000343322754,
+								"lifeSpanLow": 2.25,
+								"particles": 4,
+								"rotationEnd": 0.0,
+								"rotationStart": 0.0,
+								"scale": [
+									[
+										0.0,
+										0.7599999904632568
+									],
+									[
+										1.0,
+										0.8999999761581421
+									],
+									[
+										-10000.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									]
+								],
+								"shape": 0,
+								"speed": 0.0
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Smoke",
+							"uuid": 815822172
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"scale": [
+								1.0,
+								1.0,
+								1.0
+							],
+							"translation": [
+								0.0,
+								-4.0,
+								0.20000000298023224
+							]
+						},
+						{
+							"component": "Particles",
+							"settings": {
+								"alpha": [
+									[
+										0.0,
+										0.07999998331069946
+									],
+									[
+										0.633431077003479,
+										0.1600000262260437
+									],
+									[
+										1.0,
+										0.0
+									],
+									[
+										-10000.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									]
+								],
+								"atlas": "assets/firewood/smoke.png",
+								"atlasColumns": 1,
+								"atlasRows": 1,
+								"gravity": -0.7160000205039978,
+								"lifeSpanHigh": 2.490999937057495,
+								"lifeSpanLow": 1.5829999446868896,
+								"particles": 100,
+								"rotationEnd": 210.73199462890625,
+								"rotationStart": 0.0,
+								"scale": [
+									[
+										0.0,
+										0.8999999761581421
+									],
+									[
+										0.18768328428268433,
+										0.949999988079071
+									],
+									[
+										1.0,
+										0.8899999856948853
+									],
+									[
+										-10000.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									]
+								],
+								"shape": 2,
+								"speed": 0.06599999964237213
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Soot",
+							"uuid": 2550898856
+						},
+						{
+							"component": "Transform",
+							"rotation": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"scale": [
+								1.0,
+								1.0,
+								1.0
+							],
+							"translation": [
+								0.0,
+								-4.0,
+								0.0
+							]
+						},
+						{
+							"component": "Particles",
+							"settings": {
+								"alpha": [
+									[
+										0.0,
+										0.2200000286102295
+									],
+									[
+										0.6392961740493774,
+										0.6499999761581421
+									],
+									[
+										1.0,
+										0.06999999284744263
+									],
+									[
+										-10000.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									]
+								],
+								"atlas": "assets/firewood/soot.png",
+								"atlasColumns": 1,
+								"atlasRows": 1,
+								"gravity": 0.10899999737739563,
+								"lifeSpanHigh": 4.254000186920166,
+								"lifeSpanLow": 2.0,
+								"particles": 20,
+								"rotationEnd": 206.3419952392578,
+								"rotationStart": 87.80500030517578,
+								"scale": [
+									[
+										0.0,
+										0.9099999666213989
+									],
+									[
+										1.0,
+										0.9099999666213989
+									],
+									[
+										-10000.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0
+									]
+								],
+								"shape": 2,
+								"speed": 0.800000011920929
+							}
+						}
+					]
+				}
+			],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Fire",
+					"uuid": 1468282234
+				}
+			]
+		},
+		{
+			"children": [
+				{
+					"children": [
+						{
+							"children": [],
+							"components": [
+								{
+									"component": "Core",
+									"tag": "Torch",
+									"uuid": 2634288849
+								},
+								{
+									"castShadow": true,
+									"component": "Model",
+									"model": "assets/torch/Torch.gltf"
+								},
+								{
+									"component": "Transform",
+									"rotation": [
+										0.0,
+										90.0,
+										0.0
+									],
+									"scale": [
+										2.0,
+										2.0,
+										2.0
+									],
+									"translation": [
+										-2.0,
+										-2.0,
+										0.0
+									]
+								},
+								{
+									"color": [
+										0.11764705926179886,
+										0.0784313753247261,
+										0.019607843831181526
+									],
+									"component": "Point Light",
+									"offset": [
+										0.17000000178813934,
+										0.10000000149011612,
+										0.029999999329447746
+									],
+									"radius": 0.30000001192092896
+								}
+							]
+						},
+						{
+							"children": [],
+							"components": [
+								{
+									"component": "Core",
+									"tag": "Flame",
+									"uuid": 1674273830
+								},
+								{
+									"component": "Transform",
+									"rotation": [
+										0.0,
+										0.0,
+										0.0
+									],
+									"scale": [
+										0.6000000238418579,
+										1.5,
+										1.0
+									],
+									"translation": [
+										-1.600000023841858,
+										-1.100000023841858,
+										-0.10000000149011612
+									]
+								},
+								{
+									"color": [
+										0.05752211809158325,
+										0.04267420992255211,
+										0.0050904517993330956
+									],
+									"component": "Point Light",
+									"offset": [
+										-1.600000023841858,
+										-0.20000000298023224,
+										-0.10000000149011612
+									],
+									"radius": 1.0
+								},
+								{
+									"component": "Particles",
+									"settings": {
+										"alpha": [
+											[
+												0.0,
+												0.4624999761581421
+											],
+											[
+												0.5014662742614746,
+												0.862500011920929
+											],
+											[
+												1.0,
+												0.4750000238418579
+											],
+											[
+												-10000.0,
+												0.0
+											],
+											[
+												-10000.0,
+												0.0
+											],
+											[
+												-10000.0,
+												0.0
+											]
+										],
+										"atlas": "assets/torch/flames.png",
+										"atlasColumns": 16,
+										"atlasRows": 4,
+										"gravity": 0.0,
+										"lifeSpanHigh": 1.8489999771118164,
+										"lifeSpanLow": 1.343000054359436,
+										"particles": 1,
+										"rotationEnd": 0.0,
+										"rotationStart": 0.0,
+										"scale": [
+											[
+												0.0,
+												1.0
+											],
+											[
+												0.49560117721557617,
+												0.800000011920929
+											],
+											[
+												1.0,
+												0.949999988079071
+											],
+											[
+												-10000.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0
+											]
+										],
+										"shape": 0,
+										"speed": 0.0
+									}
+								}
+							]
+						}
+					],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Left",
+							"uuid": 724284883
+						}
+					]
+				},
+				{
+					"children": [
+						{
+							"children": [],
+							"components": [
+								{
+									"component": "Core",
+									"tag": "Torch",
+									"uuid": 236632611
+								},
+								{
+									"castShadow": true,
+									"component": "Model",
+									"model": "assets/torch/Torch.gltf"
+								},
+								{
+									"component": "Transform",
+									"rotation": [
+										0.0,
+										-90.0,
+										0.0
+									],
+									"scale": [
+										2.0,
+										2.0,
+										2.0
+									],
+									"translation": [
+										2.0,
+										-2.0,
+										0.0
+									]
+								},
+								{
+									"color": [
+										0.11764705926179886,
+										0.0784313753247261,
+										0.019607843831181526
+									],
+									"component": "Point Light",
+									"offset": [
+										-0.20000000298023224,
+										0.10000000149011612,
+										0.019999999552965164
+									],
+									"radius": 0.30000001192092896
+								}
+							]
+						},
+						{
+							"children": [],
+							"components": [
+								{
+									"component": "Core",
+									"tag": "Flame",
+									"uuid": 2740174447
+								},
+								{
+									"component": "Transform",
+									"rotation": [
+										0.0,
+										0.0,
+										0.0
+									],
+									"scale": [
+										0.699999988079071,
+										1.5,
+										1.0
+									],
+									"translation": [
+										1.600000023841858,
+										-1.100000023841858,
+										-0.10000000149011612
+									]
+								},
+								{
+									"color": [
+										0.16814160346984863,
+										0.12200108170509338,
+										0.005207922775298357
+									],
+									"component": "Point Light",
+									"offset": [
+										-0.6000000238418579,
+										-0.20000000298023224,
+										-0.10000000149011612
+									],
+									"radius": 1.2000000476837158
+								},
+								{
+									"component": "Particles",
+									"settings": {
+										"alpha": [
+											[
+												0.0,
+												0.4624999761581421
+											],
+											[
+												0.5102639198303223,
+												0.800000011920929
+											],
+											[
+												1.0,
+												0.44999998807907104
+											],
+											[
+												-10000.0,
+												0.6499999761581421
+											],
+											[
+												-10000.0,
+												0.6499999761581421
+											],
+											[
+												-10000.0,
+												0.6499999761581421
+											]
+										],
+										"atlas": "assets/torch/flames.png",
+										"atlasColumns": 16,
+										"atlasRows": 4,
+										"gravity": 0.0010000000474974513,
+										"lifeSpanHigh": 1.8489999771118164,
+										"lifeSpanLow": 1.343000054359436,
+										"particles": 1,
+										"rotationEnd": 0.0,
+										"rotationStart": 0.0,
+										"scale": [
+											[
+												0.0,
+												1.0
+											],
+											[
+												0.5043988227844238,
+												0.737500011920929
+											],
+											[
+												1.0,
+												1.0
+											],
+											[
+												-10000.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0
+											]
+										],
+										"shape": 0,
+										"speed": 0.0
+									}
+								}
+							]
+						}
+					],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Right",
+							"uuid": 2172251004
+						}
+					]
+				}
+			],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Torches",
+					"uuid": 1733465189
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 10.0,
+			"fov": 60.0,
+			"near": 0.5,
+			"pitch": -3.210111379623413,
+			"position": [
+				-0.11313693970441818,
+				-2.2376434803009033,
+				4.424063205718994
+			],
+			"speed": 3.0,
+			"yaw": 0.0
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.6000000238418579,
+		"contrast": 0.9700000286102295,
+		"exposure": 1.4900000095367432,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": false,
+		"godrays": false,
+		"tonemap": 3
+	}
+}

@@ -1,0 +1,499 @@
+{
+	"links": [
+		{
+			"from": 4199234642,
+			"id": 2126217525,
+			"to": 3009259456
+		},
+		{
+			"from": 504030413,
+			"id": 89811019,
+			"to": 139345585
+		},
+		{
+			"from": 3099626467,
+			"id": 1082286702,
+			"to": 1201578438
+		},
+		{
+			"from": 4199234642,
+			"id": 3254880158,
+			"to": 78221710
+		},
+		{
+			"from": 504030413,
+			"id": 3746026837,
+			"to": 1507525971
+		},
+		{
+			"from": 4026487469,
+			"id": 3240544659,
+			"to": 3795832070
+		},
+		{
+			"from": 694146000,
+			"id": 553265410,
+			"to": 4069816819
+		},
+		{
+			"from": 1043941645,
+			"id": 4040359205,
+			"to": 3341472812
+		},
+		{
+			"from": 556969473,
+			"id": 3587168492,
+			"to": 563324433
+		},
+		{
+			"from": 2944394539,
+			"id": 3911897091,
+			"to": 4142766422
+		},
+		{
+			"from": 1127951203,
+			"id": 3993217114,
+			"to": 2582601684
+		},
+		{
+			"from": 4026487469,
+			"id": 3051358240,
+			"to": 3611879913
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 2796377670,
+			"inputs": [
+				{
+					"id": 2501608985,
+					"name": "Width",
+					"type": "float",
+					"value": 1.0
+				},
+				{
+					"id": 3395798594,
+					"name": "Height",
+					"type": "float",
+					"value": 1.0
+				},
+				{
+					"id": 2266092105,
+					"name": "Depth",
+					"type": "float",
+					"value": 1.0
+				},
+				{
+					"id": 2773139980,
+					"name": "Center",
+					"type": "bool",
+					"value": true
+				}
+			],
+			"outputs": [
+				{
+					"id": 4199234642,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"title": "Cube Manifold",
+			"type": "Cube Manifold",
+			"x": 3.0,
+			"y": 17.0
+		},
+		{
+			"id": 860841340,
+			"inputs": [
+				{
+					"id": 1371567545,
+					"name": "Height",
+					"type": "float",
+					"value": 1.0
+				},
+				{
+					"id": 2813997730,
+					"name": "Top Radius",
+					"type": "float",
+					"value": 0.10000000149011612
+				},
+				{
+					"id": 1545882542,
+					"name": "Bottom Radius",
+					"type": "float",
+					"value": 0.5
+				},
+				{
+					"id": 996482093,
+					"name": "Segments",
+					"type": "int",
+					"value": 128
+				},
+				{
+					"id": 168070081,
+					"name": "Center",
+					"type": "bool",
+					"value": false
+				}
+			],
+			"outputs": [
+				{
+					"id": 1043941645,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"title": "Cylinder Manifold",
+			"type": "Cylinder Manifold",
+			"x": 3.0,
+			"y": 326.0
+		},
+		{
+			"id": 1428306405,
+			"inputs": [
+				{
+					"id": 1054675271,
+					"name": "Radius",
+					"type": "float",
+					"value": 0.6000000238418579
+				},
+				{
+					"id": 521255553,
+					"name": "Segments",
+					"type": "int",
+					"value": 64
+				}
+			],
+			"outputs": [
+				{
+					"id": 504030413,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"title": "Sphere Manifold",
+			"type": "Sphere Manifold",
+			"x": 3.0,
+			"y": 206.0
+		},
+		{
+			"id": 2401398816,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 4026487469,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"path": "assets/manifold.ot",
+			"title": "Manifold Generator",
+			"type": "Manifold Generator",
+			"x": 797.0,
+			"y": 75.0
+		},
+		{
+			"id": 3151400214,
+			"inputs": [
+				{
+					"id": 569142309,
+					"name": "Height",
+					"type": "float",
+					"value": 1.0
+				},
+				{
+					"id": 3597425230,
+					"name": "Top Radius",
+					"type": "float",
+					"value": 0.20000000298023224
+				},
+				{
+					"id": 1410314062,
+					"name": "Bottom Radius",
+					"type": "float",
+					"value": 0.20000000298023224
+				},
+				{
+					"id": 217599677,
+					"name": "Segments",
+					"type": "int",
+					"value": 32
+				},
+				{
+					"id": 3240819437,
+					"name": "Center",
+					"type": "bool",
+					"value": true
+				}
+			],
+			"outputs": [
+				{
+					"id": 1127951203,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"title": "Cylinder Manifold",
+			"type": "Cylinder Manifold",
+			"x": 3.0,
+			"y": 520.0
+		},
+		{
+			"id": 4285713672,
+			"inputs": [
+				{
+					"id": 2582601684,
+					"name": "Input",
+					"type": "manifold"
+				},
+				{
+					"id": 3567120135,
+					"name": "Translate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.30000001192092896
+					]
+				},
+				{
+					"id": 2891006079,
+					"name": "Rotate",
+					"type": "vector3",
+					"value": [
+						90.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 226246800,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						1.0,
+						1.0,
+						1.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 2944394539,
+					"name": "Output",
+					"type": "manifold"
+				}
+			],
+			"title": "Manifold Transform",
+			"type": "Manifold Transform",
+			"x": 224.0,
+			"y": 494.0
+		},
+		{
+			"id": 1155901222,
+			"inputs": [
+				{
+					"id": 3341472812,
+					"name": "A",
+					"type": "manifold"
+				},
+				{
+					"id": 4142766422,
+					"name": "B",
+					"type": "manifold"
+				}
+			],
+			"outputs": [
+				{
+					"id": 556969473,
+					"name": "Result",
+					"type": "manifold"
+				}
+			],
+			"title": "Manifold Difference",
+			"type": "Manifold Difference",
+			"x": 791.0,
+			"y": 462.0
+		},
+		{
+			"azimuth": 18.994422912597656,
+			"elevation": 0.5064797401428223,
+			"id": 3306652105,
+			"inputs": [
+				{
+					"id": 563324433,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"lightColor": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"meshColor": [
+				1.0,
+				0.8500000238418579,
+				0.0
+			],
+			"outputs": [],
+			"title": "Manifold Probe",
+			"type": "Manifold Probe",
+			"wireframe": false,
+			"x": 1090.0,
+			"y": 324.0
+		},
+		{
+			"id": 2736846761,
+			"inputs": [
+				{
+					"id": 3009259456,
+					"name": "A",
+					"type": "manifold"
+				},
+				{
+					"id": 139345585,
+					"name": "B",
+					"type": "manifold"
+				}
+			],
+			"outputs": [
+				{
+					"id": 3099626467,
+					"name": "Result",
+					"type": "manifold"
+				}
+			],
+			"title": "Manifold Difference",
+			"type": "Manifold Difference",
+			"x": 337.0,
+			"y": 54.0
+		},
+		{
+			"azimuth": -17.657163619995117,
+			"elevation": 9.007109642028809,
+			"id": 245059582,
+			"inputs": [
+				{
+					"id": 1201578438,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"lightColor": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"meshColor": [
+				1.0,
+				0.8500000238418579,
+				0.0
+			],
+			"outputs": [],
+			"title": "Manifold Probe",
+			"type": "Manifold Probe",
+			"wireframe": false,
+			"x": 580.0,
+			"y": 4.0
+		},
+		{
+			"id": 3622050429,
+			"inputs": [
+				{
+					"id": 78221710,
+					"name": "A",
+					"type": "manifold"
+				},
+				{
+					"id": 1507525971,
+					"name": "B",
+					"type": "manifold"
+				}
+			],
+			"outputs": [
+				{
+					"id": 694146000,
+					"name": "Result",
+					"type": "manifold"
+				}
+			],
+			"title": "Manifold Union",
+			"type": "Manifold Union",
+			"x": 337.0,
+			"y": 223.0
+		},
+		{
+			"azimuth": 24.342378616333008,
+			"elevation": 23.498708724975586,
+			"id": 879112846,
+			"inputs": [
+				{
+					"id": 4069816819,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"lightColor": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"meshColor": [
+				1.0,
+				0.8500000238418579,
+				0.0
+			],
+			"outputs": [],
+			"title": "Manifold Probe",
+			"type": "Manifold Probe",
+			"wireframe": false,
+			"x": 580.0,
+			"y": 233.0
+		},
+		{
+			"azimuth": 16.596139907836914,
+			"elevation": 10.68539047241211,
+			"id": 1476596490,
+			"inputs": [
+				{
+					"id": 3795832070,
+					"name": "Manifold",
+					"type": "manifold"
+				}
+			],
+			"lightColor": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"meshColor": [
+				1.0,
+				0.8500000238418579,
+				0.0
+			],
+			"outputs": [],
+			"title": "Manifold Probe",
+			"type": "Manifold Probe",
+			"wireframe": false,
+			"x": 1087.0,
+			"y": 10.0
+		},
+		{
+			"id": 1957370161,
+			"inputs": [
+				{
+					"id": 3611879913,
+					"name": "Input",
+					"type": "manifold"
+				}
+			],
+			"outputs": [],
+			"title": "Save Manifold to File",
+			"type": "Save Manifold to File",
+			"x": 1088.0,
+			"y": 251.0
+		}
+	]
+}

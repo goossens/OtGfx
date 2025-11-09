@@ -1,0 +1,243 @@
+{
+	"links": [
+		{
+			"from": 2328493305,
+			"id": 1452369846,
+			"to": 2511747297
+		},
+		{
+			"from": 178693374,
+			"id": 12067616,
+			"to": 2579752259
+		},
+		{
+			"from": 178693374,
+			"id": 1917744951,
+			"to": 4212610965
+		},
+		{
+			"from": 3685543364,
+			"id": 3200598620,
+			"to": 1768027432
+		},
+		{
+			"from": 2804520904,
+			"id": 226545926,
+			"to": 1188714593
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 3306839662,
+			"inputs": [
+				{
+					"id": 1356280732,
+					"name": "Width",
+					"type": "int",
+					"value": 1024
+				},
+				{
+					"id": 95135891,
+					"name": "Height",
+					"type": "int",
+					"value": 1024
+				}
+			],
+			"outputs": [
+				{
+					"id": 178693374,
+					"name": "Texture",
+					"type": "texture"
+				}
+			],
+			"path": "assets/canvas.ot",
+			"title": "Canvas Generator",
+			"type": "Canvas Generator",
+			"x": 61.0,
+			"y": 346.0
+		},
+		{
+			"id": 2500155942,
+			"inputs": [
+				{
+					"id": 4212610965,
+					"name": "Texture",
+					"type": "texture"
+				}
+			],
+			"outputs": [],
+			"title": "Texture Probe",
+			"type": "Texture Probe",
+			"x": 381.0,
+			"y": 424.0
+		},
+		{
+			"id": 1205952888,
+			"inputs": [
+				{
+					"id": 1213828521,
+					"name": "Width",
+					"type": "int",
+					"value": 500
+				},
+				{
+					"id": 1231006958,
+					"name": "Height",
+					"type": "int",
+					"value": 500
+				},
+				{
+					"id": 1162434827,
+					"name": "Repeat",
+					"type": "float",
+					"value": 6.0
+				},
+				{
+					"id": 1355399889,
+					"name": "Black Color",
+					"type": "color",
+					"value": [
+						0.0,
+						0.0,
+						0.0,
+						1.0
+					]
+				},
+				{
+					"id": 1107390219,
+					"name": "White Color",
+					"type": "color",
+					"value": [
+						0.8955223560333252,
+						0.8955223560333252,
+						0.8955223560333252,
+						0.5671641826629639
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 3685543364,
+					"name": "Texture",
+					"type": "texture"
+				}
+			],
+			"title": "CheckerBoard Generator",
+			"type": "CheckerBoard Generator",
+			"x": 61.0,
+			"y": 6.0
+		},
+		{
+			"curve": 0,
+			"id": 4009062728,
+			"inputs": [
+				{
+					"id": 1768027432,
+					"name": "Input",
+					"type": "texture"
+				},
+				{
+					"id": 1238521574,
+					"name": "Black Level",
+					"type": "color",
+					"value": [
+						0.0,
+						0.0,
+						0.0,
+						1.0
+					]
+				},
+				{
+					"id": 4222597686,
+					"name": "White Level",
+					"type": "color",
+					"value": [
+						1.0,
+						1.0,
+						1.0,
+						1.0
+					]
+				}
+			],
+			"lut": [
+				[
+					0.0,
+					0.0
+				],
+				[
+					1.0,
+					0.4399999976158142
+				],
+				[
+					-10000.0,
+					0.0
+				],
+				[
+					0.0,
+					0.0
+				],
+				[
+					0.0,
+					0.0
+				],
+				[
+					0.0,
+					0.0
+				]
+			],
+			"outputs": [
+				{
+					"id": 2804520904,
+					"name": "Output",
+					"type": "texture"
+				}
+			],
+			"title": "RGBA Curves",
+			"type": "RGBA Curves",
+			"x": 366.0,
+			"y": 6.0
+		},
+		{
+			"id": 372837584,
+			"inputs": [
+				{
+					"id": 1188714593,
+					"name": "Input",
+					"type": "texture"
+				},
+				{
+					"id": 2579752259,
+					"name": "Overlay",
+					"type": "texture"
+				}
+			],
+			"outputs": [
+				{
+					"id": 2328493305,
+					"name": "Output",
+					"type": "texture"
+				}
+			],
+			"title": "Alpha Over",
+			"type": "Alpha Over",
+			"x": 666.0,
+			"y": 296.0
+		},
+		{
+			"id": 3493605675,
+			"inputs": [
+				{
+					"id": 2511747297,
+					"name": "Texture",
+					"type": "texture"
+				}
+			],
+			"outputs": [],
+			"title": "Texture Probe",
+			"type": "Texture Probe",
+			"x": 872.0,
+			"y": 5.0
+		}
+	]
+}

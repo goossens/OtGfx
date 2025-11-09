@@ -1,0 +1,115 @@
+#!/usr/local/bin/ot
+
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+var gui = import("gui");
+
+var drawing = import("widgets/drawing");
+var clock = import("widgets/clock");
+var radar = import("widgets/radar");
+var vd = import("widgets/vd");
+
+class MyApp : gui.App {
+	function setup(this) {
+		var columns = gui.Columns([25, 50, 25]);
+		this.add(columns);
+
+		var rows = gui.Rows([45, 55]);
+		rows.add(this.tronPanel());
+		rows.add(this.propertiesPanel());
+		columns.add(rows);
+
+		columns.add(this.tabPanel());
+		columns.add(this.dialPanel());
+	}
+
+	function tronPanel(this) {
+		var panel = gui.Panel();
+		panel.add(gui.Tron());
+		return panel;
+	}
+
+	function propertiesPanel(this) {
+		var properties = gui.Properties(0.55);
+		var widgets = gui.TreeNode("Property Widgets");
+		properties.add(widgets);
+
+		widgets.add(gui.CheckBox("Boolean", false, function(value) {
+			print("Boolean: ", value);
+		}));
+
+		widgets.add(gui.IntegerSlider("Integer", 50, 0, 100, function(value) {
+			print("Integer: ", value);
+		}));
+
+		widgets.add(gui.RealSlider("Real", 0.5, 0.0, 1.0, function(value) {
+			print("Real: ", value);
+		}));
+
+		widgets.add(gui.TextField("String", "", function(value) {
+			print("String: ", value);
+		}));
+
+		widgets.add(gui.ComboBox("Selector", "", ["", "one", "two", "three"], function(value) {
+			print("Selector: ", value);
+		}));
+
+		return properties;
+	}
+
+	function tabPanel(this) {
+		this.tabs = gui.TabBar();
+		this.addTab("Logo", this.logoPanel());
+		this.addTab("Clock", clock.Clock());
+		this.addTab("Radar", radar.Radar());
+		this.addTab("Test", vd.Vd());
+		this.addTab("Drawing", drawing.Drawing());
+		return this.tabs;
+	}
+
+	function addTab(this, label, widget) {
+		var tab = gui.Tab(label);
+		tab.add(widget);
+		this.tabs.add(tab);
+	}
+	function logoPanel(this) {
+		return gui.Picture()
+			.setPicture(Path(__DIR__, "assets", "logo.png"))
+			.setHorizontalAlignment(gui.alignCenter)
+			.setVerticalAlignment(gui.alignMiddle);
+	}
+
+	function dialPanel(this) {
+		this.steam = gui.Dial()
+			.setBackground(Path(__DIR__, "assets", "steam.png"), 150, 150)
+			.setNeedle(Path(__DIR__, "assets", "needle.png"), 150, 150)
+			.setRotationLimits(-150.0, 150.0)
+			.setValueLimits(0.0, 500.0)
+			.setValue(400.0)
+			.setScale(0.5)
+			.setHorizontalAlignment(gui.alignCenter);
+
+		this.knob = gui.FilmStrip()
+			.setFilmStrip(Path(__DIR__, "assets", "knob.png"))
+			.setFrames(128)
+			.setValue(this.steam.getValue() / 500.0)
+			.setHorizontalAlignment(gui.alignCenter)
+			.setCallback(function(value) {
+				this.steam.setValue(value * 500.0);
+			});
+
+		var dials = gui.Panel();
+		dials.add(gui.Header("Dials/Meters/Knobs"));
+		dials.add(this.steam);
+		dials.add(gui.Label("Level", gui.alignCenter));
+		dials.add(this.knob);
+		return dials;
+	}
+}
+
+var app = MyApp();
+app.run();

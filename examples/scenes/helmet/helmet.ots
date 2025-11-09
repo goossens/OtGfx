@@ -1,0 +1,148 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 1813117803
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-30.0,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						3.0,
+						4.0
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 100.0,
+					"fov": 60.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Skybox",
+					"uuid": 397016261
+				},
+				{
+					"brightness": 0.5699999928474426,
+					"component": "Sky Box",
+					"cubemap": "assets/sunset.hdr",
+					"gamma": 2.5999999046325684
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "IBL",
+					"uuid": 1816997939
+				},
+				{
+					"component": "Image Based Lighting (IBL)",
+					"cubemap": "assets/sunset.hdr"
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Helmet",
+					"uuid": 1501969473
+				},
+				{
+					"castShadow": true,
+					"component": "Model",
+					"model": "assets/DamagedHelmet.gltf"
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						-2.0,
+						-50.0,
+						-10.0
+					],
+					"scale": [
+						2.0,
+						2.0,
+						2.0
+					],
+					"translation": [
+						-0.4000000059604645,
+						0.5,
+						0.0
+					]
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 50.0,
+			"fov": 60.0,
+			"near": 0.10000000149011612,
+			"pitch": -21.55008888244629,
+			"position": [
+				0.0,
+				2.0,
+				5.0
+			],
+			"speed": 3.0,
+			"yaw": 1.596582055091858
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.44999998807907104,
+		"contrast": 1.5099999904632568,
+		"exposure": 0.5299999713897705,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": false,
+		"godrays": false,
+		"tonemap": 6
+	}
+}

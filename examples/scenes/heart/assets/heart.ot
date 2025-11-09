@@ -1,0 +1,15 @@
+var shape = import("shape");
+
+class Generator : shape.Shape {
+	function generate(this) {
+		this.moveTo(25, 25);
+		this.bezierCurveTo(25, 25, 20, 50, 0, 50);
+		this.bezierCurveTo(-30, 50, -30, 15, -30, 15);
+		this.bezierCurveTo(-30, -5, -10, -27, 25, -45);
+		this.bezierCurveTo(60, -27, 80, -5, 80, 15);
+		this.bezierCurveTo(80, 15, 80, 50, 50, 50);
+		this.bezierCurveTo(35, 50, 25, 25, 25, 25);
+
+		this.circle(25, 0, 15);
+	}
+}

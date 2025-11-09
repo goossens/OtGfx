@@ -1,0 +1,503 @@
+{
+	"links": [
+		{
+			"from": 1264211271,
+			"id": 2894921561,
+			"to": 3668522933
+		},
+		{
+			"from": 4268866276,
+			"id": 460101970,
+			"to": 4265614440
+		},
+		{
+			"from": 2899184105,
+			"id": 1581110295,
+			"to": 3827253381
+		},
+		{
+			"from": 3848305466,
+			"id": 1672979964,
+			"to": 102567846
+		},
+		{
+			"from": 3689894685,
+			"id": 3733072218,
+			"to": 945768549
+		},
+		{
+			"from": 1533389473,
+			"id": 501500904,
+			"to": 309925066
+		},
+		{
+			"from": 3601304416,
+			"id": 2653508370,
+			"to": 203729305
+		},
+		{
+			"from": 4216697146,
+			"id": 2356319009,
+			"to": 4266417075
+		},
+		{
+			"from": 3301039066,
+			"id": 3450197298,
+			"to": 3311694367
+		},
+		{
+			"from": 365201105,
+			"id": 2324976220,
+			"to": 3189373295
+		},
+		{
+			"from": 2644089457,
+			"id": 4173385653,
+			"to": 2927469254
+		},
+		{
+			"from": 1739425664,
+			"id": 507560804,
+			"to": 1305712855
+		},
+		{
+			"from": 2841268553,
+			"id": 2388851543,
+			"to": 1014418491
+		},
+		{
+			"from": 516188977,
+			"id": 2633180320,
+			"to": 3785390663
+		},
+		{
+			"from": 827272833,
+			"id": 4088118680,
+			"to": 2201807937
+		},
+		{
+			"from": 2464541713,
+			"id": 1711063996,
+			"to": 532287848
+		},
+		{
+			"from": 2464541713,
+			"id": 518497157,
+			"to": 4236765908
+		},
+		{
+			"from": 2464541713,
+			"id": 3596791130,
+			"to": 225809525
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 538930107,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 2899184105,
+					"name": "Geometry",
+					"type": "geometry"
+				}
+			],
+			"path": "",
+			"title": "Geometry",
+			"type": "Geometry Input",
+			"x": 131.0,
+			"y": 11.0
+		},
+		{
+			"id": 2964941285,
+			"inputs": [
+				{
+					"id": 1202990129,
+					"name": "Seed",
+					"type": "int",
+					"value": 1
+				},
+				{
+					"id": 798292254,
+					"name": "Min",
+					"type": "float",
+					"value": 0.5
+				},
+				{
+					"id": 918957183,
+					"name": "Max",
+					"type": "float",
+					"value": 1.0
+				}
+			],
+			"outputs": [
+				{
+					"id": 3689894685,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Random Float",
+			"type": "Random Float",
+			"x": 257.0,
+			"y": 372.0
+		},
+		{
+			"id": 3262656160,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 1533389473,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Scale",
+			"type": "Float Input",
+			"value": 1.0,
+			"x": 131.0,
+			"y": 545.0
+		},
+		{
+			"id": 2136221550,
+			"inputs": [
+				{
+					"id": 945768549,
+					"name": "A",
+					"type": "float"
+				},
+				{
+					"id": 309925066,
+					"name": "B",
+					"type": "float"
+				}
+			],
+			"operator": 2,
+			"outputs": [
+				{
+					"id": 2464541713,
+					"name": "Result",
+					"type": "float"
+				}
+			],
+			"title": "Binary Float",
+			"type": "Binary Float",
+			"x": 436.0,
+			"y": 470.0
+		},
+		{
+			"id": 4237229282,
+			"inputs": [
+				{
+					"id": 1160240525,
+					"name": "Seed",
+					"type": "int",
+					"value": 1
+				},
+				{
+					"id": 2905782448,
+					"name": "Min",
+					"type": "float",
+					"value": 0.0
+				},
+				{
+					"id": 601288807,
+					"name": "Max",
+					"type": "float",
+					"value": 360.0
+				}
+			],
+			"outputs": [
+				{
+					"id": 1264211271,
+					"name": "Value",
+					"type": "float"
+				}
+			],
+			"title": "Random Float",
+			"type": "Random Float",
+			"x": 435.0,
+			"y": 326.0
+		},
+		{
+			"id": 1200162136,
+			"inputs": [
+				{
+					"id": 328829659,
+					"name": "X",
+					"type": "float",
+					"value": 0.0
+				},
+				{
+					"id": 3668522933,
+					"name": "Y",
+					"type": "float"
+				},
+				{
+					"id": 4085025102,
+					"name": "Z",
+					"type": "float",
+					"value": 0.0
+				}
+			],
+			"outputs": [
+				{
+					"id": 4268866276,
+					"name": "Value",
+					"type": "vector3"
+				}
+			],
+			"title": "Combine XYZ",
+			"type": "Combine XYZ",
+			"x": 666.0,
+			"y": 326.0
+		},
+		{
+			"id": 4082656913,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3601304416,
+					"name": "Image",
+					"type": "image"
+				}
+			],
+			"path": "",
+			"title": "Instance Mask",
+			"type": "Image Input",
+			"x": 131.0,
+			"y": 200.0
+		},
+		{
+			"id": 3530977512,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 365201105,
+					"name": "U",
+					"type": "float"
+				},
+				{
+					"id": 2644089457,
+					"name": "V",
+					"type": "float"
+				}
+			],
+			"title": "UV Field",
+			"type": "UV Field",
+			"x": 257.0,
+			"y": 275.0
+		},
+		{
+			"id": 4135589338,
+			"inputs": [
+				{
+					"id": 203729305,
+					"name": "Image",
+					"type": "image"
+				},
+				{
+					"id": 3189373295,
+					"name": "U",
+					"type": "float"
+				},
+				{
+					"id": 2927469254,
+					"name": "V",
+					"type": "float"
+				}
+			],
+			"outputs": [
+				{
+					"id": 4216697146,
+					"name": "Gray",
+					"type": "float"
+				}
+			],
+			"title": "Sample Gray Image",
+			"type": "Sample Gray Image",
+			"x": 418.0,
+			"y": 174.0
+		},
+		{
+			"id": 3345459450,
+			"inputs": [
+				{
+					"id": 4266417075,
+					"name": "A",
+					"type": "float"
+				},
+				{
+					"id": 1830482152,
+					"name": "B",
+					"type": "float",
+					"value": 0.10000000149011612
+				}
+			],
+			"operator": 2,
+			"outputs": [
+				{
+					"id": 3301039066,
+					"name": "Result",
+					"type": "bool"
+				}
+			],
+			"title": "Compare Float",
+			"type": "Compare Float",
+			"x": 614.0,
+			"y": 170.0
+		},
+		{
+			"id": 2767349882,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 1739425664,
+					"name": "Value",
+					"type": "int"
+				}
+			],
+			"title": "Instance Count",
+			"type": "Integer Input",
+			"value": 200,
+			"x": 131.0,
+			"y": 136.0
+		},
+		{
+			"id": 3405945509,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 516188977,
+					"name": "Value",
+					"type": "int"
+				}
+			],
+			"title": "Random Seed",
+			"type": "Integer Input",
+			"value": 0,
+			"x": 131.0,
+			"y": 73.0
+		},
+		{
+			"id": 3138945819,
+			"inputs": [
+				{
+					"id": 532287848,
+					"name": "X",
+					"type": "float"
+				},
+				{
+					"id": 4236765908,
+					"name": "Y",
+					"type": "float"
+				},
+				{
+					"id": 225809525,
+					"name": "Z",
+					"type": "float"
+				}
+			],
+			"outputs": [
+				{
+					"id": 827272833,
+					"name": "Value",
+					"type": "vector3"
+				}
+			],
+			"title": "Combine XYZ",
+			"type": "Combine XYZ",
+			"x": 666.0,
+			"y": 470.0
+		},
+		{
+			"id": 2937495558,
+			"inputs": [
+				{
+					"id": 3827253381,
+					"name": "Geometry",
+					"type": "geometry"
+				},
+				{
+					"id": 3785390663,
+					"name": "Seed",
+					"type": "int"
+				},
+				{
+					"id": 1305712855,
+					"name": "Instance Count",
+					"type": "int"
+				},
+				{
+					"id": 3311694367,
+					"name": "Selection",
+					"type": "bool"
+				},
+				{
+					"id": 3215647462,
+					"name": "Rotate to Normals",
+					"type": "bool",
+					"value": false
+				},
+				{
+					"id": 4265614440,
+					"name": "Rotation",
+					"type": "vector3"
+				},
+				{
+					"id": 2201807937,
+					"name": "Scale",
+					"type": "vector3"
+				}
+			],
+			"outputs": [
+				{
+					"id": 2841268553,
+					"name": "Instances",
+					"type": "instances"
+				}
+			],
+			"title": "Instances on Faces",
+			"type": "Instances on Faces",
+			"x": 841.0,
+			"y": 14.0
+		},
+		{
+			"id": 2414095796,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3848305466,
+					"name": "Value",
+					"type": "string"
+				}
+			],
+			"title": "Instances Name",
+			"type": "String Input",
+			"value": "",
+			"x": 131.0,
+			"y": 611.0
+		},
+		{
+			"id": 3047086596,
+			"inputs": [
+				{
+					"id": 1014418491,
+					"name": "Input",
+					"type": "instances"
+				},
+				{
+					"id": 102567846,
+					"name": "Name",
+					"type": "string"
+				}
+			],
+			"outputs": [],
+			"title": "Save Instances to Virtual",
+			"type": "Save Instances to Virtual",
+			"x": 1139.0,
+			"y": 586.0
+		}
+	]
+}

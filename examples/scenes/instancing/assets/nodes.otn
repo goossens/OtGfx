@@ -1,0 +1,662 @@
+{
+	"links": [
+		{
+			"from": 141066482,
+			"id": 4082992494,
+			"to": 795908031
+		},
+		{
+			"from": 3025445172,
+			"id": 3461571239,
+			"to": 3545155075
+		},
+		{
+			"from": 180408701,
+			"id": 288016460,
+			"to": 2346885826
+		},
+		{
+			"from": 4191412660,
+			"id": 3329626033,
+			"to": 1027933994
+		},
+		{
+			"from": 216853080,
+			"id": 980787635,
+			"to": 2820934007
+		},
+		{
+			"from": 2748530417,
+			"id": 3737899874,
+			"to": 3196163256
+		},
+		{
+			"from": 216853080,
+			"id": 1274646304,
+			"to": 873477357
+		},
+		{
+			"from": 3339123378,
+			"id": 1050838188,
+			"to": 3098789528
+		},
+		{
+			"from": 3339123378,
+			"id": 2722823854,
+			"to": 1603031618
+		},
+		{
+			"from": 1255943026,
+			"id": 382632584,
+			"to": 251076592
+		},
+		{
+			"from": 3645131408,
+			"id": 3332762566,
+			"to": 2041633410
+		},
+		{
+			"from": 1968705174,
+			"id": 1769594629,
+			"to": 852880645
+		},
+		{
+			"from": 2248573501,
+			"id": 3314211876,
+			"to": 3675693576
+		},
+		{
+			"from": 2248573501,
+			"id": 2159170197,
+			"to": 1241675404
+		},
+		{
+			"from": 473541455,
+			"id": 2666505135,
+			"to": 554574787
+		}
+	],
+	"metadata": {},
+	"nodes": [
+		{
+			"id": 2677775489,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 141066482,
+					"name": "Geometry",
+					"type": "geometry"
+				}
+			],
+			"primitive": {
+				"phiLength": 360.0,
+				"phiSegments": 8,
+				"phiStart": 0.0,
+				"thetaLength": 180.0,
+				"thetaSegments": 16,
+				"thetaStart": 0.0,
+				"type": "Sphere"
+			},
+			"title": "Create Sphere",
+			"type": "Geometry Generator",
+			"x": 6.0,
+			"y": 157.0
+		},
+		{
+			"id": 3781631580,
+			"inputs": [
+				{
+					"id": 795908031,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 997779709,
+					"name": "Translate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 3911898886,
+					"name": "Rotate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 803165759,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						6.0,
+						6.0,
+						6.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 3339123378,
+					"name": "Output",
+					"type": "geometry"
+				}
+			],
+			"title": "Transform",
+			"type": "Geometry Transform",
+			"x": 248.0,
+			"y": 130.0
+		},
+		{
+			"id": 2538637514,
+			"inputs": [
+				{
+					"id": 3098789528,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 840759907,
+					"name": "Translate",
+					"type": "vector3",
+					"value": [
+						-7.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 3245459342,
+					"name": "Rotate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 2296027807,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						1.0,
+						1.0,
+						1.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 2248573501,
+					"name": "Output",
+					"type": "geometry"
+				}
+			],
+			"title": "Transform",
+			"type": "Geometry Transform",
+			"x": 604.0,
+			"y": 17.0
+		},
+		{
+			"id": 1829953391,
+			"inputs": [
+				{
+					"id": 1241675404,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 1312634976,
+					"name": "Name",
+					"type": "string",
+					"value": "parentV"
+				}
+			],
+			"outputs": [],
+			"title": "Save Geometry to Virtual",
+			"type": "Save Geometry to Virtual",
+			"x": 1304.0,
+			"y": 36.0
+		},
+		{
+			"id": 1849796011,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 4191412660,
+					"name": "Geometry",
+					"type": "geometry"
+				}
+			],
+			"primitive": {
+				"bottomRadius": 1.0,
+				"heightSegments": 1,
+				"openEnded": false,
+				"radialSegments": 32,
+				"thetaLength": 360.0,
+				"thetaStart": 0.0,
+				"topRadius": 0.0,
+				"type": "Cylinder"
+			},
+			"title": "Create Cone",
+			"type": "Geometry Generator",
+			"x": 6.0,
+			"y": 649.0
+		},
+		{
+			"id": 2146266194,
+			"inputs": [
+				{
+					"id": 1027933994,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 3674880614,
+					"name": "Translate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.5,
+						0.0
+					]
+				},
+				{
+					"id": 59766303,
+					"name": "Rotate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 1831560002,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						0.20000000298023224,
+						0.6000000238418579,
+						0.20000000298023224
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 3025445172,
+					"name": "Output",
+					"type": "geometry"
+				}
+			],
+			"title": "Transform",
+			"type": "Geometry Transform",
+			"x": 248.0,
+			"y": 625.0
+		},
+		{
+			"id": 80633612,
+			"inputs": [
+				{
+					"id": 3545155075,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 1873980317,
+					"name": "Name",
+					"type": "string",
+					"value": "child"
+				}
+			],
+			"outputs": [],
+			"title": "Save Geometry to Virtual",
+			"type": "Save Geometry to Virtual",
+			"x": 1304.0,
+			"y": 622.0
+		},
+		{
+			"id": 3172657298,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3625227314,
+					"name": "X",
+					"type": "float"
+				},
+				{
+					"id": 1347289520,
+					"name": "Y",
+					"type": "float"
+				},
+				{
+					"id": 473541455,
+					"name": "Z",
+					"type": "float"
+				}
+			],
+			"title": "Position",
+			"type": "Position Field",
+			"x": 604.0,
+			"y": 189.0
+		},
+		{
+			"id": 837793109,
+			"inputs": [
+				{
+					"id": 554574787,
+					"name": "A",
+					"type": "float"
+				},
+				{
+					"id": 4238422020,
+					"name": "B",
+					"type": "float",
+					"value": 0.0
+				}
+			],
+			"operator": 5,
+			"outputs": [
+				{
+					"id": 1968705174,
+					"name": "Result",
+					"type": "bool"
+				}
+			],
+			"title": "Compare Float",
+			"type": "Compare Float",
+			"x": 729.0,
+			"y": 189.0
+		},
+		{
+			"id": 2533510625,
+			"inputs": [
+				{
+					"id": 3675693576,
+					"name": "Geometry",
+					"type": "geometry"
+				},
+				{
+					"id": 852880645,
+					"name": "Selection",
+					"type": "bool"
+				},
+				{
+					"id": 2253122059,
+					"name": "Rotate to Normals",
+					"type": "bool",
+					"value": true
+				},
+				{
+					"id": 2278322405,
+					"name": "Rotation",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 502892136,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						1.0,
+						1.0,
+						1.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 180408701,
+					"name": "Instances",
+					"type": "instances"
+				}
+			],
+			"title": "Instances on Vertices",
+			"type": "Instances on Vertices",
+			"x": 960.0,
+			"y": 102.0
+		},
+		{
+			"id": 3247491458,
+			"inputs": [
+				{
+					"id": 2346885826,
+					"name": "Input",
+					"type": "instances"
+				},
+				{
+					"id": 2867761287,
+					"name": "Name",
+					"type": "string",
+					"value": "instancesV"
+				}
+			],
+			"outputs": [],
+			"title": "Save Instances to Virtual",
+			"type": "Save Instances to Virtual",
+			"x": 1296.0,
+			"y": 134.0
+		},
+		{
+			"id": 3836844752,
+			"inputs": [
+				{
+					"id": 1603031618,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 1290617004,
+					"name": "Translate",
+					"type": "vector3",
+					"value": [
+						7.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 2264241974,
+					"name": "Rotate",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 3805232308,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						1.0,
+						1.0,
+						1.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 216853080,
+					"name": "Output",
+					"type": "geometry"
+				}
+			],
+			"title": "Transform",
+			"type": "Geometry Transform",
+			"x": 604.0,
+			"y": 340.0
+		},
+		{
+			"id": 3502237646,
+			"inputs": [],
+			"outputs": [
+				{
+					"id": 3754249534,
+					"name": "X",
+					"type": "float"
+				},
+				{
+					"id": 1373093797,
+					"name": "Y",
+					"type": "float"
+				},
+				{
+					"id": 1255943026,
+					"name": "Z",
+					"type": "float"
+				}
+			],
+			"title": "Position",
+			"type": "Position Field",
+			"x": 604.0,
+			"y": 510.0
+		},
+		{
+			"id": 1242930939,
+			"inputs": [
+				{
+					"id": 251076592,
+					"name": "A",
+					"type": "float"
+				},
+				{
+					"id": 3736512974,
+					"name": "B",
+					"type": "float",
+					"value": 0.0
+				}
+			],
+			"operator": 5,
+			"outputs": [
+				{
+					"id": 3645131408,
+					"name": "Result",
+					"type": "bool"
+				}
+			],
+			"title": "Compare Float",
+			"type": "Compare Float",
+			"x": 729.0,
+			"y": 510.0
+		},
+		{
+			"id": 3537745297,
+			"inputs": [
+				{
+					"id": 873477357,
+					"name": "Geometry",
+					"type": "geometry"
+				},
+				{
+					"id": 3713176088,
+					"name": "Seed",
+					"type": "int",
+					"value": 0
+				},
+				{
+					"id": 575614436,
+					"name": "Instance Count",
+					"type": "int",
+					"value": 200
+				},
+				{
+					"id": 2041633410,
+					"name": "Selection",
+					"type": "bool"
+				},
+				{
+					"id": 3079541220,
+					"name": "Rotate to Normals",
+					"type": "bool",
+					"value": true
+				},
+				{
+					"id": 2137833022,
+					"name": "Rotation",
+					"type": "vector3",
+					"value": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				{
+					"id": 652117834,
+					"name": "Scale",
+					"type": "vector3",
+					"value": [
+						1.0,
+						1.0,
+						1.0
+					]
+				}
+			],
+			"outputs": [
+				{
+					"id": 2748530417,
+					"name": "Instances",
+					"type": "instances"
+				}
+			],
+			"title": "Instances on Faces",
+			"type": "Instances on Faces",
+			"x": 960.0,
+			"y": 382.0
+		},
+		{
+			"id": 3606165252,
+			"inputs": [
+				{
+					"id": 3196163256,
+					"name": "Input",
+					"type": "instances"
+				},
+				{
+					"id": 3614857548,
+					"name": "Name",
+					"type": "string",
+					"value": "instancesF"
+				}
+			],
+			"outputs": [],
+			"title": "Save Instances to Virtual",
+			"type": "Save Instances to Virtual",
+			"x": 1296.0,
+			"y": 359.0
+		},
+		{
+			"id": 3529924128,
+			"inputs": [
+				{
+					"id": 2820934007,
+					"name": "Input",
+					"type": "geometry"
+				},
+				{
+					"id": 2866868110,
+					"name": "Name",
+					"type": "string",
+					"value": "parentF"
+				}
+			],
+			"outputs": [],
+			"title": "Save Geometry to Virtual",
+			"type": "Save Geometry to Virtual",
+			"x": 1304.0,
+			"y": 252.0
+		}
+	]
+}

@@ -1,0 +1,340 @@
+{
+	"entities": [
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Camera",
+					"uuid": 4233914042
+				},
+				{
+					"component": "Transform",
+					"rotation": [
+						2.9100000858306885,
+						0.0,
+						0.0
+					],
+					"scale": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"translation": [
+						0.0,
+						-2.200000047683716,
+						23.200000762939453
+					]
+				},
+				{
+					"component": "Camera",
+					"far": 100.0,
+					"fov": 60.0,
+					"mainCamera": true,
+					"near": 0.10000000149011612
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Light",
+					"uuid": 2324434418
+				},
+				{
+					"ambient": 0.05000000074505806,
+					"azimuth": 131.0,
+					"castShadow": false,
+					"color": [
+						1.0,
+						1.0,
+						1.0
+					],
+					"component": "Directional Light",
+					"elevation": 0.0
+				}
+			]
+		},
+		{
+			"children": [],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Nodes",
+					"uuid": 1152765716
+				},
+				{
+					"component": "Nodes",
+					"path": "assets/nodes.otn",
+					"settings": {}
+				}
+			]
+		},
+		{
+			"children": [
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Parent",
+							"uuid": 2807222734
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:parentV",
+							"transparent": false,
+							"wireframe": true
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									0.23670606315135956,
+									0.7296155095100403,
+									0.8230088353157043,
+									1.0
+								],
+								"albedoTexture": "",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.5,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 0.5,
+								"scale": 1.0
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Instances (red)",
+							"uuid": 1880476020
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:child",
+							"transparent": false,
+							"wireframe": false
+						},
+						{
+							"component": "Instancing",
+							"path": "virtual:instancesV"
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									0.8716814517974854,
+									0.0887109562754631,
+									0.0887109562754631,
+									1.0
+								],
+								"albedoTexture": "",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.7900000214576721,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 0.3400000035762787,
+								"scale": 1.0
+							}
+						}
+					]
+				}
+			],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Instances on Vertices",
+					"uuid": 977311025
+				}
+			]
+		},
+		{
+			"children": [
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Parent",
+							"uuid": 2741517982
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:parentF",
+							"transparent": false,
+							"wireframe": true
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									0.23670606315135956,
+									0.7296155095100403,
+									0.8230088353157043,
+									1.0
+								],
+								"albedoTexture": "",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 0.5,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 0.5,
+								"scale": 1.0
+							}
+						}
+					]
+				},
+				{
+					"children": [],
+					"components": [
+						{
+							"component": "Core",
+							"tag": "Instances (green)",
+							"uuid": 898881119
+						},
+						{
+							"castShadow": true,
+							"component": "Geometry",
+							"cullBack": true,
+							"path": "virtual:child",
+							"transparent": false,
+							"wireframe": false
+						},
+						{
+							"component": "Instancing",
+							"path": "virtual:instancesF"
+						},
+						{
+							"component": "Material",
+							"material": {
+								"albedo": [
+									0.13806875050067902,
+									0.7256637215614319,
+									0.17966829240322113,
+									1.0
+								],
+								"albedoTexture": "",
+								"ao": 1.0,
+								"aoTexture": "",
+								"emissive": [
+									0.0,
+									0.0,
+									0.0
+								],
+								"emissiveTexture": "",
+								"metallic": 1.0,
+								"metallicRoughnessTexture": "",
+								"normalTexture": "",
+								"offset": [
+									0.0,
+									0.0
+								],
+								"roughness": 0.36000001430511475,
+								"scale": 1.0
+							}
+						}
+					]
+				}
+			],
+			"components": [
+				{
+					"component": "Core",
+					"tag": "Instances on Faces",
+					"uuid": 1180202796
+				}
+			]
+		}
+	],
+	"metadata": {
+		"camera": {
+			"far": 200.0,
+			"fov": 60.0,
+			"near": 0.5,
+			"pitch": -14.0,
+			"position": [
+				0.0,
+				5.0,
+				20.0
+			],
+			"speed": 3.0,
+			"yaw": 0.0
+		},
+		"gizmo": {
+			"enabled": false,
+			"mode": 7,
+			"snapInterval": [
+				0.10000000149011612,
+				0.10000000149011612,
+				0.10000000149011612
+			],
+			"snapping": false
+		},
+		"grid": {
+			"enabled": false,
+			"scale": 1.0
+		},
+		"type": "scene"
+	},
+	"processing": {
+		"bloom": true,
+		"bloomIntensity": 0.7099999785423279,
+		"contrast": 1.0499999523162842,
+		"exposure": 1.5399999618530273,
+		"fog": false,
+		"fogColor": [
+			0.4000000059604645,
+			0.5,
+			0.800000011920929
+		],
+		"fogDensity": 0.10000000149011612,
+		"fxaa": false,
+		"godrays": false,
+		"tonemap": 3
+	}
+}
