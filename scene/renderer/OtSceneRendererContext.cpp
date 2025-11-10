@@ -268,3 +268,117 @@ void OtSceneRendererContext::initialize(OtScene* s, OtCamera c) {
 		}
 	}
 }
+
+
+//
+//	OtSceneRendererContext::setCameraUniforms
+//
+
+void OtSceneRendererContext::setCameraUniforms(size_t uniformSlot) {
+	// set uniforms
+	struct Uniforms {
+		glm::mat4 viewProjectionMatrix;
+		glm::mat4 inverseViewProjectionMatrix;
+		glm::mat4 projectionMatrix;
+		glm::mat4 inverseProjectionMatrix;
+		glm::mat4 viewMatrix;
+		glm::mat4 inverseViewMatrix;
+	} uniforms {
+		camera.viewProjectionMatrix,
+		glm::inverse(camera.viewProjectionMatrix),
+		camera.projectionMatrix,
+		glm::inverse(camera.projectionMatrix),
+		camera.viewMatrix,
+		glm::inverse(camera.viewMatrix)
+	};
+
+	pass->setVertexUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+}
+
+
+//
+//	OtSceneRendererContext::setLightingUniforms
+//
+
+void OtSceneRendererContext::setLightingUniforms(size_t uniformSlot, size_t samplerSlot) {
+	// set uniforms
+	struct Uniforms {
+		glm::vec3 cameraPosition;
+		uint32_t hasDirectionalLighting;
+		glm::vec3 directionalLightDirection;
+		float directionalLightAmbient;
+		glm::vec3 directionalLightColor;
+		uint32_t hasImageBasedLighting;
+		int iblEnvLevel;
+	} uniforms {
+		camera.position,
+		static_cast<uint32_t>(hasDirectionalLighting),
+		directionalLightDirection,
+		directionalLightAmbient,
+		directionalLightColor,
+		static_cast<uint32_t>(hasImageBasedLighting),
+		hasImageBasedLighting ? ibl.maxEnvLevel : 0
+	};
+
+	pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+
+	// submit the IBL samplers
+	if (hasImageBasedLighting) {
+		pass->bindFragmentSampler(samplerSlot++, iblBrdfLutSampler, ibl.iblBrdfLut);
+		pass->bindFragmentSampler(samplerSlot++, iblIrradianceMapSampler, ibl.iblIrradianceMap);
+		pass->bindFragmentSampler(samplerSlot++, iblEnvironmentMapSampler, ibl.iblEnvironmentMap);
+
+	} else {
+		auto& gpu = OtGpu::instance();
+		pass->bindFragmentSampler(samplerSlot++, iblBrdfLutSampler, gpu.transparentDummyTexture);
+		pass->bindFragmentSampler(samplerSlot++, iblIrradianceMapSampler, gpu.dummyCubeMap);
+		pass->bindFragmentSampler(samplerSlot++, iblEnvironmentMapSampler, gpu.dummyCubeMap);
+	}
+}
+
+
+//
+//	OtSceneRendererContext::setShadowUniforms
+//
+
+void OtSceneRendererContext::setShadowUniforms(size_t uniformSlot, size_t samplerSlot) {
+	// set uniforms
+	struct Uniforms {
+		glm::mat4 viewTransform;
+		glm::mat4 shadowViewProjTransform[OtCascadedShadowMap::maxCascades];
+		float cascadeDistance[OtCascadedShadowMap::maxCascades];
+		float shadowTexelSize;
+		uint32_t shadowEnabled;
+	} uniforms;
+
+	uniforms.viewTransform = camera.viewMatrix;
+	uniforms.shadowTexelSize = 1.0f / csm.getSize();
+	uniforms.shadowEnabled = static_cast<uint32_t>(castShadow);
+
+	for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
+		uniforms.shadowViewProjTransform[i] = csm.getCamera(i).viewProjectionMatrix;
+		uniforms.cascadeDistance[i] = csm.getDistance(i);
+	}
+
+	pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+
+	// set textures
+	pass->bindFragmentSampler(samplerSlot++, shadowMap0Sampler, csm.getDepthTexture(0));
+	pass->bindFragmentSampler(samplerSlot++, shadowMap1Sampler, csm.getDepthTexture(1));
+	pass->bindFragmentSampler(samplerSlot++, shadowMap2Sampler, csm.getDepthTexture(2));
+	pass->bindFragmentSampler(samplerSlot++, shadowMap3Sampler, csm.getDepthTexture(3));
+}
+
+
+//
+//	OtSceneRendererContext::bindFragmentSampler
+//
+
+void OtSceneRendererContext::bindFragmentSampler(size_t slot, OtSampler& sampler, OtAsset<OtTextureAsset>& texture) {
+	if (texture.isReady()) {
+		pass->bindFragmentSampler(slot, sampler, texture->getTexture());
+
+	} else {
+		pass->bindFragmentSampler(slot, sampler, OtGpu::instance().transparentDummyTexture);
+	}
+}

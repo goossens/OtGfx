@@ -123,22 +123,22 @@ void OtSceneRendererDebug::renderShadowMaps(OtSceneRenderer& renderer) {
 
 void OtSceneRendererDebug::renderReflection([[maybe_unused]] OtSceneRenderer& renderer) {
 	if (ImGui::CollapsingHeader("Reflection/Refraction")) {
-		// auto& water = renderer.waterPass;
+		auto& water = renderer.waterPass;
 
-		// if (water.reflectionBuffer.isValid()) {
-		// 	if (water.reflectionBuffer.isValid()) {
-		// 		auto texture = water.reflectionBuffer.getColorTexture();
-		// 		renderTexture("Reflection Buffer", texture);
-		// 	}
+		if (water.reflectionBuffer.isValid()) {
+			if (water.reflectionBuffer.isValid()) {
+				auto texture = water.reflectionBuffer.getColorTexture();
+				renderTexture("Reflection Buffer", texture);
+			}
 
-		// 	if (water.refractionBuffer.isValid()) {
-		// 		auto texture = water.refractionBuffer.getColorTexture();
-		// 		renderTexture("Refraction Buffer", texture);
-		// 	}
+			if (water.refractionBuffer.isValid()) {
+				auto texture = water.refractionBuffer.getColorTexture();
+				renderTexture("Refraction Buffer", texture);
+			}
 
-		// } else {
-		// 	ImGui::SeparatorText("No Data");
-		// }
+		} else {
+			ImGui::SeparatorText("No Data");
+		}
 	}
 }
 
@@ -312,7 +312,7 @@ void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug
 
 	// // start a rendering pass
 	// OtPass pass;
-	// pass.setClear(true);
+	// pass.setClearColor(true);
 	// pass.setRectangle(0, 0, width, height);
 	// pass.setFrameBuffer(debug.framebuffer);
 

@@ -12,6 +12,9 @@
 //	Include files
 //
 
+#include <cstdint>
+
+#include "glm/glm.hpp"
 #include "SDL3/SDL.h"
 
 
@@ -37,5 +40,11 @@ public:
 	virtual ~OtRenderTarget() {}
 
 	// get render target information
-	virtual OtRenderTargetInfo* getRenderTargetInfo() = 0;
+	virtual OtRenderTargetInfo* getRenderTargetInfo(
+		bool clearColor,
+		bool clearDepth,
+		bool clearStencil,
+		glm::vec4 clearColorValue,
+		float clearDepthValue,
+		std::uint8_t clearStencilValue) = 0;
 };

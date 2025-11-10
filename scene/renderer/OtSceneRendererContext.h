@@ -17,12 +17,14 @@
 
 #include "glm/glm.hpp"
 
+#include "OtAsset.h"
 #include "OtCamera.h"
 #include "OtCascadedShadowMap.h"
 #include "OtGrass.h"
 #include "OtImageBasedLighting.h"
 #include "OtMaterial.h"
 #include "OtRenderPass.h"
+#include "OtTextureAsset.h"
 
 #include "OtGeometryRenderData.h"
 #include "OtImageBasedLighting.h"
@@ -121,4 +123,15 @@ public:
 	OtSampler lightingDepthSampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};
 
 	OtSampler cubemapSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
+
+	OtSampler waterNormalmapSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler reflectionSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
+	OtSampler refractionSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
+	OtSampler refractionDepthSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
+
+	// support functions
+	void setCameraUniforms(size_t uniformSlot);
+	void setLightingUniforms(size_t uniformSlot, size_t samplerSlot);
+	void setShadowUniforms(size_t uniformSlot, size_t samplerSlot);
+	void bindFragmentSampler(size_t slot, OtSampler& sampler, OtAsset<OtTextureAsset>& texture);
 };

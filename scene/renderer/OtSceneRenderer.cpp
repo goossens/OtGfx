@@ -15,15 +15,6 @@
 
 
 //
-//	OtSceneRenderer::OtSceneRenderer
-//
-
-OtSceneRenderer::OtSceneRenderer() {
-	compositeBuffer.setClearColor(false);
-}
-
-
-//
 //	OtSceneRenderer::render
 //
 
@@ -62,7 +53,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// render water (if required)
 	if (ctx.hasWaterEntities) {
-		// waterPass.render(ctx);
+		waterPass.render(ctx);
 	}
 
 	waterPassTime = stopwatch.lap();

@@ -315,7 +315,8 @@ void OtOscilloscope::render(OtTexture& texture) {
 	}
 
 	OtRenderPass pass;
-	pass.start(texture, true);
+	pass.setClearColor(true);
+	pass.start(texture);
 	pass.bindPipeline(pipeline);
 
 	// setup brush

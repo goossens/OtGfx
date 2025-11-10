@@ -1,5 +1,7 @@
 #include "glm/glm.hpp"
 
+#include "OtRenderPass.h"
+
 #include "OtBackgroundPass.h"
 
 
@@ -15,7 +17,9 @@ void OtBackgroundPass::render(OtSceneRendererContext& ctx) {
 		backgroundColor = component.color;
 	}
 
-	// fill framebuffer with background color;
-	flood.setColor(backgroundColor);
-	flood.render(framebuffer.getColorTexture());
+	OtRenderPass pass;
+	pass.setClearColor(true, glm::vec4(backgroundColor, 1.0f));
+	pass.setClearDepth(true);
+	pass.start(framebuffer);
+	pass.end();
 }

@@ -12,7 +12,6 @@
 //	Include files
 //
 
-#include "OtFlood.h"
 #include "OtFrameBuffer.h"
 
 #include "OtSceneRendererContext.h"
@@ -33,5 +32,4 @@ public:
 private:
 	// properties
 	OtFrameBuffer& framebuffer;
-	OtFlood flood;
 };

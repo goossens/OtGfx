@@ -17,6 +17,12 @@ vec3 uvToClipSpace(vec2 uv, float depth) {
 	return vec3(uv.x * 2.0f - 1.0f, uv.y * -2.0f + 1.0f, depth);
 }
 
+// convert point from uv to world space
+vec3 uvToWorldSpace(vec2 uv, float depth, mat4 invViewProj) {
+	vec4 p = invViewProj * vec4(uvToClipSpace(uv, depth), 1.0f);
+	return p.xyz / p.w;
+}
+
 // pre multiply color
 vec4 preMultiplyAlpha(vec4 color) {
 	return vec4(color.rgb * color.a, color.a);

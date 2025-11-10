@@ -48,37 +48,6 @@ bool OtGbuffer::update(int w, int h) {
 		emissiveTexture.update(w32, h32, OtTexture::Format::rgba8, colorUsage);
 		depthTexture.update(w32, h32, OtTexture::Format::d32, depthUsage);
 
-		// create/update render target information
-		colorTargetInfo[0] = SDL_GPUColorTargetInfo{};
-		colorTargetInfo[0].texture = albedoTexture.getTexture();
-		colorTargetInfo[0].load_op = SDL_GPU_LOADOP_CLEAR;
-		colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
-
-		colorTargetInfo[1] = SDL_GPUColorTargetInfo{};
-		colorTargetInfo[1].texture = normalTexture.getTexture();
-		colorTargetInfo[1].load_op = SDL_GPU_LOADOP_CLEAR;
-		colorTargetInfo[1].store_op = SDL_GPU_STOREOP_STORE;
-
-		colorTargetInfo[2] = SDL_GPUColorTargetInfo{};
-		colorTargetInfo[2].texture = pbrTexture.getTexture();
-		colorTargetInfo[2].load_op = SDL_GPU_LOADOP_CLEAR;
-		colorTargetInfo[2].store_op = SDL_GPU_STOREOP_STORE;
-
-		colorTargetInfo[3] = SDL_GPUColorTargetInfo{};
-		colorTargetInfo[3].texture = emissiveTexture.getTexture();
-		colorTargetInfo[3].load_op = SDL_GPU_LOADOP_CLEAR;
-		colorTargetInfo[3].store_op = SDL_GPU_STOREOP_STORE;
-
-		depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo{};
-		depthStencilTargetInfo.texture = depthTexture.getTexture();
-		depthStencilTargetInfo.clear_depth = 1.0f;
-		depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-		depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-
-		info.colorTargetInfo = colorTargetInfo;
-		info.numColorTargets = 4;
-		info.depthStencilTargetInfo = &depthStencilTargetInfo;
-
 		// remember dimensions and set state
 		width = w;
 		height = h;
@@ -88,4 +57,61 @@ bool OtGbuffer::update(int w, int h) {
 	} else {
 		return false;
 	}
+}
+
+
+//
+//	OtGbuffer::getRenderTargetInfo
+//
+
+OtRenderTargetInfo* OtGbuffer::getRenderTargetInfo(
+	bool clearColorTexture,
+	bool clearDepthTexture,
+	[[maybe_unused]] bool clearStencilTexture,
+	glm::vec4 clearColorValue,
+	float clearDepthValue,
+	[[maybe_unused]] std::uint8_t clearStencilValue) {
+
+	auto color = SDL_FColor{
+		clearColorValue.r,
+		clearColorValue.g,
+		clearColorValue.b,
+		clearColorValue.a
+	};
+
+	colorTargetInfo[0] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[0].texture = albedoTexture.getTexture();
+	colorTargetInfo[0].clear_color = color;
+	colorTargetInfo[0].load_op = clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
+
+	colorTargetInfo[1] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[1].texture = normalTexture.getTexture();
+	colorTargetInfo[1].clear_color = color;
+	colorTargetInfo[1].load_op = clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	colorTargetInfo[1].store_op = SDL_GPU_STOREOP_STORE;
+
+	colorTargetInfo[2] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[2].texture = pbrTexture.getTexture();
+	colorTargetInfo[2].clear_color = color;
+	colorTargetInfo[2].load_op = clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	colorTargetInfo[2].store_op = SDL_GPU_STOREOP_STORE;
+
+	colorTargetInfo[3] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[3].texture = emissiveTexture.getTexture();
+	colorTargetInfo[3].clear_color = color;
+	colorTargetInfo[3].load_op = clearColorTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	colorTargetInfo[3].store_op = SDL_GPU_STOREOP_STORE;
+
+	depthStencilTargetInfo = SDL_GPUDepthStencilTargetInfo{};
+	depthStencilTargetInfo.texture = depthTexture.getTexture();
+	depthStencilTargetInfo.clear_depth = clearDepthValue,
+	depthStencilTargetInfo.load_op = clearDepthTexture ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD;
+	depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+
+	info.colorTargetInfo = colorTargetInfo;
+	info.numColorTargets = 4;
+	info.depthStencilTargetInfo = &depthStencilTargetInfo;
+
+	return &info;
 }

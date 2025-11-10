@@ -34,7 +34,7 @@
 // #include "OtParticlesPass.h"
 #include "OtShadowPass.h"
 #include "OtSkyPass.h"
-// #include "OtWaterPass.h"
+#include "OtWaterPass.h"
 // #include "OtGridPass.h"
 // #include "OtHighlightPass.h"
 // #include "OtPickingPass.h"
@@ -48,11 +48,8 @@
 
 class OtSceneRenderer {
 public:
-	// constructor
-	OtSceneRenderer();
-
 	// set properties
-//	inline void setGridScale(float gridScale) { gridPass.setGridScale(gridScale); }
+	// inline void setGridScale(float gridScale) { gridPass.setGridScale(gridScale); }
 	inline void setSelectedEntity(OtEntity entity) { selectedEntity = entity; }
 
 	// support entity picking
@@ -83,7 +80,7 @@ private:
 	OtDeferredPass deferredPass{deferredRenderingBuffer, compositeBuffer};
 	OtForwardPass forwardPass{compositeBuffer};
 	OtSkyPass skyPass{compositeBuffer};
-	// OtWaterPass waterPass{compositeBuffer};
+	OtWaterPass waterPass{compositeBuffer};
 	// OtParticlesPass particlePass{compositeBuffer};
 	OtPostProcessingPass postProcessingPass{compositeBuffer};
 	// OtGridPass gridPass;

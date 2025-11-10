@@ -36,6 +36,7 @@ void OtShadowPass::render(OtSceneRendererContext& ctx) {
 	for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
 		// setup pass to render entities as opaque blobs
 		OtRenderPass pass;
+		pass.setClearDepth(true);
 		pass.start(ctx.csm.getFrameBuffer(i));
 		ctx.pass = &pass;
 
@@ -43,7 +44,7 @@ void OtShadowPass::render(OtSceneRendererContext& ctx) {
 		ctx.cameraID = OtSceneRendererContext::getShadowCameraID(i);
 
 		// render all entities
-		setCameraUniforms(ctx, 1);
+		ctx.setCameraUniforms(1);
 		renderEntities(ctx);
 
 		// we're done

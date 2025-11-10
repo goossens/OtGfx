@@ -71,6 +71,8 @@ void OtMeshPreview::render(int width, int height, OtMesh& mesh, Context& context
 
 	// setup the pass
 	OtRenderPass pass;
+	pass.setClearColor(true);
+	pass.setClearDepth(true);
 	pass.start(framebuffer);
 	pass.bindPipeline(context.wireframe ? linePipeline : fillPipeline);
 

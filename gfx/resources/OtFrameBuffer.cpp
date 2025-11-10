@@ -21,7 +21,6 @@ void OtFrameBuffer::initialize(OtTexture::Format c, OtTexture::Format d) {
 		clear();
 		colorTextureType = c;
 		depthTextureType = d;
-		updateRenderTargetInformation();
 	}
 }
 
@@ -38,39 +37,6 @@ void OtFrameBuffer::clear() {
 	// clear other fields
 	width = -1;
 	height = -1;
-}
-
-
-//
-//	OtFrameBuffer::setClearColor
-//
-
-void OtFrameBuffer::setClearColor(bool flag, const glm::vec4& value) {
-	clearColorTexture = flag;
-	clearColorValue = value;
-	updateRenderTargetInformation();
-}
-
-
-//
-//	OtFrameBuffer::setClearDepth
-//
-
-void OtFrameBuffer::setClearDepth(bool flag, float value) {
-	clearDepthTexture = flag;
-	clearDepthValue = value;
-	updateRenderTargetInformation();
-}
-
-
-//
-//	OtFrameBuffer::setClearStencil
-//
-
-void OtFrameBuffer::setClearStencil(bool flag, uint8_t value) {
-	clearStencilTexture = flag;
-	clearStencilValue = value;
-	updateRenderTargetInformation();
 }
 
 
@@ -106,9 +72,6 @@ bool OtFrameBuffer::update(int w, int h) {
 		// remember dimensions
 		width = w;
 		height = h;
-
-		// create/update render target information
-		updateRenderTargetInformation();
 		return true;
 
 	} else {
@@ -118,10 +81,17 @@ bool OtFrameBuffer::update(int w, int h) {
 
 
 //
-//	OtFrameBuffer::updateRenderTargetInformation
+//	OtFrameBuffer::getRenderTargetInfo
 //
 
-void OtFrameBuffer::updateRenderTargetInformation() {
+OtRenderTargetInfo* OtFrameBuffer::getRenderTargetInfo(
+	bool clearColorTexture,
+	bool clearDepthTexture,
+	bool clearStencilTexture,
+	glm::vec4 clearColorValue,
+	float clearDepthValue,
+	std::uint8_t clearStencilValue) {
+
 	colorTargetInfo = SDL_GPUColorTargetInfo{};
 	colorTargetInfo.texture = colorTexture.getTexture();
 
@@ -147,5 +117,6 @@ void OtFrameBuffer::updateRenderTargetInformation() {
 	info.colorTargetInfo = hasColorTexture() ? &colorTargetInfo : nullptr;
 	info.numColorTargets = hasColorTexture() ? 1 : 0;
 	info.depthStencilTargetInfo = hasDepthTexture() ? &depthStencilTargetInfo : nullptr;
+	return &info;
 }
 

@@ -45,11 +45,6 @@ public:
 	// see if framebuffer is valid
 	inline bool isValid() { return colorTextureType != OtTexture::Format::none || depthTextureType != OtTexture::Format::none; }
 
-	// set clear properties
-	void setClearColor(bool flag, const glm::vec4& value=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	void setClearDepth(bool flag, float value=1.0f);
-	void setClearStencil(bool flag, uint8_t value=0);
-
 	// update frame buffer
 	bool update(int w, int h);
 
@@ -87,22 +82,19 @@ private:
 	OtTexture colorTexture;
 	OtTexture depthTexture;
 
-	// clearing flags
-	bool clearColorTexture = true;
-	bool clearDepthTexture = true;
-	bool clearStencilTexture = true;
-	glm::vec4 clearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
-	float clearDepthValue = 1.0f;
-	std::uint8_t clearStencilValue = 0;
-
 	// render target description
 	SDL_GPUColorTargetInfo colorTargetInfo;
 	SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
 	OtRenderTargetInfo info;
 
-	void updateRenderTargetInformation();
-
 	// get render target information
 	friend class OtRenderPass;
-	inline OtRenderTargetInfo* getRenderTargetInfo() override { return &info; }
+
+	OtRenderTargetInfo* getRenderTargetInfo(
+		bool clearColorTexture,
+		bool clearDepthTexture,
+		bool clearStencilTexture,
+		glm::vec4 clearColorValue,
+		float clearDepthValue,
+		std::uint8_t clearStencilValue) override;
 };

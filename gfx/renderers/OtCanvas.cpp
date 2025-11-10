@@ -343,6 +343,9 @@ void OtCanvas::render(OtFrameBuffer& framebuffer, float scale, std::function<voi
 
 	// start rendering pass
 	OtRenderPass pass;
+	pass.setClearColor(true, glm::vec4(0.0f));
+	pass.setClearDepth(true);
+	pass.setClearStencil(true);
 	pass.start(framebuffer);
 
 	// ignore empty canvases

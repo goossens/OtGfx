@@ -55,7 +55,7 @@ void main() {
 	}
 
 	// atmospheric scattering
-	vec3 nitrogen = vec3(0.650, 0.570, 0.475);
+	// vec3 nitrogen = vec3(0.650, 0.570, 0.475);
 	vec3 nitrogen1 = vec3(0.179, 0.106, 0.051); // pow(nitrogen, 4.0)
 	vec3 nitrogen2 = vec3(0.696, 0.624, 0.535); // pow(nitrogen, 0.84)
 

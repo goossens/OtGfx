@@ -241,104 +241,6 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 		ctx.pass->render(cmd.mesh->getVertexBuffer(), cmd.mesh->getIndexBuffer());
 	}
 }
-//
-//	OtSceneRenderEntitiesPass::setCameraUniforms
-//
-
-void OtSceneRenderEntitiesPass::setCameraUniforms(OtSceneRendererContext& ctx, size_t uniformSlot) {
-	// set uniforms
-	struct Uniforms {
-		glm::mat4 viewProjectionMatrix;
-		glm::mat4 inverseViewProjectionMatrix;
-		glm::mat4 projectionMatrix;
-		glm::mat4 inverseProjectionMatrix;
-		glm::mat4 viewMatrix;
-		glm::mat4 inverseViewMatrix;
-	} uniforms {
-		ctx.camera.viewProjectionMatrix,
-		glm::inverse(ctx.camera.viewProjectionMatrix),
-		ctx.camera.projectionMatrix,
-		glm::inverse(ctx.camera.projectionMatrix),
-		ctx.camera.viewMatrix,
-		glm::inverse(ctx.camera.viewMatrix)
-	};
-
-	ctx.pass->setVertexUniforms(uniformSlot, &uniforms, sizeof(uniforms));
-}
-
-
-//
-//	OtSceneRenderEntitiesPass::setLightingUniforms
-//
-
-void OtSceneRenderEntitiesPass::setLightingUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot) {
-	// set uniforms
-	struct Uniforms {
-		glm::vec3 cameraPosition;
-		uint32_t hasDirectionalLighting;
-		glm::vec3 directionalLightDirection;
-		float directionalLightAmbient;
-		glm::vec3 directionalLightColor;
-		uint32_t hasImageBasedLighting;
-		int iblEnvLevel;
-	} uniforms {
-		ctx.camera.position,
-		static_cast<uint32_t>(ctx.hasDirectionalLighting),
-		ctx.directionalLightDirection,
-		ctx.directionalLightAmbient,
-		ctx.directionalLightColor,
-		static_cast<uint32_t>(ctx.hasImageBasedLighting),
-		ctx.hasImageBasedLighting ? ctx.ibl.maxEnvLevel : 0
-	};
-
-	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
-
-	// submit the IBL samplers
-	if (ctx.hasImageBasedLighting) {
-		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblBrdfLutSampler, ctx.ibl.iblBrdfLut);
-		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblIrradianceMapSampler, ctx.ibl.iblIrradianceMap);
-		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblEnvironmentMapSampler, ctx.ibl.iblEnvironmentMap);
-
-	} else {
-		auto& gpu = OtGpu::instance();
-		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblBrdfLutSampler, gpu.transparentDummyTexture);
-		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblIrradianceMapSampler, gpu.dummyCubeMap);
-		ctx.pass->bindFragmentSampler(samplerSlot++, ctx.iblEnvironmentMapSampler, gpu.dummyCubeMap);
-	}
-}
-
-
-//
-//	OtSceneRenderEntitiesPass::setShadowUniforms
-//
-
-void OtSceneRenderEntitiesPass::setShadowUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot) {
-	// set uniforms
-	struct Uniforms {
-		glm::mat4 viewTransform;
-		glm::mat4 shadowViewProjTransform[OtCascadedShadowMap::maxCascades];
-		float cascadeDistance[OtCascadedShadowMap::maxCascades];
-		float shadowTexelSize;
-		uint32_t shadowEnabled;
-	} uniforms;
-
-	uniforms.viewTransform = ctx.camera.viewMatrix;
-	uniforms.shadowTexelSize = 1.0f / ctx.csm.getSize();
-	uniforms.shadowEnabled = static_cast<uint32_t>(ctx.castShadow);
-
-	for (size_t i = 0; i < OtCascadedShadowMap::maxCascades; i++) {
-		uniforms.shadowViewProjTransform[i] = ctx.csm.getCamera(i).viewProjectionMatrix;
-		uniforms.cascadeDistance[i] = ctx.csm.getDistance(i);
-	}
-
-	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
-
-	// set textures
-	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap0Sampler, ctx.csm.getDepthTexture(0));
-	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap1Sampler, ctx.csm.getDepthTexture(1));
-	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap2Sampler, ctx.csm.getDepthTexture(2));
-	ctx.pass->bindFragmentSampler(samplerSlot++, ctx.shadowMap3Sampler, ctx.csm.getDepthTexture(3));
-}
 
 
 //
@@ -378,11 +280,11 @@ void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx,
 	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
 
 	// set textures
-	bindFragmentSampler(ctx, samplerSlot++, ctx.albedoSampler, material->albedoTexture);
-	bindFragmentSampler(ctx, samplerSlot++, ctx.metallicRoughnessSampler, material->metallicRoughnessTexture);
-	bindFragmentSampler(ctx, samplerSlot++, ctx.emissiveSampler, material->emissiveTexture);
-	bindFragmentSampler(ctx, samplerSlot++, ctx.aoSampler, material->aoTexture);
-	bindFragmentSampler(ctx, samplerSlot++, ctx.normalSampler, material->normalTexture);
+	ctx.bindFragmentSampler(samplerSlot++, ctx.albedoSampler, material->albedoTexture);
+	ctx.bindFragmentSampler(samplerSlot++, ctx.metallicRoughnessSampler, material->metallicRoughnessTexture);
+	ctx.bindFragmentSampler(samplerSlot++, ctx.emissiveSampler, material->emissiveTexture);
+	ctx.bindFragmentSampler(samplerSlot++, ctx.aoSampler, material->aoTexture);
+	ctx.bindFragmentSampler(samplerSlot++, ctx.normalSampler, material->normalTexture);
 }
 
 
@@ -398,18 +300,4 @@ void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx,
 		ctx.scene->hasComponent<OtMaterialComponent>(entity)
 			? ctx.scene->getComponent<OtMaterialComponent>(entity).material
 			: std::make_shared<OtMaterial>());
-}
-
-
-//
-//	OtSceneRenderEntitiesPass::bindFragmentSampler
-//
-
-void OtSceneRenderEntitiesPass::bindFragmentSampler(OtSceneRendererContext& ctx, size_t slot, OtSampler& sampler, OtAsset<OtTextureAsset>& texture) {
-	if (texture.isReady()) {
-		ctx.pass->bindFragmentSampler(slot, sampler, texture->getTexture());
-
-	} else {
-		ctx.pass->bindFragmentSampler(slot, sampler, OtGpu::instance().transparentDummyTexture);
-	}
 }

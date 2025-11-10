@@ -29,7 +29,6 @@
 
 void OtSkyPass::render(OtSceneRendererContext& ctx) {
 	OtRenderPass pass;
-	framebuffer.setClearDepth(false);
 	pass.start(framebuffer);
 	ctx.pass = &pass;
 
@@ -63,7 +62,6 @@ void OtSkyPass::render(OtSceneRendererContext& ctx) {
 	};
 
 	pass.end();
-	framebuffer.setClearDepth(true);
 }
 
 

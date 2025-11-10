@@ -26,10 +26,43 @@ OtRenderPass::~OtRenderPass() {
 
 
 //
+//	OtRenderPass::setClearColor
+//
+
+void OtRenderPass::setClearColor(bool flag, const glm::vec4& value) {
+	OtAssert(!open);
+	clearColorTexture = flag;
+	clearColorValue = value;
+}
+
+
+//
+//	OtRenderPass::setClearDepth
+//
+
+void OtRenderPass::setClearDepth(bool flag, float value) {
+	OtAssert(!open);
+	clearDepthTexture = flag;
+	clearDepthValue = value;
+}
+
+
+//
+//	OtRenderPass::setClearStencil
+//
+
+void OtRenderPass::setClearStencil(bool flag, uint8_t value) {
+	OtAssert(!open);
+	clearStencilTexture = flag;
+	clearStencilValue = value;
+}
+
+
+//
 //	OtRenderPass::start
 //
 
-void OtRenderPass::start(OtTexture& texture, bool clear) {
+void OtRenderPass::start(OtTexture& texture) {
 	// sanity checks
 	OtAssert(!open);
 
@@ -41,7 +74,7 @@ void OtRenderPass::start(OtTexture& texture, bool clear) {
 	SDL_GPUColorTargetInfo info{};
 	info.texture = texture.getTexture();
 
-	if (clear) {
+	if (clearColorTexture) {
 		info.load_op = SDL_GPU_LOADOP_CLEAR;
 		info.clear_color = SDL_FColor{0.0f, 0.0f, 0.0f, 1.0f};
 	}
@@ -63,9 +96,16 @@ void OtRenderPass::start(OtFrameBuffer& framebuffer) {
 		OtLogFatal("Can't use invalid framebuffer in render pass");
 	}
 
-	// start rendering pass
-	auto info = framebuffer.getRenderTargetInfo();
+	// get render description
+	auto info = framebuffer.getRenderTargetInfo(
+		clearColorTexture,
+		clearDepthTexture,
+		clearStencilTexture,
+		clearColorValue,
+		clearDepthValue,
+		clearStencilValue);
 
+	// start rendering pass
 	pass = SDL_BeginGPURenderPass(
 		OtGpu::instance().pipelineCommandBuffer,
 		info->colorTargetInfo,
@@ -88,7 +128,13 @@ void OtRenderPass::start(OtGbuffer& gbuffer) {
 	}
 
 	// start rendering pass
-	auto info = gbuffer.getRenderTargetInfo();
+	auto info = gbuffer.getRenderTargetInfo(
+		clearColorTexture,
+		clearDepthTexture,
+		clearStencilTexture,
+		clearColorValue,
+		clearDepthValue,
+		clearStencilValue);
 
 	pass = SDL_BeginGPURenderPass(
 		OtGpu::instance().pipelineCommandBuffer,

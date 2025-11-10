@@ -67,13 +67,6 @@ protected:
 		OtRenderPipeline& staticPipeline,
 		OtRenderPipeline& animatedPipeline);
 
-	void setCameraUniforms(OtSceneRendererContext& ctx, size_t uniformSlot);
-	void setLightingUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
-	void setShadowUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot);
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material);
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity);
-
-private:
-	// local support functions
-	void bindFragmentSampler(OtSceneRendererContext& ctx, size_t slot, OtSampler& sampler, OtAsset<OtTextureAsset>& texture);
 };

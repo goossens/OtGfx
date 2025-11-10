@@ -48,11 +48,13 @@ void OtDeferredPass::render(OtSceneRendererContext& ctx) {
 void OtDeferredPass::renderGeometry(OtSceneRendererContext& ctx) {
 	// setup pass
 	OtRenderPass pass;
+	pass.setClearColor(true, glm::vec4(0.0f));
+	pass.setClearDepth(true);
 	pass.start(gbuffer);
 	ctx.pass = &pass;
 
 	// submit common uniforms
-	setCameraUniforms(ctx, 1);
+	ctx.setCameraUniforms(1);
 
 	// render all entities
 	renderEntities(ctx);
@@ -113,8 +115,8 @@ void OtDeferredPass::renderDirectionalLight(OtSceneRendererContext& ctx) {
 	};
 
 	pass.setFragmentUniforms(0, &uniforms, sizeof(Uniforms));
-	setLightingUniforms(ctx, 1, 5);
-	setShadowUniforms(ctx, 2, 8);
+	ctx.setLightingUniforms(1, 5);
+	ctx.setShadowUniforms(2, 8);
 
 	// bind samplers
 	pass.bindFragmentSampler(0, ctx.lightingAlbedoSampler, gbuffer.getAlbedoTexture());
@@ -137,7 +139,6 @@ void OtDeferredPass::renderPointLights(OtSceneRendererContext& ctx) {
 	OtRenderPass pass;
 	pass.start(framebuffer);
 	ctx.pass = &pass;
-
 	pass.end();
 }
 

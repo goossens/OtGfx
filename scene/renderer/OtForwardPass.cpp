@@ -29,9 +29,9 @@ void OtForwardPass::render(OtSceneRendererContext& ctx) {
 	ctx.pass = &pass;
 
 	// submit common uniforms
-	setCameraUniforms(ctx, 1);
-	setLightingUniforms(ctx, 1, 5);
-	setShadowUniforms(ctx, 2, 8);
+	ctx.setCameraUniforms(1);
+	ctx.setLightingUniforms(1, 5);
+	ctx.setShadowUniforms(2, 8);
 
 	// render all entities
 	renderEntities(ctx);

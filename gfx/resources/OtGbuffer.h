@@ -74,5 +74,12 @@ private:
 
 	// get render target information
 	friend class OtRenderPass;
-	inline OtRenderTargetInfo* getRenderTargetInfo() override { return &info; }
+
+	OtRenderTargetInfo* getRenderTargetInfo(
+		bool clearColorTexture,
+		bool clearDepthTexture,
+		bool clearStencilTexture,
+		glm::vec4 clearColorValue,
+		float clearDepthValue,
+		std::uint8_t clearStencilValue) override;
 };

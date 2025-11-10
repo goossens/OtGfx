@@ -39,8 +39,14 @@ public:
 	// destructor
 	~OtRenderPass();
 
+	// set clear state (must be called before "start")
+	// without calling this, the default is no clearing
+	void setClearColor(bool flag, const glm::vec4& value=glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	void setClearDepth(bool flag, float value=1.0f);
+	void setClearStencil(bool flag, uint8_t value=0);
+
 	// start a render pass
-	void start(OtTexture& texture, bool clear);
+	void start(OtTexture& texture);
 	void start(OtFrameBuffer& framebuffer);
 	void start(OtGbuffer& gbuffer);
 
@@ -88,4 +94,12 @@ private:
 	SDL_GPUBuffer* animationBuffer = nullptr;
 	SDL_GPUBuffer* instanceBuffer = nullptr;
 	size_t instanceCount = 1;
+
+	// clearing flags
+	bool clearColorTexture = false;
+	bool clearDepthTexture = false;
+	bool clearStencilTexture = false;
+	glm::vec4 clearColorValue{0.0f, 0.0f, 0.0f, 1.0f};
+	float clearDepthValue = 1.0f;
+	std::uint8_t clearStencilValue = 0;
 };
