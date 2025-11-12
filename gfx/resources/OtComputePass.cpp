@@ -56,7 +56,7 @@ void OtComputePass::addOutputTexture(OtTexture& texture) {
 
 	SDL_GPUStorageTextureReadWriteBinding binding{};
 	binding.texture = texture.getTexture();
-	textures.emplace_back(binding);
+	outputTextures.emplace_back(binding);
 }
 
 
@@ -67,7 +67,23 @@ void OtComputePass::addOutputTexture(OtTexture& texture) {
 void OtComputePass::addOutputCubeMap(OtCubeMap& cubemap) {
 	SDL_GPUStorageTextureReadWriteBinding binding{};
 	binding.texture = cubemap.getTexture();
-	textures.emplace_back(binding);
+
+	for (size_t i = 0; i < 6; i++) {
+		binding.layer = static_cast<Uint32>(i);
+		outputTextures.emplace_back(binding);
+	}
+}
+
+
+//
+//	OtComputePass::addOutputCubeMap
+//
+
+void OtComputePass::addOutputCubeMap(OtCubeMap& cubemap, size_t layer) {
+	SDL_GPUStorageTextureReadWriteBinding binding{};
+	binding.texture = cubemap.getTexture();
+	binding.layer = static_cast<Uint32>(layer);
+	outputTextures.emplace_back(binding);
 }
 
 
@@ -89,8 +105,8 @@ void OtComputePass::addUniforms(const void* data, size_t size) {
 void OtComputePass::execute(OtComputePipeline& pipeline, size_t groupCountX, size_t groupCountY, size_t groupCountZ) {
 	SDL_GPUComputePass* pass = SDL_BeginGPUComputePass(
 		OtGpu::instance().pipelineCommandBuffer,
-		textures.data(),
-		static_cast<Uint32>(textures.size()),
+		outputTextures.data(),
+		static_cast<Uint32>(outputTextures.size()),
 		nullptr,
 		0);
 
@@ -118,6 +134,6 @@ void OtComputePass::execute(OtComputePipeline& pipeline, size_t groupCountX, siz
 	// cleanup
 	SDL_EndGPUComputePass(pass);
 	samplers.clear();
-	textures.clear();
+	outputTextures.clear();
 	uniforms.clear();
 }

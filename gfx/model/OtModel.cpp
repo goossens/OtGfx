@@ -300,7 +300,8 @@ void OtModel::loadModel(const std::string& modelPath) {
 		aiProcess_OptimizeMeshes |
 		aiProcess_GenBoundingBoxes |
 		aiProcess_ValidateDataStructure |
-		aiProcess_GlobalScale;
+		aiProcess_GlobalScale |
+		aiProcess_FlipUVs;
 
 	// read the model file
 	const aiScene* scene = importer.ReadFile(modelPath, static_cast<unsigned int>(flags));

@@ -11,33 +11,38 @@
 
 #include "nlohmann/json.hpp"
 #include "SDL3_image/SDL_image.h"
+#include "stb_image.h"
 
 #include "OtLog.h"
 #include "OtPath.h"
 #include "OtText.h"
 
 #include "OtAsset.h"
-#include "OtComputePass.h"
 #include "OtCubeMap.h"
+#include "OtRenderPass.h"
+#include "OtRenderPipeline.h"
 #include "OtSampler.h"
 #include "OtTexture.h"
 #include "OtVertex.h"
 
-#include "OtHdrReprojectComp.h"
+#include "OtHdrReprojectVert.h"
+#include "OtHdrReprojectFrag.h"
 
 
 //
 //	OtCubeMap::create
 //
 
-void OtCubeMap::create(int s, bool m) {
+void OtCubeMap::create(Format f, int s, bool m) {
+	// save settings
+	format = f;
 	size = s;
 	mip = m;
 
 	// create new cubemap
 	SDL_GPUTextureCreateInfo info{};
 	info.type = SDL_GPU_TEXTURETYPE_CUBE;
-	info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+	info.format = static_cast<SDL_GPUTextureFormat>(format);
 	info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE;
 	info.width = static_cast<Uint32>(size);
 	info.height = static_cast<Uint32>(size);
@@ -49,6 +54,10 @@ void OtCubeMap::create(int s, bool m) {
 
 	if (!sdlCubemap) {
 		OtLogFatal("Error in SDL_CreateGPUTexture: {}", SDL_GetError());
+	}
+
+	if (mip) {
+		SDL_GenerateMipmapsForGPUTexture(OtGpu::instance().copyCommandBuffer, sdlCubemap);
 	}
 
 	assign(sdlCubemap);
@@ -193,7 +202,16 @@ void OtCubeMap::loadJSON(const std::string& path, bool async) {
 
 void OtCubeMap::loadHdrImage(const std::string& path, bool async) {
 	// load image
-	asyncImage = std::make_unique<OtImage>(path);
+	int w, h, n;
+	auto pixels = stbi_loadf(path.c_str(), &w, &h, &n, 4);
+
+	if (!pixels) {
+		OtLogError("Can't open image in [{}]", path);
+	}
+
+	asyncImage = std::make_unique<OtImage>(w, h, OtImage::Format::rgba32, pixels);
+	stbi_image_free(pixels);
+
 	size = 1024;
 
 	if (async) {
@@ -233,23 +251,7 @@ void OtCubeMap::loadHdrImage(const std::string& path, bool async) {
 
 void OtCubeMap::createCubemapFromSides() {
 	// create new cubemap
-	SDL_GPUTextureCreateInfo info{};
-	info.type = SDL_GPU_TEXTURETYPE_CUBE;
-	info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-	info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
-	info.width = static_cast<Uint32>(size);
-	info.height = static_cast<Uint32>(size);
-	info.layer_count_or_depth = 6;
-	info.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1);
-	info.sample_count = SDL_GPU_SAMPLECOUNT_1;
-
-	auto sdlCubemap = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
-
-	if (!sdlCubemap) {
-		OtLogFatal("Error in SDL_CreateGPUTexture: {}", SDL_GetError());
-	}
-
-	assign(sdlCubemap);
+	create(Format::rgba8, size, false);
 
 	// create a transfer buffer
 	SDL_GPUTransferBufferCreateInfo bufferInfo{};
@@ -305,37 +307,22 @@ void OtCubeMap::createCubemapFromHDR() {
 	inputTexture.load(*asyncImage);
 
 	// create a cubemap texture
-	SDL_GPUTextureCreateInfo info{};
-	info.type = SDL_GPU_TEXTURETYPE_CUBE;
-	info.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
-	info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
-	info.width = static_cast<Uint32>(size);
-	info.height = static_cast<Uint32>(size);
-	info.layer_count_or_depth = 6;
-	info.num_levels = static_cast<Uint32>(mip ? getMipLevels() : 1);
-	info.sample_count = SDL_GPU_SAMPLECOUNT_1;
+	create(Format::rgba16, size, true);
 
-	auto sdlCubemap = SDL_CreateGPUTexture(OtGpu::instance().device, &info);
+	// setup the rendering pipeline
+	OtRenderPipeline pipeline;
+	pipeline.setShaders(OtHdrReprojectVert, sizeof(OtHdrReprojectVert), OtHdrReprojectFrag, sizeof(OtHdrReprojectFrag));
+	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
+	pipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+	pipeline.setCulling(OtRenderPipeline::Culling::none);
 
-	if (!sdlCubemap) {
-		OtLogFatal("Error in SDL_CreateGPUTexture: {}", SDL_GetError());
-	}
-
-	assign(sdlCubemap);
-
-	// start a compute pass and setup the input and output textures
+	// run a render pass
+	OtRenderPass pass;
 	OtSampler sampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
 
-	OtComputePipeline pipeline;
-	pipeline.setShader(OtHdrReprojectComp, sizeof(OtHdrReprojectComp));
-
-	OtComputePass pass;
-	pass.addInputSampler(sampler, inputTexture);
-	pass.addOutputCubeMap(*this);
-
-	pass.execute(
-		pipeline,
-		static_cast<size_t>(std::ceil(size / 16.0)),
-		static_cast<size_t>(std::ceil(size / 16.0)),
-		6);
+	pass.start(*this);
+	pass.bindPipeline(pipeline);
+	pass.bindFragmentSampler(0, sampler, inputTexture);
+	pass.render(3);
+	pass.end();
 }

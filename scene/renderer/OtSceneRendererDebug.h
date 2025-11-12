@@ -19,9 +19,10 @@
 
 #include "OtCubeMap.h"
 #include "OtFrameBuffer.h"
-#include "OtSampler.h"
+#include "OtIndexBuffer.h"
 #include "OtRenderPipeline.h"
 #include "OtTexture.h"
+#include "OtVertexBuffer.h"
 
 #include "OtSceneRenderer.h"
 
@@ -62,7 +63,8 @@ private:
 	CubeMapDebug iblIrradianceDebug;
 	CubeMapDebug iblEnvironmentDebug;
 
-	// OtSampler crossSampler{"s_cubemap"};
-	// OtUniformVec4 crossUniform{"u_crossUniform", 1};
-	// OtRenderPipeline crossShader{"OtCubeMapCrossVS", "OtCubeMapCrossFS"};
+	OtRenderPipeline pipeline;
+	OtIndexBuffer indexBuffer;
+	OtVertexBuffer vertexBuffer;
+	bool crossInitialized = false;
 };

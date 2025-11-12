@@ -63,6 +63,10 @@ public:
 	inline Addressing getAddressingX() { return requestedAddressingX; };
 	inline Addressing getAddressingY() { return requestedAddressingY; };
 
+	inline void setMinMaxLod(float mnLod, float mxLod) { minLod = mnLod; maxLod = mxLod; }
+	inline float getMinLod() { return minLod; }
+	inline float getMaxLod() { return maxLod; }
+
 private:
 	// sampler
 	std::shared_ptr<SDL_GPUSampler> sampler;
@@ -74,6 +78,8 @@ private:
 	Addressing requestedAddressingY = Addressing::repeat;
 	Addressing currentAddressingX = Addressing::none;
 	Addressing currentAddressingY = Addressing::none;
+	float minLod = 0;
+	float maxLod = 0;
 
 	// memory manage SDL resource
 	void assign(SDL_GPUSampler* newSampler);

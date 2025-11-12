@@ -14,14 +14,13 @@
 
 #include "OtComputePipeline.h"
 #include "OtCubeMap.h"
+#include "OtRenderPipeline.h"
 #include "OtSampler.h"
 #include "OtTexture.h"
 
 #include "OtIblComponent.h"
 
 #include "OtBrdfLutComp.h"
-#include "OtIblEnvironmentMapComp.h"
-#include "OtIblIrradianceMapComp.h"
 
 
 //
@@ -46,10 +45,11 @@ private:
 	// samplers
 	OtSampler cubemapSampler;
 
-	// compute programs
+	// compute/render pipelines
 	OtComputePipeline brdfLutPipeline{OtBrdfLutComp, sizeof(OtBrdfLutComp)};
-	OtComputePipeline iblEnvironmentMapPipeline{OtIblEnvironmentMapComp, sizeof(OtIblEnvironmentMapComp)};
-	OtComputePipeline iblIrradianceMapPipeline{OtIblIrradianceMapComp, sizeof(OtIblIrradianceMapComp)};
+	OtRenderPipeline irradiancePipeline;
+	OtRenderPipeline environmentPipeline;
+	bool pipelinesInitialized = false;
 
 	// image based lighting data
 	int iblSkyMapVersion = 0;

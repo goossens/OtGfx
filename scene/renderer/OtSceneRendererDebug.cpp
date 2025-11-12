@@ -9,6 +9,7 @@
 //	Include files
 //
 
+#include <cstdint>
 #include <string>
 
 #include "fmt/format.h"
@@ -16,13 +17,15 @@
 
 #include "OtAssetManager.h"
 #include "OtPath.h"
-// #include "OtPass.h"
-// #include "OtTransientIndexBuffer.h"
-// #include "OtTransientVertexBuffer.h"
+#include "OtRenderPass.h"
+#include "OtSampler.h"
 #include "OtVertex.h"
 #include "OtUi.h"
 
 #include "OtSceneRendererDebug.h"
+
+#include "OtCubeMapCrossVert.h"
+#include "OtCubeMapCrossFrag.h"
 
 
 //
@@ -55,7 +58,7 @@ void OtSceneRendererDebug::renderIbl(OtSceneRenderer& renderer) {
 	if (ImGui::CollapsingHeader("Image Based Lighting (IBL)")) {
 		auto& ibl = renderer.ctx.ibl;
 
-		if (ibl.iblEnvironmentMap.isValid()) {
+		if (ibl.iblBrdfLut.isValid()) {
 			if (ibl.iblSkyMap->isValid()) { renderCubeMap("Sky Map", *ibl.iblSkyMap, iblSkyMapDebug); }
 			if (ibl.iblIrradianceMap.isValid()) { renderCubeMap("Irradiance Map", ibl.iblIrradianceMap, iblIrradianceDebug); }
 			if (ibl.iblEnvironmentMap.isValid()) { renderCubeMap("Environment Map", ibl.iblEnvironmentMap, iblEnvironmentDebug); }
@@ -253,7 +256,10 @@ void OtSceneRendererDebug::renderTexture(const char* title, OtTexture& texture) 
 
 void OtSceneRendererDebug::renderCubeMap(const char* title, OtCubeMap& cubemap, CubeMapDebug& debug) {
 	if (ImGui::TreeNode(title)) {
-		OtUi::dragInt("Mip Level", &debug.requestedMip, 0, cubemap.getMipLevels());
+
+		if (cubemap.hasMip()) {
+			OtUi::dragInt("Mip Level", &debug.requestedMip, 0, cubemap.getMipLevels() - 1);
+		}
 
 		if (cubemap.getVersion() != debug.renderedVersion || debug.requestedMip != debug.renderedMip) {
 			renderCubeMapAsCross(cubemap, debug);
@@ -271,69 +277,91 @@ void OtSceneRendererDebug::renderCubeMap(const char* title, OtCubeMap& cubemap, 
 //
 
 void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug& debug) {
-	// static float crossVertices[] = {
-	// 	0.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
-	// 	0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+	// initialize cross GPU resource (if required)
+	if (!crossInitialized) {
+		pipeline.setShaders(OtCubeMapCrossVert, sizeof(OtCubeMapCrossVert), OtCubeMapCrossFrag, sizeof(OtCubeMapCrossFrag));
+		pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
+		pipeline.setVertexDescription(OtVertexPosUvw::getDescription());
 
-	// 	0.5f, 0.0f, 0.0f, -1.0f,  1.0f, -1.0f,
-	// 	0.5f, 0.5f, 0.0f, -1.0f,  1.0f,  1.0f,
-	// 	0.5f, 1.0f, 0.0f, -1.0f, -1.0f,  1.0f,
-	// 	0.5f, 1.5f, 0.0f, -1.0f, -1.0f, -1.0f,
+		static float crossVertices[] = {
+			0.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
+			0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
 
-	// 	1.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
-	// 	1.0f, 0.5f, 0.0f,  1.0f,  1.0f,  1.0f,
-	// 	1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
-	// 	1.0f, 1.5f, 0.0f,  1.0f, -1.0f, -1.0f,
+			0.5f, 0.0f, 0.0f, -1.0f,  1.0f, -1.0f,
+			0.5f, 0.5f, 0.0f, -1.0f,  1.0f,  1.0f,
+			0.5f, 1.0f, 0.0f, -1.0f, -1.0f,  1.0f,
+			0.5f, 1.5f, 0.0f, -1.0f, -1.0f, -1.0f,
 
-	// 	1.5f, 0.5f, 0.0f,  1.0f,  1.0f, -1.0f,
-	// 	1.5f, 1.0f, 0.0f,  1.0f, -1.0f, -1.0f,
+			1.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
+			1.0f, 0.5f, 0.0f,  1.0f,  1.0f,  1.0f,
+			1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
+			1.0f, 1.5f, 0.0f,  1.0f, -1.0f, -1.0f,
 
-	// 	2.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
-	// 	2.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
-	// };
+			1.5f, 0.5f, 0.0f,  1.0f,  1.0f, -1.0f,
+			1.5f, 1.0f, 0.0f,  1.0f, -1.0f, -1.0f,
 
-	// static constexpr size_t crossVertexCount = sizeof(crossVertices) / sizeof(*crossVertices) / 6;
+			2.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
+			2.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+		};
 
-	// static uint32_t crossIndices[] = {
-	// 	0, 1, 3, 3, 1, 4,
-	// 	2, 3, 6, 6, 3, 7,
-	// 	3, 4, 7, 7, 4, 8,
-	// 	4, 5, 8, 8, 5, 9,
-	// 	7, 8, 10, 10, 8, 11,
-	// 	10, 11, 12, 12, 11, 13
-	// };
+		vertexBuffer.set(crossVertices, sizeof(crossVertices) / sizeof(*crossVertices) / 6, OtVertexPosUvw::getDescription());
 
-	// static constexpr size_t crossIndexCount = sizeof(crossIndices) / sizeof(*crossIndices);
+		static uint32_t crossIndices[] = {
+			0, 1, 3, 3, 1, 4,
+			2, 3, 6, 6, 3, 7,
+			3, 4, 7, 7, 4, 8,
+			4, 5, 8, 8, 5, 9,
+			7, 8, 10, 10, 8, 11,
+			10, 11, 12, 12, 11, 13
+		};
+
+		indexBuffer.set(crossIndices, sizeof(crossIndices) / sizeof(*crossIndices));
+		crossInitialized = true;
+	}
 
 	// set framebuffer size
 	static constexpr int width = 600;
 	static constexpr int height = width * 4 / 6;
 	debug.framebuffer.update(width, height);
 
-	// // start a rendering pass
-	// OtPass pass;
-	// pass.setClearColor(true);
-	// pass.setRectangle(0, 0, width, height);
-	// pass.setFrameBuffer(debug.framebuffer);
+	// create mipmap sampler
+	OtSampler sampler;
+	sampler.setFilter(OtSampler::Filter::linear);
+	sampler.setAddressing(OtSampler::Addressing::clamp);
+	auto mipmapLevels = cubemap.getMipLevels();
+	sampler.setMinMaxLod(0.0f, static_cast<float>(mipmapLevels ? mipmapLevels - 1 : 0));
 
-	// // setup projection
-	// glm::mat4 view = glm::scale(glm::mat4(1.0f), glm::vec3(width / 2.0f, height / 1.5f, 1.0f));
-	// glm::mat4 projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
-	// pass.setTransform(view, projection);
+	// start a rendering pass
+	OtRenderPass pass;
+	pass.setClearColor(true);
+	pass.start(debug.framebuffer);
+	pass.bindPipeline(pipeline);
+	pass.bindFragmentSampler(0, sampler, cubemap);
 
-	// // submit geometry for cross
-	// OtTransientVertexBuffer tvb;
-	// OtTransientIndexBuffer tib;
-	// tvb.submit(crossVertices, crossVertexCount, OtVertexPosUvw::getLayout());
-	// tib.submit(crossIndices, crossIndexCount);
+	// set vertext uniforms
+	glm::mat4 view = glm::scale(glm::mat4(1.0f), glm::vec3(width / 2.0f, height / 1.5f, 1.0f));
+	glm::mat4 projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
 
-	// // setup sampler and uniform
-	// crossSampler.submit(0, cubemap.getHandle());
-	// crossUniform.setValue(0, float(debug.requestedMip), 0.0f, 0.0f, 0.0f);
-	// crossUniform.submit();
+	struct VertexUniforms {
+		glm::mat4 viewProjectionMatrix;
+	} vertexUniforms {
+		projection * view
+	};
 
-	// // run program
-	// pass.runShaderProgram(crossShader);
+	pass.setVertexUniforms(0, &vertexUniforms, sizeof(vertexUniforms));
+
+	// set fragment uniforms
+	struct FragmentUniforms {
+		float mipLevel;
+	} fragmentUniforms {
+		static_cast<float>(debug.requestedMip)
+	};
+
+	pass.setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
+
+	// render cubemap as cross
+	pass.render(vertexBuffer, indexBuffer);
+	pass.end();
 
 	// update metadata
 	debug.renderedVersion = cubemap.getVersion();

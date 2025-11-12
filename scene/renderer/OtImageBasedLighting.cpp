@@ -9,9 +9,16 @@
 //	Include files
 //
 
+#include <cstdint>
+
 #include "OtComputePass.h"
+#include "OtRenderPass.h"
 
 #include "OtImageBasedLighting.h"
+
+#include "OtIblVert.h"
+#include "OtIblIrradianceMapFrag.h"
+#include "OtIblEnvironmentMapFrag.h"
 
 
 //
@@ -33,39 +40,61 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 		auto usage = OtTexture::Usage(OtTexture::Usage::sampler | OtTexture::Usage::computeStorageWrite);
 		iblBrdfLut.update(brdfLutSize, brdfLutSize, OtTexture::Format::rg16, usage);
 
-		OtComputePass pass;
-		pass.addOutputTexture(iblBrdfLut);
-		pass.execute(brdfLutPipeline, brdfLutSize / threadCount, brdfLutSize / threadCount, 1);
+		OtComputePass brdfPass;
+		brdfPass.addOutputTexture(iblBrdfLut);
+		brdfPass.execute(brdfLutPipeline, brdfLutSize / threadCount, brdfLutSize / threadCount, 1);
+
+		// initialize render pipelines (if required)
+		if (!pipelinesInitialized) {
+			irradiancePipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
+			irradiancePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
+			irradiancePipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+			irradiancePipeline.setCulling(OtRenderPipeline::Culling::none);
+
+			environmentPipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblEnvironmentMapFrag, sizeof(OtIblEnvironmentMapFrag));
+			environmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
+			environmentPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
+			environmentPipeline.setCulling(OtRenderPipeline::Culling::none);
+
+			pipelinesInitialized = true;
+		}
 
 		// render irradiance map
-		iblIrradianceMap.create(irradianceSize, false);
-		pass.addInputSampler(cubemapSampler, cubemap);
-		pass.addOutputCubeMap(iblIrradianceMap);
-		pass.execute(iblIrradianceMapPipeline, irradianceSize / threadCount, irradianceSize / threadCount, 1);
+		OtRenderPass irradiancePass;
+		iblIrradianceMap.create(OtCubeMap::Format::rgba16, irradianceSize, false);
+
+		irradiancePass.start(iblIrradianceMap);
+		irradiancePass.bindPipeline(irradiancePipeline);
+		irradiancePass.bindFragmentSampler(0, cubemapSampler, cubemap);
+		irradiancePass.render(3);
+		irradiancePass.end();
 
 		// render environment map
-		iblEnvironmentMap.create(environmentSize, true);
+		iblEnvironmentMap.create(OtCubeMap::Format::rgba16, environmentSize, true);
 		maxEnvLevel = environmentMipLevels;
 
-		for (auto mipLevel = 0; mipLevel <= environmentMipLevels; mipLevel++) {
+		for (auto mipLevel = 0; mipLevel < environmentMipLevels; mipLevel++) {
+			OtRenderPass environmentPass;
+
+			environmentPass.start(iblEnvironmentMap, mipLevel);
+			environmentPass.bindPipeline(environmentPipeline);
+
 			// set uniforms
 			struct Uniforms {
 				float roughness;
-				float mipLevel;
-				float environmentSize;
+				uint32_t environmentSize;
 			} uniforms{
-				float(mipLevel) / float(environmentMipLevels),
-				float(mipLevel),
-				float(environmentSize)};
+				static_cast<float>(mipLevel) / static_cast<float>(environmentMipLevels),
+				static_cast<uint32_t>(environmentSize)
+			};
 
-			pass.addUniforms(&uniforms, sizeof(uniforms));
-			pass.addInputSampler(cubemapSampler, cubemap);
-			pass.addOutputCubeMap(iblEnvironmentMap);
-
-			int mipSize = environmentSize / (1 << mipLevel);
-			pass.execute(iblEnvironmentMapPipeline, mipSize / threadCount, mipSize / threadCount, 1);
+			environmentPass.setFragmentUniforms(0, &uniforms, sizeof(uniforms));
+			environmentPass.bindFragmentSampler(0, cubemapSampler, cubemap);
+			environmentPass.render(3);
+			environmentPass.end();
 		}
 
+		// update baseline
 		iblSkyMapVersion = cubemap.getVersion();
 		iblSkyMap = &cubemap;
 	}

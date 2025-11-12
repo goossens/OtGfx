@@ -144,6 +144,32 @@ struct OtVertexPosColor {
 
 
 //
+//	OtVertexPosUvw
+//
+
+struct OtVertexPosUvw {
+	// vertex elements
+	glm::vec3 position;
+	glm::vec3 uvw;
+
+	// constructors
+	OtVertexPosUvw() = default;
+	inline OtVertexPosUvw(const glm::vec3& p, const glm::vec3& u=glm::vec3(0.0f)) : position(p), uvw(u) {}
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexPosUvw, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexPosUvw, uvw)}
+		};
+
+		static OtVertexDescription description{sizeof(OtVertexPosUvw), sizeof(attributes) / sizeof(attributes[0]), attributes};
+		return &description;
+	}
+};
+
+
+//
 //	OtVertexPos
 //
 

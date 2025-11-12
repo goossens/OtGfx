@@ -68,18 +68,3 @@ vec3 importanceSampleGGX(vec2 Xi, float roughness, vec3 N) {
 	// Convert to world Space
 	return normalize(tangentX * H.x + tangentY * H.y + N * H.z);
 }
-
-vec3 toWorldCoords(uvec3 globalId, float size) {
-	vec2 uvc = (vec2(globalId.xy) + 0.5) / size;
-	uvc = 2.0 * uvc - 1.0;
-	uvc.y *= -1.0;
-
-	switch (globalId.z) {
-		case 0: return vec3(1.0, uvc.y, -uvc.x);
-		case 1: return vec3(-1.0, uvc.y, uvc.x);
-		case 2: return vec3(uvc.x, 1.0, -uvc.y);
-		case 3: return vec3(uvc.x, -1.0, uvc.y);
-		case 4: return vec3(uvc.x, uvc.y, 1.0);
-		default: return vec3(-uvc.x, uvc.y, -1.0);
-	}
-}

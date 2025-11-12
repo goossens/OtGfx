@@ -49,6 +49,7 @@ public:
 	void start(OtTexture& texture);
 	void start(OtFrameBuffer& framebuffer);
 	void start(OtGbuffer& gbuffer);
+	void start(OtCubeMap& cubemap, size_t mipLevel=0);
 
 	// bind a render pipeline
 	void bindPipeline(OtRenderPipeline& pipeline);

@@ -37,6 +37,7 @@ public:
 	// add output textures
 	void addOutputTexture(OtTexture& texture);
 	void addOutputCubeMap(OtCubeMap& cubemap);
+	void addOutputCubeMap(OtCubeMap& cubemap, size_t layer);
 
 	// add uniforms
 	void addUniforms(const void* data, size_t size);
@@ -47,6 +48,6 @@ public:
 private:
 	// pass specific data
 	std::vector<SDL_GPUTextureSamplerBinding> samplers;
-	std::vector<SDL_GPUStorageTextureReadWriteBinding> textures;
+	std::vector<SDL_GPUStorageTextureReadWriteBinding> outputTextures;
 	std::vector<std::vector<std::byte>> uniforms;
 };

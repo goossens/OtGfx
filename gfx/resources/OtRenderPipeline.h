@@ -40,7 +40,8 @@ public:
 		rgba16d32,
 		rgba32d32,
 		d32,
-		gBuffer
+		gBuffer,
+		cubemap
 	};
 
 	enum ColorMask {

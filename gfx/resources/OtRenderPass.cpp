@@ -151,6 +151,61 @@ void OtRenderPass::start(OtGbuffer& gbuffer) {
 
 
 //
+//	OtRenderPass::start
+//
+
+void OtRenderPass::start(OtCubeMap& cubemap, size_t mipLevel) {
+	// sanity checks
+	OtAssert(!open);
+
+	if (!cubemap.isValid()) {
+		OtLogFatal("Can't use invalid cubemap in render pass");
+	}
+
+	// start rendering pass
+	SDL_GPUColorTargetInfo colorTargetInfo[6];
+
+	colorTargetInfo[0] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[0].texture = cubemap.getTexture();
+	colorTargetInfo[0].mip_level = static_cast<Uint32>(mipLevel);
+	colorTargetInfo[0].layer_or_depth_plane = 0;
+
+	colorTargetInfo[1] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[1].texture = cubemap.getTexture();
+	colorTargetInfo[1].mip_level = static_cast<Uint32>(mipLevel);
+	colorTargetInfo[1].layer_or_depth_plane = 1;
+
+	colorTargetInfo[2] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[2].texture = cubemap.getTexture();
+	colorTargetInfo[2].mip_level = static_cast<Uint32>(mipLevel);
+	colorTargetInfo[2].layer_or_depth_plane = 2;
+
+	colorTargetInfo[3] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[3].texture = cubemap.getTexture();
+	colorTargetInfo[3].mip_level = static_cast<Uint32>(mipLevel);
+	colorTargetInfo[3].layer_or_depth_plane = 3;
+
+	colorTargetInfo[4] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[4].texture = cubemap.getTexture();
+	colorTargetInfo[4].mip_level = static_cast<Uint32>(mipLevel);
+	colorTargetInfo[4].layer_or_depth_plane = 4;
+
+	colorTargetInfo[5] = SDL_GPUColorTargetInfo{};
+	colorTargetInfo[5].texture = cubemap.getTexture();
+	colorTargetInfo[5].mip_level = static_cast<Uint32>(mipLevel);
+	colorTargetInfo[5].layer_or_depth_plane = 5;
+
+	pass = SDL_BeginGPURenderPass(OtGpu::instance().pipelineCommandBuffer, colorTargetInfo, 6, nullptr);
+
+	if (!pass) {
+		OtLogFatal("Error in SDL_BeginGPURenderPass: {}", SDL_GetError());
+	}
+
+	open = true;
+}
+
+
+//
 //	OtRenderPass::bindPipeline
 //
 

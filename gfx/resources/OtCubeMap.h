@@ -30,8 +30,16 @@
 
 class OtCubeMap {
 public:
+	// image formats
+	enum class Format {
+		none = SDL_GPU_TEXTUREFORMAT_INVALID,
+		rgba8 = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+		rgba16 = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
+		rgba32 = SDL_GPU_TEXTUREFORMAT_R32G32B32A32_FLOAT
+	};
+
 	// create an empty cubemap
-	void create(int size, bool mip=false);
+	void create(Format format, int size, bool mip=false);
 
 	// load cubemap from the specified file
 	void load(const std::string& path, bool async=false);
@@ -46,6 +54,7 @@ public:
 	inline int getSize() { return size; }
 	inline bool hasMip() { return mip; }
 	inline int getMipLevels() { return mip ? (int) std::ceil(std::log2(float(size))) : 0; }
+	inline Format getFormat() { return format; }
 
 	// version management
 	inline void setVersion(int v) { version = v; }
@@ -69,6 +78,7 @@ private:
 	void assign(SDL_GPUTexture* newTexture);
 
 	// properties
+	Format format = Format::none;
 	int size = 1;
 	bool mip = false;
 	int version = 0;

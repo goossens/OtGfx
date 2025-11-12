@@ -10,29 +10,34 @@
 #include "constants.glsl"
 #include "pbrHelpers.glsl"
 
-#define NUM_SAMPLES 64u
+layout(location = 0) in vec2 vUv;
 
-layout(local_size_x=16, local_size_y=16, local_size_z=1) in;
+layout(set=2, binding=0) uniform samplerCube inTexture;
 
-layout(set=0, binding=0) uniform samplerCube inTexture;
-layout(set=1, binding=0, rgba16f) uniform writeonly image2DArray outTexture;
+layout(location = 0) out vec4 side1Color;
+layout(location = 1) out vec4 side2Color;
+layout(location = 2) out vec4 side3Color;
+layout(location = 3) out vec4 side4Color;
+layout(location = 4) out vec4 side5Color;
+layout(location = 5) out vec4 side6Color;
 
-layout(std140, set=2, binding=0) uniform UBO {
-    float roughness;
-    float mipLevel;
-    float size;
+layout(std140, set=3, binding=0) uniform UBO {
+	float roughness;
+	int size;
 };
 
 // From Karis, 2014
-vec3 prefilterEnvMap(float roughness, vec3 R, float imgSize) {
+vec3 prefilterEnvMap(vec3 R) {
 	// Isotropic approximation: we lose stretchy reflections :(
 	vec3 N = R;
 	vec3 V = R;
 	vec3 prefilteredColor = vec3(0.0f);
 	float totalWeight = 0.0f;
 
-	for (uint i = 0u; i < NUM_SAMPLES; i++) {
-		vec2 Xi = hammersley(i, NUM_SAMPLES);
+	const int numSamples = 64;
+
+	for (int i = 0; i < numSamples; i++) {
+		vec2 Xi = hammersley(i, numSamples);
 		vec3 H = importanceSampleGGX(Xi, roughness, N);
 		float VoH = dot(V, H);
 		float NoH = VoH; // Since N = V in our approximation
@@ -47,11 +52,11 @@ vec3 prefilterEnvMap(float roughness, vec3 R, float imgSize) {
 			// but since V = N => VoH == NoH
 			float pdf = D_GGX(NoH, roughness) / 4.0f + 0.001f;
 			// Solid angle of current sample -- bigger for less likely samples
-			float omegaS = 1.0 / (float(NUM_SAMPLES) * pdf);
+			float omegaS = 1.0f / (float(numSamples) * pdf);
 			// Solid angle  of pixel
-			float omegaP = 4.0 * PI / (6.0 * imgSize * imgSize);
+			float omegaP = 4.0f * PI / (6.0f * size * size);
 			float mipLevel = roughness == 0.0f ? 0.0f : max(0.5f * log2(omegaS / omegaP), 0.0f);
-			prefilteredColor += texture(inTexture, L, mipLevel).rgb * NoL;
+			prefilteredColor += textureLod(inTexture, L, mipLevel).rgb * NoL;
 			totalWeight += NoL;
 		}
 	}
@@ -59,23 +64,18 @@ vec3 prefilterEnvMap(float roughness, vec3 R, float imgSize) {
 	return prefilteredColor / totalWeight;
 }
 
-void main() {
-	float mipImageSize = size / pow(2.0, mipLevel);
-	ivec3 globalId = ivec3(gl_GlobalInvocationID.xyz);
-
-	if (globalId.x >= mipImageSize || globalId.y >= mipImageSize) {
-		return;
-	}
-
-	vec3 R = normalize(toWorldCoords(globalId, mipImageSize));
-
+vec4 processSide(vec3 N) {
 	// Don't need to integrate for roughness == 0, since it's a perfect reflector
-	if (roughness == 0.0) {
-		vec4 color = texture(inTexture, R, 0);
-		imageStore(outTexture, globalId, color);
+	return (roughness == 0.0f) ? texture(inTexture, N, 0) :  vec4(prefilterEnvMap(N), 1.0f);
+}
 
-	} else {
-		vec3 color = prefilterEnvMap(roughness, R, size);
-		imageStore(outTexture, globalId, vec4(color, 1.0));
-	}
+void main() {
+	vec2 uv = 2.0f * vec2(vUv.x, 1.0f - vUv.y) - vec2(1.0f);
+
+	side1Color = processSide(normalize(vec3(1.0f, uv.y, -uv.x)));
+	side2Color = processSide(normalize(vec3(-1.0f, uv.y, uv.x)));
+	side3Color = processSide(normalize(vec3(uv.x, 1.0f, -uv.y)));
+	side4Color = processSide(normalize(vec3(uv.x, -1.0f, uv.y)));
+	side5Color = processSide(normalize(vec3(uv.x, uv.y, 1.0f)));
+	side6Color = processSide(normalize(vec3(-uv.x, uv.y, -1.0f)));
 }

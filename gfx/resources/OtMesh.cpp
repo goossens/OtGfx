@@ -59,7 +59,8 @@ void OtMesh::load(const std::string& path) {
 	auto flags =
 		aiProcessPreset_TargetRealtime_Quality |
 		aiProcess_OptimizeMeshes |
-		aiProcess_PreTransformVertices;
+		aiProcess_PreTransformVertices |
+		aiProcess_FlipUVs;
 
 	// read the file
 	const aiScene* scene = importer.ReadFile(path, static_cast<unsigned int>(flags));

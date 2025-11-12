@@ -36,6 +36,7 @@ public:
 	// constructors
 	OtImage() = default;
 	OtImage(const std::string& path, bool powerof2=false, bool square=false);
+	OtImage(int width, int height, Format format, void* pixels);
 
 	// clear the resources
 	void clear();

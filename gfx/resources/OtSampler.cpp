@@ -87,7 +87,8 @@ SDL_GPUSampler* OtSampler::getSampler() {
 		info.address_mode_u = addressModeX;
 		info.address_mode_v = addressModeY;
 		info.address_mode_w = addressModeX;
-		info.mip_lod_bias = 0;
+		info.min_lod = minLod;
+		info.max_lod = maxLod;
 		info.max_anisotropy = requestedFilter == Filter::anisotropic ? 4.0f : 0.0f;
 		info.enable_anisotropy = requestedFilter == Filter::anisotropic;
 		auto sdlSampler =SDL_CreateGPUSampler(OtGpu::instance().device, &info);
