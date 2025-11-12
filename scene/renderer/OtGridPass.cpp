@@ -1,0 +1,84 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+
+//
+//	Include files
+//
+
+#include <cstdint>
+
+#include "glm/glm.hpp"
+
+#include "OtRenderPass.h"
+#include "OtVertex.h"
+
+#include "OtGridPass.h"
+
+#include "OtGridVert.h"
+#include "OtGridFrag.h"
+
+
+//
+//	OtGridPass::render
+//
+
+void OtGridPass::render(OtSceneRendererContext& ctx) {
+	if (gridScale > 0.0f) {
+		// setup pass
+		OtRenderPass pass;
+		pass.start(framebuffer);
+		pass.bindPipeline(pipeline);
+
+		// set the vertex uniforms
+		ctx.setCameraUniforms(0);
+
+		// set the fragment uniforms
+		struct Uniforms {
+			glm::mat4 viewProjectionMatrix;
+			float gridScale;
+		} uniforms {
+			ctx.camera.viewProjectionMatrix,
+			gridScale
+		};
+
+		pass.setFragmentUniforms(0, &uniforms, sizeof(Uniforms));
+
+		pass.render(vertexBuffer, indexBuffer);
+		pass.end();
+	}
+}
+
+
+//
+//	OtGridPass::initializeResources
+//
+
+void OtGridPass::initializeResources() {
+	pipeline.setShaders(OtGridVert, sizeof(OtGridVert), OtGridFrag, sizeof(OtGridFrag));
+	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba32d32);
+	pipeline.setVertexDescription(OtVertexPos::getDescription());
+	pipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	pipeline.setCulling(OtRenderPipeline::Culling::none);
+
+	pipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::srcAlpha,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	static glm::vec3 vertices[] = {
+		glm::vec3{-1.0f, -1.0f, 0.0f},
+		glm::vec3{1.0f, -1.0f, 0.0f},
+		glm::vec3{1.0f, 1.0f, 0.0f},
+		glm::vec3{-1.0f, 1.0f, 0.0f}
+	};
+
+	static uint32_t indices[] = {0, 1, 2, 2, 3, 0};
+
+	vertexBuffer.set(vertices, sizeof(vertices) / sizeof(*vertices), OtVertexPos::getDescription());
+	indexBuffer.set(indices, sizeof(indices) / sizeof(*indices));
+}

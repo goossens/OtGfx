@@ -45,7 +45,7 @@ public:
 	OtPostProcessingPass(OtFrameBuffer& fb) : framebuffer(fb) {}
 
 	// render the pass
-	ImTextureID render(OtSceneRendererContext& ctx);
+	OtTexture* render(OtSceneRendererContext& ctx);
 
 private:
 	// give the debugger access to the inner circle

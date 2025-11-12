@@ -170,15 +170,16 @@ void OtSceneRendererDebug::renderOcclusion([[maybe_unused]] OtSceneRenderer& ren
 //
 
 void OtSceneRendererDebug::renderTimings(OtSceneRenderer& renderer) {
-	if (ImGui::CollapsingHeader("Timings (ms)")) {
+	if (ImGui::CollapsingHeader("CPU Timings (ms)")) {
 		OtUi::readonlyFloat("Context setup", renderer.ctxTime);
 		OtUi::readonlyFloat("Shadow pass", renderer.shadowPassTime);
 		OtUi::readonlyFloat("Background pass", renderer.backgroundPassTime);
 		OtUi::readonlyFloat("Opaque pass", renderer.opaquePassTime);
-		OtUi::readonlyFloat("Transparent pass", renderer.transparentPassTime);
-		OtUi::readonlyFloat("Sky pass", renderer.skyPassTime);
 		OtUi::readonlyFloat("Water pass", renderer.waterPassTime);
+		OtUi::readonlyFloat("Sky pass", renderer.skyPassTime);
 		OtUi::readonlyFloat("Particle pass", renderer.particlePassTime);
+		OtUi::readonlyFloat("Transparent pass", renderer.transparentPassTime);
+		OtUi::readonlyFloat("Grid pass", renderer.gridPassTime);
 		OtUi::readonlyFloat("Post Processing", renderer.postProcessingTime);
 		OtUi::readonlyFloat("Editor pass", renderer.editorPassTime);
 		OtUi::readonlyFloat("Total CPU time", renderer.renderTime);
@@ -277,8 +278,8 @@ void OtSceneRendererDebug::renderCubeMap(const char* title, OtCubeMap& cubemap, 
 //
 
 void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug& debug) {
-	// initialize cross GPU resource (if required)
-	if (!crossInitialized) {
+	// initialize cross GPU resources (if required)
+	if (!resourcesInitialized) {
 		pipeline.setShaders(OtCubeMapCrossVert, sizeof(OtCubeMapCrossVert), OtCubeMapCrossFrag, sizeof(OtCubeMapCrossFrag));
 		pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
 		pipeline.setVertexDescription(OtVertexPosUvw::getDescription());
@@ -316,7 +317,7 @@ void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug
 		};
 
 		indexBuffer.set(crossIndices, sizeof(crossIndices) / sizeof(*crossIndices));
-		crossInitialized = true;
+		resourcesInitialized = true;
 	}
 
 	// set framebuffer size

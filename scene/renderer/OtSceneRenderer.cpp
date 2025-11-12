@@ -44,13 +44,6 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	opaquePassTime = stopwatch.lap();
 
-	// render transparent entities
-	if (ctx.hasTransparentGeometries) {
-		forwardPass.render(ctx);
-	}
-
-	transparentPassTime = stopwatch.lap();
-
 	// render water (if required)
 	if (ctx.hasWaterEntities) {
 		waterPass.render(ctx);
@@ -72,11 +65,23 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	particlePassTime = stopwatch.lap();
 
-	// handle editor passes
-	// gridPass.render(ctx);
+	// render transparent entities
+	if (ctx.hasTransparentGeometries) {
+		forwardPass.render(ctx);
+	}
 
+	transparentPassTime = stopwatch.lap();
+
+	gridPass.render(ctx);
+	gridPassTime = stopwatch.lap();
+
+	// post process frame
+	auto output = postProcessingPass.render(ctx);
+	postProcessingTime = stopwatch.lap();
+
+	// handle editor passes
 	if (scene->isValidEntity(selectedEntity)) {
-		// highlightPass.render(ctx, selectedEntity);
+		// highlightPass.render(ctx, output, selectedEntity);
 	}
 
 	if (pickingCallback) {
@@ -85,9 +90,6 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	}
 
 	editorPassTime = stopwatch.lap();
-
-	// post process frame
-	auto textureID = postProcessingPass.render(ctx);
-	postProcessingTime = stopwatch.lap();
-	return textureID;
+	renderTime = stopwatch.elapsed();
+	return output->getTextureID();
 }

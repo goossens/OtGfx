@@ -20,7 +20,7 @@
 //	OtPostProcessingPass::render
 //
 
-ImTextureID OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
+OtTexture* OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
 	// setup buffers
 	postProcessBuffer1.update(ctx.camera.width, ctx.camera.height, OtTexture::Format::rgba16, OtTexture::Usage::rwDefault);
 	postProcessBuffer2.update(ctx.camera.width, ctx.camera.height, OtTexture::Format::rgba16, OtTexture::Usage::rwDefault);
@@ -156,7 +156,5 @@ ImTextureID OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
 	postprocess.setContrast(settings.contrast);
 	postprocess.setTonemap(settings.tonemap);
 	postprocess.render(*input, *output);
-
-	// mark the right output buffer;
-	return output->getTextureID();
+	return output;
 }

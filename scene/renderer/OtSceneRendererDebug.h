@@ -66,5 +66,5 @@ private:
 	OtRenderPipeline pipeline;
 	OtIndexBuffer indexBuffer;
 	OtVertexBuffer vertexBuffer;
-	bool crossInitialized = false;
+	bool resourcesInitialized = false;
 };

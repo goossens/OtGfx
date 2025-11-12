@@ -45,7 +45,7 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 		brdfPass.execute(brdfLutPipeline, brdfLutSize / threadCount, brdfLutSize / threadCount, 1);
 
 		// initialize render pipelines (if required)
-		if (!pipelinesInitialized) {
+		if (!resourcesInitialized) {
 			irradiancePipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
 			irradiancePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
 			irradiancePipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
@@ -56,7 +56,7 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 			environmentPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
 			environmentPipeline.setCulling(OtRenderPipeline::Culling::none);
 
-			pipelinesInitialized = true;
+			resourcesInitialized = true;
 		}
 
 		// render irradiance map
