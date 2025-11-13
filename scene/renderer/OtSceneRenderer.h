@@ -36,7 +36,7 @@
 #include "OtSkyPass.h"
 #include "OtWaterPass.h"
 #include "OtGridPass.h"
-// #include "OtHighlightPass.h"
+#include "OtHighlightPass.h"
 // #include "OtPickingPass.h"
 #include "OtPostProcessingPass.h"
 #include "OtSceneRendererContext.h"
@@ -84,7 +84,7 @@ private:
 	// OtParticlesPass particlePass{compositeBuffer};
 	OtGridPass gridPass{compositeBuffer};
 	OtPostProcessingPass postProcessingPass{compositeBuffer};
-	// OtHighlightPass highlightPass;
+	OtHighlightPass highlightPass;
 	// OtPickingPass pickingPass;
 
 	// timings

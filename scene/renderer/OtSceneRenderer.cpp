@@ -81,7 +81,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// handle editor passes
 	if (scene->isValidEntity(selectedEntity)) {
-		// highlightPass.render(ctx, output, selectedEntity);
+		highlightPass.render(ctx, output, selectedEntity);
 	}
 
 	if (pickingCallback) {
