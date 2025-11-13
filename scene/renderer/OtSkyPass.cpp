@@ -137,11 +137,9 @@ void OtSkyPass::renderSkyBox(OtSceneRendererContext& ctx, OtSkyBoxComponent& sky
 void OtSkyPass::initializePipelines() {
 	skyPipeline.setShaders(OtSkyVert, sizeof(OtSkyVert), OtSkyFrag, sizeof(OtSkyFrag));
 	skyPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
-	skyPipeline.setCulling(OtRenderPipeline::Culling::none);
 	skyPipeline.setDepthTest(OtRenderPipeline::CompareOperation::lessEqual);
 
 	skyBoxPipeline.setShaders(OtSkyVert, sizeof(OtSkyVert), OtSkyBoxFrag, sizeof(OtSkyBoxFrag));
 	skyBoxPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
-	skyBoxPipeline.setCulling(OtRenderPipeline::Culling::none);
 	skyBoxPipeline.setDepthTest(OtRenderPipeline::CompareOperation::lessEqual);
 }

@@ -166,14 +166,14 @@ private:
 	OtVertexDescription* animatedDescription = nullptr;
 	OtVertexDescription* instanceDescription = nullptr;
 	RenderTargetType renderTargetType = RenderTargetType::rgba8d32;
-	Culling culling = Culling::cw;
+	Culling culling = Culling::none;
 	bool fill = true;
 
 	bool useColorMask = false;
 	ColorMask colorMask = ColorMask::rgba;
 
-	bool useDepth = true;
-	CompareOperation depthTest = CompareOperation::less;
+	bool useDepth = false;
+	CompareOperation depthTest = CompareOperation::none;
 
 	bool useStencilTest = false;
 	uint8_t stencilCompareMask = 0xff;

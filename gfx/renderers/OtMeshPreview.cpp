@@ -33,10 +33,12 @@ OtMeshPreview::OtMeshPreview() {
 	// configure pipelines
 	fillPipeline.setShaders(OtMeshPreviewVert, sizeof(OtMeshPreviewVert), OtMeshPreviewFrag, sizeof(OtMeshPreviewFrag));
 	fillPipeline.setVertexDescription(OtVertex::getDescription());
+	fillPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	fillPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	linePipeline.setShaders(OtMeshPreviewVert, sizeof(OtMeshPreviewVert), OtMeshPreviewFrag, sizeof(OtMeshPreviewFrag));
 	linePipeline.setVertexDescription(OtVertex::getDescription());
-	linePipeline.setCulling(OtRenderPipeline::Culling::none);
+	linePipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	linePipeline.setFill(false);
 }
 

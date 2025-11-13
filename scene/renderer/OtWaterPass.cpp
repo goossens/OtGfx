@@ -178,6 +178,8 @@ void OtWaterPass::initializeResources() {
 	waterPipeline.setShaders(OtWaterVert, sizeof(OtWaterVert), OtWaterFrag, sizeof(OtWaterFrag));
 	waterPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	waterPipeline.setVertexDescription(OtVertexPos::getDescription());
+	waterPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	waterPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	waterPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,

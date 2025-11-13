@@ -66,6 +66,8 @@ void OtForwardPass::initializePipelines() {
 	cullingPipeline.setShaders(OtForwardVert, sizeof(OtForwardVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
 	cullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	cullingPipeline.setVertexDescription(OtVertex::getDescription());
+	cullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	cullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	cullingPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
@@ -76,7 +78,7 @@ void OtForwardPass::initializePipelines() {
 	noCullingPipeline.setShaders(OtForwardVert, sizeof(OtForwardVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
 	noCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	noCullingPipeline.setVertexDescription(OtVertex::getDescription());
-	noCullingPipeline.setCulling(OtRenderPipeline::Culling::none);
+	noCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 
 	noCullingPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
@@ -87,7 +89,7 @@ void OtForwardPass::initializePipelines() {
 	linesPipeline.setShaders(OtForwardVert, sizeof(OtForwardVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
 	linesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	linesPipeline.setVertexDescription(OtVertex::getDescription());
-	linesPipeline.setCulling(OtRenderPipeline::Culling::none);
+	linesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	linesPipeline.setFill(false);
 
 	linesPipeline.setBlend(

@@ -68,8 +68,6 @@ public:
 
 			pipeline.setShaders(OtCompositingVert, sizeof(OtCompositingVert), OtCompositingFrag, sizeof(OtCompositingFrag));
 			pipeline.setRenderTargetType(renderTargetType);
-			pipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-			pipeline.setCulling(OtRenderPipeline::Culling::none);
 			configurePipeline(pipeline);
 		}
 

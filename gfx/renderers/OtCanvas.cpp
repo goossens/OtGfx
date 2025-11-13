@@ -55,8 +55,6 @@ OtCanvas::OtCanvas() {
 	convexPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
 	convexPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
 	convexPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
-	convexPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	convexPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	convexPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
@@ -68,8 +66,6 @@ OtCanvas::OtCanvas() {
 	fillShapesPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
 	fillShapesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
 	fillShapesPipeline.setColorMask(OtRenderPipeline::ColorMask::none);
-	fillShapesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	fillShapesPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	fillShapesPipeline.setStencil(
 		0xff, 0xff,
@@ -85,8 +81,6 @@ OtCanvas::OtCanvas() {
 	fillFragmentsPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
 	fillFragmentsPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
 	fillFragmentsPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
-	fillFragmentsPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	fillFragmentsPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	fillFragmentsPipeline.setStencil(
 		0xff, 0xff,
@@ -123,8 +117,6 @@ OtCanvas::OtCanvas() {
 	strokeBasePipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
 	strokeBasePipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
 	strokeBasePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
-	strokeBasePipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	strokeBasePipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	strokeBasePipeline.setStencil(
 		0xff, 0xff,
@@ -142,8 +134,6 @@ OtCanvas::OtCanvas() {
 	strokeFragmentPipeline.setShaders(OtCanvasVert, sizeof(OtCanvasVert), OtCanvasFrag, sizeof(OtCanvasFrag));
 	strokeFragmentPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
 	strokeFragmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
-	strokeFragmentPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	strokeFragmentPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	strokeFragmentPipeline.setStencil(
 		0xff, 0xff,
@@ -162,8 +152,6 @@ OtCanvas::OtCanvas() {
 	clearStencilPipeline.setVertexDescription(OtVertexPosUv2D::getDescription());
 	clearStencilPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8d24s8);
 	clearStencilPipeline.setColorMask(OtRenderPipeline::ColorMask::none);
-	clearStencilPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	clearStencilPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	clearStencilPipeline.setStencil(
 		0xff, 0xff,

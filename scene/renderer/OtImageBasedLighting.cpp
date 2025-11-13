@@ -48,13 +48,9 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 		if (!resourcesInitialized) {
 			irradiancePipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
 			irradiancePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
-			irradiancePipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-			irradiancePipeline.setCulling(OtRenderPipeline::Culling::none);
 
 			environmentPipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblEnvironmentMapFrag, sizeof(OtIblEnvironmentMapFrag));
 			environmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
-			environmentPipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-			environmentPipeline.setCulling(OtRenderPipeline::Culling::none);
 
 			resourcesInitialized = true;
 		}

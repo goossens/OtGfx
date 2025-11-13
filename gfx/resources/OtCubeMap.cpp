@@ -313,8 +313,6 @@ void OtCubeMap::createCubemapFromHDR() {
 	OtRenderPipeline pipeline;
 	pipeline.setShaders(OtHdrReprojectVert, sizeof(OtHdrReprojectVert), OtHdrReprojectFrag, sizeof(OtHdrReprojectFrag));
 	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
-	pipeline.setDepthTest(OtRenderPipeline::CompareOperation::none);
-	pipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	// run a render pass
 	OtRenderPass pass;

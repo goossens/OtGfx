@@ -61,8 +61,6 @@ void OtGridPass::initializeResources() {
 	pipeline.setShaders(OtGridVert, sizeof(OtGridVert), OtGridFrag, sizeof(OtGridFrag));
 	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba32d32);
 	pipeline.setVertexDescription(OtVertexPos::getDescription());
-	pipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
-	pipeline.setCulling(OtRenderPipeline::Culling::none);
 
 	pipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,

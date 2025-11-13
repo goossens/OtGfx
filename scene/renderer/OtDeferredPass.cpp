@@ -152,42 +152,48 @@ void OtDeferredPass::initializePipelines() {
 	cullingPipeline.setShaders(OtDeferredVert, sizeof(OtDeferredVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	cullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	cullingPipeline.setVertexDescription(OtVertex::getDescription());
+	cullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	cullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	noCullingPipeline.setShaders(OtDeferredVert, sizeof(OtDeferredVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	noCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	noCullingPipeline.setVertexDescription(OtVertex::getDescription());
-	noCullingPipeline.setCulling(OtRenderPipeline::Culling::none);
+	noCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 
 	linesPipeline.setShaders(OtDeferredVert, sizeof(OtDeferredVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	linesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	linesPipeline.setVertexDescription(OtVertex::getDescription());
-	linesPipeline.setCulling(OtRenderPipeline::Culling::none);
+	linesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	linesPipeline.setFill(false);
 
 	instancedCullingPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedCullingPipeline.setVertexDescription(OtVertex::getDescription());
 	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
+	instancedCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	instancedCullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	instancedNoCullingPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedNoCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedNoCullingPipeline.setVertexDescription(OtVertex::getDescription());
 	instancedNoCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
-	instancedNoCullingPipeline.setCulling(OtRenderPipeline::Culling::none);
+	instancedNoCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 
 	instancedLinesPipeline.setShaders(OtDeferredInstancingVert, sizeof(OtDeferredInstancingVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	instancedLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	instancedLinesPipeline.setVertexDescription(OtVertex::getDescription());
 	instancedLinesPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
-	instancedLinesPipeline.setCulling(OtRenderPipeline::Culling::none);
+	instancedLinesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	instancedLinesPipeline.setFill(false);
 
 	animatedPipeline.setShaders(OtDeferredAnimatedVert, sizeof(OtDeferredAnimatedVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	animatedPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
 	animatedPipeline.setVertexDescription(OtVertex::getDescription());
 	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
+	animatedPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	animatedPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	directionalLightPipeline.setShaders(OtDeferredLightingVert, sizeof(OtDeferredLightingVert), OtDeferredLightingFrag, sizeof(OtDeferredLightingFrag));
 	directionalLightPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
-	directionalLightPipeline.setCulling(OtRenderPipeline::Culling::none);
+	directionalLightPipeline.setDepthTest(OtRenderPipeline::CompareOperation::always);
 }
