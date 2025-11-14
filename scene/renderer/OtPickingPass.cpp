@@ -31,6 +31,7 @@ OtEntity OtPickingPass::render(OtSceneRendererContext& ctx, glm::vec2 uv) {
 	// update buffer (if required)
 	idBuffer.update(ctx.camera.width / 4, ctx.camera.height / 4);
 
+	// setup camera for identification buffer
 	auto camera = ctx.camera;
 	ctx.camera = OtCamera(idBuffer.getWidth(), idBuffer.getHeight(), camera.projectionMatrix, camera.viewMatrix);
 

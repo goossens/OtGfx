@@ -11,16 +11,16 @@
 #define MATERIAL_SAMPLERS 0
 #include "material.glsl"
 
-layout(location = 0) in vec3 vPosition;
-layout(location = 1) in vec3 vNormal;
-layout(location = 2) in vec3 vTangent;
-layout(location = 3) in vec3 vBitangent;
-layout(location = 4) in vec2 vUv;
+layout(location=0) in vec3 vPosition;
+layout(location=1) in vec3 vNormal;
+layout(location=2) in vec3 vTangent;
+layout(location=3) in vec3 vBitangent;
+layout(location=4) in vec2 vUv;
 
-layout(location = 0) out vec4 fragColor;
-layout(location = 1) out vec4 fragNormal;
-layout(location = 2) out vec4 fragPBR;
-layout(location = 3) out vec4 fragEmissive;
+layout(location=0) out vec4 fragColor;
+layout(location=1) out vec4 fragNormal;
+layout(location=2) out vec4 fragPBR;
+layout(location=3) out vec4 fragEmissive;
 
 // main function
 void main() {

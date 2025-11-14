@@ -6,7 +6,7 @@
 
 #version 450 core
 
-layout(location = 0) out vec3 vPosition;
+layout(location=0) out vec3 vPosition;
 
 layout(std140, set=1, binding=0) uniform UBO {
 	mat4 invViewProj;

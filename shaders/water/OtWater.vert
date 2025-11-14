@@ -10,10 +10,10 @@
 #define CAMERA_UNIFORMS 0
 #include "camera.glsl"
 
-layout(location = 0) in vec3 aPosition;
+layout(location=0) in vec3 aPosition;
 
-layout(location = 0) out vec3 vNear;
-layout(location = 1) out vec3 vFar;
+layout(location=0) out vec3 vNear;
+layout(location=1) out vec3 vFar;
 
 vec3 unproject(float x, float y, float z) {
 	vec4 unprojectedPoint = inverseViewProjectionMatrix * vec4(x, y, z, 1.0);

@@ -10,16 +10,16 @@
 #include "constants.glsl"
 #include "pbrHelpers.glsl"
 
-layout(location = 0) in vec2 vUv;
+layout(location=0) in vec2 vUv;
 
 layout(set=2, binding=0) uniform samplerCube inTexture;
 
-layout(location = 0) out vec4 side1Color;
-layout(location = 1) out vec4 side2Color;
-layout(location = 2) out vec4 side3Color;
-layout(location = 3) out vec4 side4Color;
-layout(location = 4) out vec4 side5Color;
-layout(location = 5) out vec4 side6Color;
+layout(location=0) out vec4 side1Color;
+layout(location=1) out vec4 side2Color;
+layout(location=2) out vec4 side3Color;
+layout(location=3) out vec4 side4Color;
+layout(location=4) out vec4 side5Color;
+layout(location=5) out vec4 side6Color;
 
 layout(std140, set=3, binding=0) uniform UBO {
 	float roughness;

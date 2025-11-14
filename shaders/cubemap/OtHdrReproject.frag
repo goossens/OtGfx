@@ -6,16 +6,16 @@
 
 #version 450
 
-layout(location = 0) in vec2 vUv;
+layout(location=0) in vec2 vUv;
 
 layout(set=0, binding=0) uniform sampler2D inTexture;
 
-layout(location = 0) out vec4 side1Color;
-layout(location = 1) out vec4 side2Color;
-layout(location = 2) out vec4 side3Color;
-layout(location = 3) out vec4 side4Color;
-layout(location = 4) out vec4 side5Color;
-layout(location = 5) out vec4 side6Color;
+layout(location=0) out vec4 side1Color;
+layout(location=1) out vec4 side2Color;
+layout(location=2) out vec4 side3Color;
+layout(location=3) out vec4 side4Color;
+layout(location=4) out vec4 side5Color;
+layout(location=5) out vec4 side6Color;
 
 const vec2 invAtan = vec2(0.1591f, -0.3183f);
 

@@ -18,10 +18,10 @@
 #include "pbr.glsl"
 #include "utilities.glsl"
 
-layout(location = 0) in vec3 vNear;
-layout(location = 1) in vec3 vFar;
+layout(location=0) in vec3 vNear;
+layout(location=1) in vec3 vFar;
 
-layout(location = 0) out vec4 fragColor;
+layout(location=0) out vec4 fragColor;
 
 // uniforms
 layout(std140, set=3, binding=0) uniform UBO {

@@ -11,8 +11,8 @@
 #define MATERIAL_SAMPLERS 0
 #include "material.glsl"
 
-layout(location = 0) in vec2 vUv;
-layout(location = 0) out vec4 fragColor;
+layout(location=0) in vec2 vUv;
+layout(location=0) out vec4 fragColor;
 
 layout(std140, set=3, binding=1) uniform UBO {
 	float entityID;

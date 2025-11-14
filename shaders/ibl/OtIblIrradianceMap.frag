@@ -9,16 +9,16 @@
 
 #include "constants.glsl"
 
-layout(location = 0) in vec2 vUv;
+layout(location=0) in vec2 vUv;
 
 layout(set=2, binding=0) uniform samplerCube inTexture;
 
-layout(location = 0) out vec4 side1Color;
-layout(location = 1) out vec4 side2Color;
-layout(location = 2) out vec4 side3Color;
-layout(location = 3) out vec4 side4Color;
-layout(location = 4) out vec4 side5Color;
-layout(location = 5) out vec4 side6Color;
+layout(location=0) out vec4 side1Color;
+layout(location=1) out vec4 side2Color;
+layout(location=2) out vec4 side3Color;
+layout(location=3) out vec4 side4Color;
+layout(location=4) out vec4 side5Color;
+layout(location=5) out vec4 side6Color;
 
 vec4 processSide(vec3 N) {
 	vec3 up = abs(N.z) < 0.999f ? vec3(0.0f, 0.0f, 1.0f) : vec3(1.0f, 0.0f, 0.0f);
