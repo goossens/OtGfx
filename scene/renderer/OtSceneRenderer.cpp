@@ -85,7 +85,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 	}
 
 	if (pickingCallback) {
-		// pickingPass.render(ctx, pickingNDC, pickingCallback);
+		pickingCallback(pickingPass.render(ctx, pickingUV));
 		pickingCallback = nullptr;
 	}
 

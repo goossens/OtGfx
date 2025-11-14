@@ -602,18 +602,18 @@ void OtSceneEditor::renderViewPort() {
 	auto savedPos = ImGui::GetCursorScreenPos();
 	ImGui::Dummy(size);
 
-	// if (!renderer->isPicking() && ImGui::IsItemClicked()) {
-	// 	auto position = ImGui::GetMousePos() - ImGui::GetItemRectMin();
-	// 	glm::vec2 ndc{position.x / size.x * 2.0f - 1.0f, (size.y - position.y) / size.y * 2.0f - 1.0f};
+	if (ImGui::IsItemClicked()) {
+		auto position = ImGui::GetMousePos() - ImGui::GetItemRectMin();
+		glm::vec2 uv{position.x / size.x, position.y / size.y};
 
-	// 	renderer->pickEntity(ndc, [this](OtEntity entity) {
-	// 		selectedEntity = entity;
+		renderer->pickEntity(uv, [this](OtEntity entity) {
+			selectedEntity = entity;
 
-	// 		if (selectedEntity != OtEntityNull) {
-	// 			scrollToSelected = true;
-	// 		}
-	// 	});
-	// }
+			if (selectedEntity != OtEntityNull) {
+				scrollToSelected = true;
+			}
+		});
+	}
 
 	ImGui::SetCursorScreenPos(savedPos);
 

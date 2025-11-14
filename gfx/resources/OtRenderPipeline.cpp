@@ -398,6 +398,7 @@ SDL_GPUTextureFormat OtRenderPipeline::getTextureFormat() {
 	switch (renderTargetType) {
 		case RenderTargetType::none: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		case RenderTargetType::r8: return SDL_GPU_TEXTUREFORMAT_R8_UNORM;
+		case RenderTargetType::r8d32: return SDL_GPU_TEXTUREFORMAT_R8_UNORM;
 		case RenderTargetType::rg16: return SDL_GPU_TEXTUREFORMAT_R16G16_UNORM;
 		case RenderTargetType::rgba8: return SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
 		case RenderTargetType::rgba16: return SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
@@ -423,6 +424,7 @@ bool OtRenderPipeline::hasDepthStencilFormat() {
 	switch (renderTargetType) {
 		case RenderTargetType::none: return false;
 		case RenderTargetType::r8: return false;
+		case RenderTargetType::r8d32: return true;
 		case RenderTargetType::rg16: return false;
 		case RenderTargetType::rgba8: return false;
 		case RenderTargetType::rgba16: return false;
@@ -448,6 +450,7 @@ SDL_GPUTextureFormat OtRenderPipeline::getDepthStencilFormat() {
 	switch (renderTargetType) {
 		case RenderTargetType::none: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		case RenderTargetType::r8: return SDL_GPU_TEXTUREFORMAT_INVALID;
+		case RenderTargetType::r8d32: return SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
 		case RenderTargetType::rg16: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		case RenderTargetType::rgba8: return SDL_GPU_TEXTUREFORMAT_INVALID;
 		case RenderTargetType::rgba16: return SDL_GPU_TEXTUREFORMAT_INVALID;

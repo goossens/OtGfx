@@ -185,8 +185,10 @@ void OtSceneRenderEntitiesPass::renderGeometryHelper(
 		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
 	}
 
-	// render geometry
+	// set fragment uniforms
 	setMaterialUniforms(ctx, 0, 0, grd.entity);
+
+	// render geometry
 	ctx.pass->render(grd.component->asset->getGeometry());
 }
 
@@ -236,8 +238,10 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
 		}
 
-		// render geometry
+		// set fragment uniforms
 		setMaterialUniforms(ctx, 0, 0, cmd.material);
+
+		// render geometry
 		ctx.pass->render(cmd.mesh->getVertexBuffer(), cmd.mesh->getIndexBuffer());
 	}
 }

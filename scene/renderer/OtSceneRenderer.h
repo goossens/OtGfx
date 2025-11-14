@@ -30,14 +30,13 @@
 #include "OtBackgroundPass.h"
 #include "OtDeferredPass.h"
 #include "OtForwardPass.h"
-// #include "OtOcclusionPass.h"
 // #include "OtParticlesPass.h"
 #include "OtShadowPass.h"
 #include "OtSkyPass.h"
 #include "OtWaterPass.h"
 #include "OtGridPass.h"
 #include "OtHighlightPass.h"
-// #include "OtPickingPass.h"
+#include "OtPickingPass.h"
 #include "OtPostProcessingPass.h"
 #include "OtSceneRendererContext.h"
 
@@ -53,12 +52,10 @@ public:
 	inline void setSelectedEntity(OtEntity entity) { selectedEntity = entity; }
 
 	// support entity picking
-	inline void pickEntity(glm::vec2 ndc, std::function<void(OtEntity)> callback) {
-		pickingNDC = ndc;
+	inline void pickEntity(glm::vec2 uv, std::function<void(OtEntity)> callback) {
+		pickingUV = uv;
 		pickingCallback = callback;
 	}
-
-//	inline bool isPicking() { return pickingPass.isPicking(); }
 
 	// render specified scene
 	ImTextureID render(OtCamera& camera, OtScene* scene);
@@ -85,7 +82,7 @@ private:
 	OtGridPass gridPass{compositeBuffer};
 	OtPostProcessingPass postProcessingPass{compositeBuffer};
 	OtHighlightPass highlightPass;
-	// OtPickingPass pickingPass;
+	OtPickingPass pickingPass;
 
 	// timings
 	float ctxTime;
@@ -103,6 +100,6 @@ private:
 
 	// support for selected entities and entity picking
 	OtEntity selectedEntity = OtEntityNull;
-	glm::vec2 pickingNDC;
+	glm::vec2 pickingUV;
 	std::function<void(OtEntity)> pickingCallback;
 };

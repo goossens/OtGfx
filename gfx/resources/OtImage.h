@@ -62,6 +62,17 @@ public:
 	inline void* getPixels() { return surface->pixels; }
 	inline int getPitch() { return surface->pitch; }
 
+	inline int getBpp() {
+		switch (getFormat()) {
+			case Format::none: return 0;
+			case Format::r8: return 1;
+			case Format::rgba8: return 4;
+			case Format::rgba32: return 16;
+		}
+
+		return 0;
+	}
+
 	// get pixel values
 	glm::vec4 getPixelRgba(int x, int y);
 	inline float getPixelGray(int x, int y) { return getPixelRgba(x, y).r; }

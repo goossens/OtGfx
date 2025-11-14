@@ -44,7 +44,7 @@ OtImage& OtReadBackBuffer::readback(OtTexture& texture) {
 OtImage& OtReadBackBuffer::readback(OtTexture& texture, int x, int y, int w, int h) {
 	// this is a hack to ensure things happen in the right order
 	// this object creates it's own command buffer which is executed immediately
-	// therefore, previous GPU commands have the be executed first
+	// therefore, previous GPU commands have to be executed first
 	auto& gpu = OtGpu::instance();
 	gpu.flushAndRestartFrame();
 

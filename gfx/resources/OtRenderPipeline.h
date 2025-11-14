@@ -31,6 +31,7 @@ public:
 	enum class RenderTargetType {
 		none,
 		r8,
+		r8d32,
 		rg16,
 		rgba8,
 		rgba16,

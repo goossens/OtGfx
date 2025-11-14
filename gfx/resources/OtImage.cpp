@@ -329,7 +329,7 @@ void OtImage::normalize() {
 		}
 
 	} else {
-		if (surface->format != SDL_PIXELFORMAT_ABGR8888) {
+		if (surface->format != SDL_PIXELFORMAT_INDEX8 && surface->format != SDL_PIXELFORMAT_ABGR8888) {
 			auto sdlSurface = SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_ABGR8888);
 
 			if (!sdlSurface) {
