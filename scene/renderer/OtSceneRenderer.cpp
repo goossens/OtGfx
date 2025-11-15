@@ -60,7 +60,7 @@ ImTextureID OtSceneRenderer::render(OtCamera& camera, OtScene* scene) {
 
 	// render particles
 	if (ctx.hasParticlesEntities) {
-		// particlePass.render(ctx);
+		particlePass.render(ctx);
 	}
 
 	particlePassTime = stopwatch.lap();

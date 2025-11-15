@@ -24,11 +24,6 @@
 
 class OtShadowPass : public OtSceneRenderEntitiesPass {
 public:
-	// constructor
-	OtShadowPass() {
-		initializePipelines();
-	}
-
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
 
@@ -63,5 +58,6 @@ private:
 	void renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) override;
 	void renderTransparentGeometry(OtSceneRendererContext&ctx , OtGeometryRenderData& grd) override;
 
-	void initializePipelines();
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

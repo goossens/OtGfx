@@ -278,45 +278,9 @@ void OtSceneRendererDebug::renderCubeMap(const char* title, OtCubeMap& cubemap, 
 //
 
 void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug& debug) {
-	// initialize cross GPU resources (if required)
+	// initialize resources (if required)
 	if (!resourcesInitialized) {
-		pipeline.setShaders(OtCubeMapCrossVert, sizeof(OtCubeMapCrossVert), OtCubeMapCrossFrag, sizeof(OtCubeMapCrossFrag));
-		pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
-		pipeline.setVertexDescription(OtVertexPosUvw::getDescription());
-
-		static float crossVertices[] = {
-			0.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
-			0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
-
-			0.5f, 0.0f, 0.0f, -1.0f,  1.0f, -1.0f,
-			0.5f, 0.5f, 0.0f, -1.0f,  1.0f,  1.0f,
-			0.5f, 1.0f, 0.0f, -1.0f, -1.0f,  1.0f,
-			0.5f, 1.5f, 0.0f, -1.0f, -1.0f, -1.0f,
-
-			1.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
-			1.0f, 0.5f, 0.0f,  1.0f,  1.0f,  1.0f,
-			1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
-			1.0f, 1.5f, 0.0f,  1.0f, -1.0f, -1.0f,
-
-			1.5f, 0.5f, 0.0f,  1.0f,  1.0f, -1.0f,
-			1.5f, 1.0f, 0.0f,  1.0f, -1.0f, -1.0f,
-
-			2.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
-			2.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
-		};
-
-		vertexBuffer.set(crossVertices, sizeof(crossVertices) / sizeof(*crossVertices) / 6, OtVertexPosUvw::getDescription());
-
-		static uint32_t crossIndices[] = {
-			0, 1, 3, 3, 1, 4,
-			2, 3, 6, 6, 3, 7,
-			3, 4, 7, 7, 4, 8,
-			4, 5, 8, 8, 5, 9,
-			7, 8, 10, 10, 8, 11,
-			10, 11, 12, 12, 11, 13
-		};
-
-		indexBuffer.set(crossIndices, sizeof(crossIndices) / sizeof(*crossIndices));
+		initializeResources();
 		resourcesInitialized = true;
 	}
 
@@ -367,4 +331,50 @@ void OtSceneRendererDebug::renderCubeMapAsCross(OtCubeMap& cubemap, CubeMapDebug
 	// update metadata
 	debug.renderedVersion = cubemap.getVersion();
 	debug.renderedMip = debug.requestedMip;
+}
+
+
+//
+//	OtSceneRendererDebug::initializeResources
+//
+
+void OtSceneRendererDebug::initializeResources() {
+	pipeline.setShaders(OtCubeMapCrossVert, sizeof(OtCubeMapCrossVert), OtCubeMapCrossFrag, sizeof(OtCubeMapCrossFrag));
+	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba8);
+	pipeline.setVertexDescription(OtVertexPosUvw::getDescription());
+
+	static float crossVertices[] = {
+		0.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
+		0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+
+		0.5f, 0.0f, 0.0f, -1.0f,  1.0f, -1.0f,
+		0.5f, 0.5f, 0.0f, -1.0f,  1.0f,  1.0f,
+		0.5f, 1.0f, 0.0f, -1.0f, -1.0f,  1.0f,
+		0.5f, 1.5f, 0.0f, -1.0f, -1.0f, -1.0f,
+
+		1.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
+		1.0f, 0.5f, 0.0f,  1.0f,  1.0f,  1.0f,
+		1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
+		1.0f, 1.5f, 0.0f,  1.0f, -1.0f, -1.0f,
+
+		1.5f, 0.5f, 0.0f,  1.0f,  1.0f, -1.0f,
+		1.5f, 1.0f, 0.0f,  1.0f, -1.0f, -1.0f,
+
+		2.0f, 0.5f, 0.0f, -1.0f,  1.0f, -1.0f,
+		2.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+	};
+
+	vertexBuffer.set(crossVertices, sizeof(crossVertices) / sizeof(*crossVertices) / 6, OtVertexPosUvw::getDescription());
+
+	static uint32_t crossIndices[] = {
+		0, 1, 3, 3, 1, 4,
+		2, 3, 6, 6, 3, 7,
+		3, 4, 7, 7, 4, 8,
+		4, 5, 8, 8, 5, 9,
+		7, 8, 10, 10, 8, 11,
+		10, 11, 12, 12, 11, 13
+	};
+
+	indexBuffer.set(crossIndices, sizeof(crossIndices) / sizeof(*crossIndices));
+	resourcesInitialized = true;
 }

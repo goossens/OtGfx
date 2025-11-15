@@ -23,6 +23,12 @@
 //
 
 void OtForwardPass::render(OtSceneRendererContext& ctx) {
+	// initialize resources (if required)
+	if (!resourcesInitialized) {
+		initializeResources();
+		resourcesInitialized = true;
+	}
+
 	// setup pass
 	OtRenderPass pass;
 	pass.start(framebuffer);
@@ -59,10 +65,10 @@ void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeo
 
 
 //
-//	OtForwardPass::initializePipelines
+//	OtForwardPass::initializeResources
 //
 
-void OtForwardPass::initializePipelines() {
+void OtForwardPass::initializeResources() {
 	cullingPipeline.setShaders(OtForwardVert, sizeof(OtForwardVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
 	cullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	cullingPipeline.setVertexDescription(OtVertex::getDescription());
@@ -71,7 +77,7 @@ void OtForwardPass::initializePipelines() {
 
 	cullingPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
@@ -82,7 +88,7 @@ void OtForwardPass::initializePipelines() {
 
 	noCullingPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
@@ -94,7 +100,7 @@ void OtForwardPass::initializePipelines() {
 
 	linesPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 }

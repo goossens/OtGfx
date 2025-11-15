@@ -27,11 +27,6 @@
 
 class OtPickingPass : public OtSceneRenderEntitiesPass {
 public:
-	// constructor
-	OtPickingPass() {
-		initializePipelines();
-	}
-
 	// render the pass
 	OtEntity render(OtSceneRendererContext& ctx, glm::vec2 uv);
 
@@ -73,5 +68,6 @@ private:
 	void renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) override;
 	void renderTransparentGeometry(OtSceneRendererContext&ctx , OtGeometryRenderData& grd) override;
 
-	void initializePipelines();
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

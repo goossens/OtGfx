@@ -25,6 +25,12 @@
 //
 
 void OtWaterPass::render(OtSceneRendererContext& ctx) {
+	// initialize resources (if required)
+	if (!resourcesInitialized) {
+		initializeResources();
+		resourcesInitialized = true;
+	}
+
 	// update the buffers
 	width = ctx.camera.width / 2;
 	height = ctx.camera.height / 2;
@@ -183,7 +189,7 @@ void OtWaterPass::initializeResources() {
 
 	waterPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 

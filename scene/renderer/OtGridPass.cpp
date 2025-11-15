@@ -28,6 +28,12 @@
 
 void OtGridPass::render(OtSceneRendererContext& ctx) {
 	if (gridScale > 0.0f) {
+		// initialize resources (if required)
+		if (!resourcesInitialized) {
+			initializeResources();
+			resourcesInitialized = false;
+		}
+
 		// setup pass
 		OtRenderPass pass;
 		pass.start(framebuffer);

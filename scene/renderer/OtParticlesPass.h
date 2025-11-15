@@ -15,34 +15,32 @@
 #include "OtFrameBuffer.h"
 #include "OtIndexBuffer.h"
 #include "OtRenderPipeline.h"
+#include "OtSampler.h"
 #include "OtVertexBuffer.h"
 
 #include "OtSceneRendererContext.h"
 
 
 //
-//	OtGridPass
+//	OtParticlesPass
 //
 
-class OtGridPass {
+class OtParticlesPass {
 public:
 	// constructor
-	OtGridPass(OtFrameBuffer& fb) : framebuffer(fb) {}
-
-	// access properties
-	void setGridScale(float gs) { gridScale = gs; }
+	OtParticlesPass(OtFrameBuffer& fb) : framebuffer(fb) {}
 
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
 
 private:
-	// grid scale (0.0 means no grid)
-	float gridScale = 0.0f;
-
 	// properties
 	OtFrameBuffer& framebuffer;
 	OtRenderPipeline pipeline;
+	OtSampler particlesSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+
 	OtVertexBuffer vertexBuffer;
+	OtVertexBuffer particleBuffer;
 	OtIndexBuffer indexBuffer;
 
 	// support functions

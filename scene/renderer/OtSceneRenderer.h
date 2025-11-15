@@ -30,7 +30,7 @@
 #include "OtBackgroundPass.h"
 #include "OtDeferredPass.h"
 #include "OtForwardPass.h"
-// #include "OtParticlesPass.h"
+#include "OtParticlesPass.h"
 #include "OtShadowPass.h"
 #include "OtSkyPass.h"
 #include "OtWaterPass.h"
@@ -78,7 +78,7 @@ private:
 	OtForwardPass forwardPass{compositeBuffer};
 	OtSkyPass skyPass{compositeBuffer};
 	OtWaterPass waterPass{compositeBuffer};
-	// OtParticlesPass particlePass{compositeBuffer};
+	OtParticlesPass particlePass{compositeBuffer};
 	OtGridPass gridPass{compositeBuffer};
 	OtPostProcessingPass postProcessingPass{compositeBuffer};
 	OtHighlightPass highlightPass;

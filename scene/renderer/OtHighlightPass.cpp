@@ -35,7 +35,13 @@
 void OtHighlightPass::render(OtSceneRendererContext& ctx, OtTexture* texture, OtEntity entity) {
 	// see if we have a "highlightable" entity
 	if (isHighlightable(ctx.scene, entity)) {
-		// run both passes
+		// initialize resources (if required)
+		if (!resourcesInitialized) {
+			initializeResources();
+			resourcesInitialized = false;
+		}
+
+	// run both passes
 		renderSelectedPass(ctx, entity);
 		renderHighlightPass(ctx, texture);
 	}
@@ -175,10 +181,10 @@ void OtHighlightPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtG
 
 
 //
-//	OtHighlightPass::initializePipelines
+//	OtHighlightPass::initializeResources
 //
 
-void OtHighlightPass::initializePipelines() {
+void OtHighlightPass::initializeResources() {
 	opaqueCullingPipeline.setShaders(OtSimpleVert, sizeof(OtSimpleVert), OtSelectOpaqueFrag, sizeof(OtSelectOpaqueFrag));
 	opaqueCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
 	opaqueCullingPipeline.setVertexDescription(OtVertex::getDescription());

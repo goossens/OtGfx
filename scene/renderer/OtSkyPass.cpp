@@ -28,6 +28,12 @@
 //
 
 void OtSkyPass::render(OtSceneRendererContext& ctx) {
+	// initialize resources (if required)
+	if (!resourcesInitialized) {
+		initializeResources();
+		resourcesInitialized = true;
+	}
+
 	OtRenderPass pass;
 	pass.start(framebuffer);
 	ctx.pass = &pass;
@@ -131,10 +137,10 @@ void OtSkyPass::renderSkyBox(OtSceneRendererContext& ctx, OtSkyBoxComponent& sky
 
 
 //
-//	OtSkyPass::initializePipelines
+//	OtSkyPass::initializeResources
 //
 
-void OtSkyPass::initializePipelines() {
+void OtSkyPass::initializeResources() {
 	skyPipeline.setShaders(OtSkyVert, sizeof(OtSkyVert), OtSkyFrag, sizeof(OtSkyFrag));
 	skyPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	skyPipeline.setDepthTest(OtRenderPipeline::CompareOperation::lessEqual);

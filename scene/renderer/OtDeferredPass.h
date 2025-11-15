@@ -25,9 +25,7 @@
 class OtDeferredPass : public OtSceneRenderEntitiesPass {
 public:
 	// constructor
-	OtDeferredPass(OtGbuffer& gb, OtFrameBuffer& fb) : gbuffer(gb), framebuffer(fb) {
-		initializePipelines();
-	}
+	OtDeferredPass(OtGbuffer& gb, OtFrameBuffer& fb) : gbuffer(gb), framebuffer(fb) {}
 
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
@@ -65,5 +63,7 @@ private:
 	void renderGeometry(OtSceneRendererContext& ctx);
 	void renderDirectionalLight(OtSceneRendererContext& ctx);
 	void renderPointLights(OtSceneRendererContext& ctx);
-	void initializePipelines();
+
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

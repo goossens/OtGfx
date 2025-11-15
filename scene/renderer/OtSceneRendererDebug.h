@@ -66,5 +66,7 @@ private:
 	OtRenderPipeline pipeline;
 	OtIndexBuffer indexBuffer;
 	OtVertexBuffer vertexBuffer;
+
+	void initializeResources();
 	bool resourcesInitialized = false;
 };

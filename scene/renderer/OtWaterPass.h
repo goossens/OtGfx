@@ -32,9 +32,7 @@
 class OtWaterPass {
 public:
 	// constructor
-	OtWaterPass(OtFrameBuffer& fb) : framebuffer(fb) {
-		initializeResources();
-	}
+	OtWaterPass(OtFrameBuffer& fb) : framebuffer(fb) {}
 
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
@@ -75,4 +73,5 @@ private:
 
 	// support functions
 	void initializeResources();
+	bool resourcesInitialized = false;
 };

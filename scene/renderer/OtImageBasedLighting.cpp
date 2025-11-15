@@ -30,6 +30,12 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 	OtCubeMap& cubemap = component.cubemap->getCubeMap();
 
 	if (cubemap.getVersion() != iblSkyMapVersion) {
+		// initialize resources (if required)
+		if (!resourcesInitialized) {
+			initializeResources();
+			resourcesInitialized = true;
+		}
+
 		static constexpr int threadCount = 16;
 		static constexpr int brdfLutSize = 128;
 		static constexpr int irradianceSize = 64;
@@ -43,17 +49,6 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 		OtComputePass brdfPass;
 		brdfPass.addOutputTexture(iblBrdfLut);
 		brdfPass.execute(brdfLutPipeline, brdfLutSize / threadCount, brdfLutSize / threadCount, 1);
-
-		// initialize render pipelines (if required)
-		if (!resourcesInitialized) {
-			irradiancePipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
-			irradiancePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
-
-			environmentPipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblEnvironmentMapFrag, sizeof(OtIblEnvironmentMapFrag));
-			environmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
-
-			resourcesInitialized = true;
-		}
 
 		// render irradiance map
 		OtRenderPass irradiancePass;
@@ -75,7 +70,7 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 			environmentPass.start(iblEnvironmentMap, mipLevel);
 			environmentPass.bindPipeline(environmentPipeline);
 
-			// set uniforms
+			// set fragment uniforms
 			struct Uniforms {
 				float roughness;
 				uint32_t environmentSize;
@@ -94,4 +89,17 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 		iblSkyMapVersion = cubemap.getVersion();
 		iblSkyMap = &cubemap;
 	}
+}
+
+
+//
+//	OtImageBasedLighting::initializeResources
+//
+
+void OtImageBasedLighting::initializeResources() {
+	irradiancePipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
+	irradiancePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
+
+	environmentPipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblEnvironmentMapFrag, sizeof(OtIblEnvironmentMapFrag));
+	environmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
 }

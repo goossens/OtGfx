@@ -49,8 +49,11 @@ private:
 	OtComputePipeline brdfLutPipeline{OtBrdfLutComp, sizeof(OtBrdfLutComp)};
 	OtRenderPipeline irradiancePipeline;
 	OtRenderPipeline environmentPipeline;
-	bool resourcesInitialized = false;
 
 	// image based lighting data
 	int iblSkyMapVersion = 0;
+
+	// support functions
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

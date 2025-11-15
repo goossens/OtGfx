@@ -25,11 +25,6 @@
 
 class OtHighlightPass : public OtSceneRenderEntitiesPass {
 public:
-	// constructor
-	OtHighlightPass() {
-		initializePipelines();
-	}
-
 	// render the pass
 	void render(OtSceneRendererContext& ctx, OtTexture* texture, OtEntity entity);
 
@@ -82,5 +77,6 @@ private:
 	void renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) override;
 	void renderTransparentGeometry(OtSceneRendererContext&ctx , OtGeometryRenderData& grd) override;
 
-	void initializePipelines();
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

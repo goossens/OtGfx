@@ -28,6 +28,12 @@
 //
 
 OtEntity OtPickingPass::render(OtSceneRendererContext& ctx, glm::vec2 uv) {
+	// initialize resources (if required)
+	if (!resourcesInitialized) {
+		initializeResources();
+		resourcesInitialized = true;
+	}
+
 	// update buffer (if required)
 	idBuffer.update(ctx.camera.width / 4, ctx.camera.height / 4);
 
@@ -168,10 +174,10 @@ void OtPickingPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeo
 
 
 //
-//	OtPickingPass::initializePipelines
+//	OtPickingPass::initializeResources
 //
 
-void OtPickingPass::initializePipelines() {
+void OtPickingPass::initializeResources() {
 	opaqueCullingPipeline.setShaders(OtSimpleVert, sizeof(OtSimpleVert), OtPickingOpaqueFrag, sizeof(OtPickingOpaqueFrag));
 	opaqueCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8d32);
 	opaqueCullingPipeline.setVertexDescription(OtVertex::getDescription());

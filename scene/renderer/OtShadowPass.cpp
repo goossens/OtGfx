@@ -26,6 +26,12 @@
 //
 
 void OtShadowPass::render(OtSceneRendererContext& ctx) {
+	// initialize resources (if required)
+	if (!resourcesInitialized) {
+		initializeResources();
+		resourcesInitialized = true;
+	}
+
 	// save context part the we will temporarily overwrite
 	auto camera = ctx.camera;
 	auto cameraID = ctx.cameraID;
@@ -108,10 +114,10 @@ void OtShadowPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeom
 
 
 //
-//	OtShadowPass::initializePipelines
+//	OtShadowPass::initializeResources
 //
 
-void OtShadowPass::initializePipelines() {
+void OtShadowPass::initializeResources() {
 	opaqueCullingPipeline.setShaders(OtSimpleVert, sizeof(OtSimpleVert), OtShadowOpaqueFrag, sizeof(OtShadowOpaqueFrag));
 	opaqueCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::d32);
 	opaqueCullingPipeline.setVertexDescription(OtVertex::getDescription());

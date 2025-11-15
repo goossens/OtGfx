@@ -28,9 +28,7 @@
 class OtSkyPass {
 public:
 	// constructor
-	OtSkyPass(OtFrameBuffer& fb) : framebuffer(fb) {
-		initializePipelines();
-	}
+	OtSkyPass(OtFrameBuffer& fb) : framebuffer(fb) {}
 
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
@@ -44,5 +42,7 @@ private:
 	// support functions
 	void renderSky(OtSceneRendererContext& ctx, OtSkyComponent& sky);
 	void renderSkyBox(OtSceneRendererContext& ctx, OtSkyBoxComponent& skybox);
-	void initializePipelines();
+
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

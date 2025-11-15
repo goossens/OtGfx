@@ -31,6 +31,12 @@
 //
 
 void OtDeferredPass::render(OtSceneRendererContext& ctx) {
+	// initialize resources (if required)
+	if (!resourcesInitialized) {
+		initializeResources();
+		resourcesInitialized = true;
+	}
+
 	// run the geometry and lighting passes
 	renderGeometry(ctx);
 	renderDirectionalLight(ctx);
@@ -144,10 +150,10 @@ void OtDeferredPass::renderPointLights(OtSceneRendererContext& ctx) {
 
 
 //
-//	OtDeferredPass::initializePipelines
+//	OtDeferredPass::initializeResources
 //
 
-void OtDeferredPass::initializePipelines() {
+void OtDeferredPass::initializeResources() {
 	// configure rendering pipelines
 	cullingPipeline.setShaders(OtDeferredVert, sizeof(OtDeferredVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
 	cullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);

@@ -247,6 +247,39 @@ struct OtVertexBones {
 };
 
 
+//
+//	OtVertexParticle
+//
+
+struct OtVertexParticle {
+	// vertex elements
+	glm::vec3 position;
+	float alpha;
+	glm::vec2 uv1;
+	glm::vec2 uv2;
+	float scale;
+	float rotate;
+	float grid;
+	float blend;
+
+	// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexParticle, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT, offsetof(OtVertexParticle, alpha)},
+			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexParticle, uv1)},
+			{3, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(OtVertexParticle, uv2)},
+			{4, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT, offsetof(OtVertexParticle, scale)},
+			{5, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT, offsetof(OtVertexParticle, rotate)},
+			{6, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT, offsetof(OtVertexParticle, grid)},
+			{7, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT, offsetof(OtVertexParticle, blend)}
+		};
+
+		static OtVertexDescription description{sizeof(OtVertexParticle), sizeof(attributes) / sizeof(attributes[0]), attributes};
+		return &description;
+	}
+};
+
 
 //
 //	OtVertexMatrix

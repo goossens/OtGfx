@@ -25,9 +25,7 @@
 class OtForwardPass : public OtSceneRenderEntitiesPass {
 public:
 	// constructor
-	OtForwardPass(OtFrameBuffer& fb) : framebuffer(fb) {
-		initializePipelines();
-	}
+	OtForwardPass(OtFrameBuffer& fb) : framebuffer(fb) {}
 
 	// render the pass
 	void render(OtSceneRendererContext& ctx);
@@ -51,5 +49,6 @@ private:
 	OtRenderPipeline instancedLinesPipeline;
 
 	// support functions
-	void initializePipelines();
+	void initializeResources();
+	bool resourcesInitialized = false;
 };

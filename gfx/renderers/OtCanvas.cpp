@@ -58,7 +58,7 @@ OtCanvas::OtCanvas() {
 
 	convexPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
@@ -91,7 +91,7 @@ OtCanvas::OtCanvas() {
 
 	fillFragmentsPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
@@ -110,7 +110,7 @@ OtCanvas::OtCanvas() {
 
 	fillPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
@@ -127,7 +127,7 @@ OtCanvas::OtCanvas() {
 
 	strokeBasePipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
@@ -144,7 +144,7 @@ OtCanvas::OtCanvas() {
 
 	strokeFragmentPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
-		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
 	);
 
