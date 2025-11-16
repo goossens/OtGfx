@@ -120,7 +120,7 @@ void OtWaterPass::renderWater(OtSceneRendererContext& ctx, OtWaterComponent& wat
 	glm::vec4 farPoint = ctx.camera.projectionMatrix * glm::vec4(0.0, water.level, -water.distance, 1.0);
 	float distance = farPoint.z / farPoint.w;
 
-	// submit vertex uniforms
+	// set vertex uniforms
 	struct VertexUniforms {
 		glm::mat4 inverseViewProjectionMatrix;
 	} vertexUniforms {
@@ -129,7 +129,7 @@ void OtWaterPass::renderWater(OtSceneRendererContext& ctx, OtWaterComponent& wat
 
 	ctx.pass->setVertexUniforms(0, &vertexUniforms, sizeof(vertexUniforms));
 
-	// submit fragment uniforms
+	// set fragment uniforms
 	struct FragmentUniforms {
 		glm::mat4 viewMatrix;
 		glm::mat4 viewProjectionMatrix;

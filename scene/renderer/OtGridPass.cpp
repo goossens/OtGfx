@@ -39,7 +39,7 @@ void OtGridPass::render(OtSceneRendererContext& ctx) {
 		pass.start(framebuffer);
 		pass.bindPipeline(pipeline);
 
-		// set the vertex uniforms
+		// set vertex uniforms
 		struct VertexUniforms {
 			glm::mat4 inverseViewProjectionMatrix;
 		} vertexUniforms {
@@ -48,7 +48,7 @@ void OtGridPass::render(OtSceneRendererContext& ctx) {
 
 		ctx.pass->setVertexUniforms(0, &vertexUniforms, sizeof(vertexUniforms));
 
-		// set the fragment uniforms
+		// set fragment uniforms
 		struct FragmentUniforms {
 			glm::mat4 viewProjectionMatrix;
 			float gridScale;

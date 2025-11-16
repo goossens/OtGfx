@@ -46,7 +46,7 @@ void OtSkyPass::render(OtSceneRendererContext& ctx) {
 	glm::vec4 perspective;
 	glm::decompose(ctx.camera.viewMatrix, scale, rotate, translate, skew, perspective);
 
-	// set the vertex uniforms
+	// set vertex uniforms
 	struct Uniforms {
 		glm::mat4 invViewProj;
 	} uniforms {
@@ -83,7 +83,7 @@ void OtSkyPass::renderSky(OtSceneRendererContext& ctx, OtSkyComponent& sky) {
 	static float time = 0.0f;
 	time += ImGui::GetIO().DeltaTime;
 
-	// set the fragment uniforms
+	// set fragment uniforms
 	struct Uniforms {
 		glm::vec3 sunPosition;
 		float time;
@@ -117,7 +117,7 @@ void OtSkyPass::renderSkyBox(OtSceneRendererContext& ctx, OtSkyBoxComponent& sky
 	// bind pipeline
 	ctx.pass->bindPipeline(skyBoxPipeline);
 
-	// set the fragment uniforms
+	// set fragment uniforms
 	struct Uniforms {
 		float brightness;
 		float gamma;
