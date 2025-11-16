@@ -12,9 +12,12 @@
 #include "glm/glm.hpp"
 
 #include "OtRenderPass.h"
+#include "OtVertex.h"
 
 #include "OtForwardPass.h"
+
 #include "OtForwardVert.h"
+#include "OtForwardInstancingVert.h"
 #include "OtForwardPbrFrag.h"
 
 
@@ -98,6 +101,43 @@ void OtForwardPass::initializeResources() {
 	linesPipeline.setFill(false);
 
 	linesPipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::srcAlpha,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	instancedCullingPipeline.setShaders(OtForwardInstancingVert, sizeof(OtForwardInstancingVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
+	instancedCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
+	instancedCullingPipeline.setVertexDescription(OtVertex::getDescription());
+	instancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
+	instancedCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	instancedCullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	instancedCullingPipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::srcAlpha,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	instancedNoCullingPipeline.setShaders(OtForwardInstancingVert, sizeof(OtForwardInstancingVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
+	instancedNoCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
+	instancedNoCullingPipeline.setVertexDescription(OtVertex::getDescription());
+	instancedNoCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
+	instancedNoCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+
+	instancedNoCullingPipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::srcAlpha,
+		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha
+	);
+
+	instancedLinesPipeline.setShaders(OtForwardInstancingVert, sizeof(OtForwardInstancingVert), OtForwardPbrFrag, sizeof(OtForwardPbrFrag));
+	instancedLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
+	instancedLinesPipeline.setVertexDescription(OtVertex::getDescription());
+	instancedLinesPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
+	instancedLinesPipeline.setFill(false);
+
+	instancedLinesPipeline.setBlend(
 		OtRenderPipeline::BlendOperation::add,
 		OtRenderPipeline::BlendFactor::srcAlpha,
 		OtRenderPipeline::BlendFactor::oneMinusSrcAlpha

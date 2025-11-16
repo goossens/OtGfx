@@ -13,10 +13,9 @@
 #include "glm/gtx/quaternion.hpp"
 
 #include "OtRenderPass.h"
-#include "OtRenderPipeline.h"
+#include "OtVertex.h"
 
 #include "OtDeferredPass.h"
-#include "OtVertex.h"
 
 #include "OtDeferredVert.h"
 #include "OtDeferredAnimatedVert.h"

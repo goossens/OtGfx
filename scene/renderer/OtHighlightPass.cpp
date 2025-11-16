@@ -202,15 +202,18 @@ void OtHighlightPass::initializeResources() {
 	opaqueInstancedCullingPipeline.setShaders(OtSimpleInstancingVert, sizeof(OtSimpleInstancingVert), OtSelectOpaqueFrag, sizeof(OtSelectOpaqueFrag));
 	opaqueInstancedCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
 	opaqueInstancedCullingPipeline.setVertexDescription(OtVertex::getDescription());
+	opaqueInstancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	opaqueInstancedCullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	opaqueInstancedNoCullingPipeline.setShaders(OtSimpleInstancingVert, sizeof(OtSimpleInstancingVert), OtSelectOpaqueFrag, sizeof(OtSelectOpaqueFrag));
 	opaqueInstancedNoCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
+	opaqueInstancedNoCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	opaqueInstancedNoCullingPipeline.setVertexDescription(OtVertex::getDescription());
 
 	opaqueInstancedLinesPipeline.setShaders(OtSimpleInstancingVert, sizeof(OtSimpleInstancingVert), OtSelectOpaqueFrag, sizeof(OtSelectOpaqueFrag));
 	opaqueInstancedLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
 	opaqueInstancedLinesPipeline.setVertexDescription(OtVertex::getDescription());
+	opaqueInstancedLinesPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	opaqueInstancedLinesPipeline.setFill(false);
 
 	animatedPipeline.setShaders(OtSimpleAnimatedVert, sizeof(OtSimpleAnimatedVert), OtSelectOpaqueFrag, sizeof(OtSelectOpaqueFrag));
@@ -236,15 +239,18 @@ void OtHighlightPass::initializeResources() {
 	transparentInstancedCullingPipeline.setShaders(OtSimpleInstancingVert, sizeof(OtSimpleInstancingVert), OtSelectTransparentFrag, sizeof(OtSelectTransparentFrag));
 	transparentInstancedCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
 	transparentInstancedCullingPipeline.setVertexDescription(OtVertex::getDescription());
+	transparentInstancedCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	transparentInstancedCullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	transparentInstancedNoCullingPipeline.setShaders(OtSimpleInstancingVert, sizeof(OtSimpleInstancingVert), OtSelectTransparentFrag, sizeof(OtSelectTransparentFrag));
 	transparentInstancedNoCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
+	transparentInstancedNoCullingPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	transparentInstancedNoCullingPipeline.setVertexDescription(OtVertex::getDescription());
 
 	transparentInstancedLinesPipeline.setShaders(OtSimpleInstancingVert, sizeof(OtSimpleInstancingVert), OtSelectTransparentFrag, sizeof(OtSelectTransparentFrag));
 	transparentInstancedLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8);
 	transparentInstancedLinesPipeline.setVertexDescription(OtVertex::getDescription());
+	transparentInstancedLinesPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	transparentInstancedLinesPipeline.setFill(false);
 
 	outlinePipeline.setShaders(OtOutlineVert, sizeof(OtOutlineVert), OtOutlineFrag, sizeof(OtOutlineFrag));

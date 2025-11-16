@@ -12,6 +12,7 @@
 //	Include files
 //
 
+#include "OtFrameBuffer.h"
 #include "OtRenderPipeline.h"
 
 #include "OtSceneRendererContext.h"
