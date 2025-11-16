@@ -130,7 +130,7 @@ public:
 	OtSampler refractionDepthSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
 
 	// support functions
-	void setCameraUniforms(size_t uniformSlot);
+	void setCameraUniforms(size_t uniformSlot, bool fragmentShader=false);
 	void setLightingUniforms(size_t uniformSlot, size_t samplerSlot);
 	void setShadowUniforms(size_t uniformSlot, size_t samplerSlot);
 	void bindFragmentSampler(size_t slot, OtSampler& sampler, OtAsset<OtTextureAsset>& texture);

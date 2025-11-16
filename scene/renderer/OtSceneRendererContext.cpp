@@ -274,7 +274,7 @@ void OtSceneRendererContext::initialize(OtScene* s, OtCamera c) {
 //	OtSceneRendererContext::setCameraUniforms
 //
 
-void OtSceneRendererContext::setCameraUniforms(size_t uniformSlot) {
+void OtSceneRendererContext::setCameraUniforms(size_t uniformSlot, bool fragmentShader) {
 	// set uniforms
 	struct Uniforms {
 		glm::mat4 viewProjectionMatrix;
@@ -283,16 +283,29 @@ void OtSceneRendererContext::setCameraUniforms(size_t uniformSlot) {
 		glm::mat4 inverseProjectionMatrix;
 		glm::mat4 viewMatrix;
 		glm::mat4 inverseViewMatrix;
+		float viewWidth;
+		float viewHeight;
+		float texelWidth;
+		float texelHeight;
 	} uniforms {
 		camera.viewProjectionMatrix,
 		glm::inverse(camera.viewProjectionMatrix),
 		camera.projectionMatrix,
 		glm::inverse(camera.projectionMatrix),
 		camera.viewMatrix,
-		glm::inverse(camera.viewMatrix)
+		glm::inverse(camera.viewMatrix),
+		static_cast<float>(camera.width),
+		static_cast<float>(camera.height),
+		1.0f / static_cast<float>(camera.width),
+		1.0f / static_cast<float>(camera.height)
 	};
 
-	pass->setVertexUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+	if (fragmentShader) {
+		pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+
+	} else {
+		pass->setVertexUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+	}
 }
 
 

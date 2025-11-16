@@ -230,10 +230,6 @@ struct OtVertexBones {
 	glm::vec4 indices;
 	glm::vec4 weights;
 
-	// constructors
-	OtVertexBones() = default;
-	inline OtVertexBones(const glm::vec4& i, const glm::vec4& w) : indices(i), weights(w) {}
-
 	// get vertex description
 	static inline OtVertexDescription* getDescription() {
 		static SDL_GPUVertexAttribute attributes[] = {
@@ -276,6 +272,34 @@ struct OtVertexParticle {
 		};
 
 		static OtVertexDescription description{sizeof(OtVertexParticle), sizeof(attributes) / sizeof(attributes[0]), attributes};
+		return &description;
+	}
+};
+
+//
+//	OtVertexPointLight
+//
+
+struct OtVertexPointLight {
+	// vertex elements
+	glm::vec3 position;
+	glm::vec3 color;
+	float radius;
+	float unused;
+
+	// constructors
+	OtVertexPointLight() = default;
+	inline OtVertexPointLight(glm::vec3 p, glm::vec3 c, float r) : position(p), color(c), radius(r) {}
+
+		// get vertex description
+	static inline OtVertexDescription* getDescription() {
+		static SDL_GPUVertexAttribute attributes[] = {
+			{0, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexPointLight, position)},
+			{1, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(OtVertexPointLight, color)},
+			{2, 0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT, offsetof(OtVertexPointLight, radius)}
+		};
+
+		static OtVertexDescription description{sizeof(OtVertexPointLight), sizeof(attributes) / sizeof(attributes[0]), attributes};
 		return &description;
 	}
 };

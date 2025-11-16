@@ -29,7 +29,7 @@ layout(std140, set=1, binding=0) uniform UBO1 {
 };
 
 void main() {
-	vec4 pos = vec4(aPosition, 1.0);
+	vec4 pos = vec4(aPosition, 1.0f);
 
 	vec4 worldPos =
 		modelMatrix[int(aIndices.x)] * pos * aWeights.x +

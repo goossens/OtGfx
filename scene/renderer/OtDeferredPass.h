@@ -14,6 +14,8 @@
 
 #include "OtFrameBuffer.h"
 #include "OtGbuffer.h"
+#include "OtIndexBuffer.h"
+#include "OtVertexBuffer.h"
 
 #include "OtSceneRenderEntitiesPass.h"
 
@@ -57,7 +59,11 @@ private:
 	OtRenderPipeline grassPipeline;
 
 	OtRenderPipeline directionalLightPipeline;
-	OtRenderPipeline pointLightPipeline;
+	OtRenderPipeline pointLightsPipeline;
+
+	OtVertexBuffer pointLightVertices;
+	OtVertexBuffer pointLightInstances;
+	OtIndexBuffer pointLightIndices;
 
 	// support functions
 	void renderGeometry(OtSceneRendererContext& ctx);

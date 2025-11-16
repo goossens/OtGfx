@@ -22,8 +22,12 @@
 #include "OtDeferredAnimatedVert.h"
 #include "OtDeferredInstancingVert.h"
 #include "OtDeferredPbrFrag.h"
+
 #include "OtDeferredLightingVert.h"
 #include "OtDeferredLightingFrag.h"
+
+#include "OtPointLightsVert.h"
+#include "OtPointLightsFrag.h"
 
 
 //
@@ -141,10 +145,62 @@ void OtDeferredPass::renderDirectionalLight(OtSceneRendererContext& ctx) {
 //
 
 void OtDeferredPass::renderPointLights(OtSceneRendererContext& ctx) {
+	std::vector<OtVertexPointLight> lights;
+
+	for (auto&& [entity, component] : ctx.scene->view<OtPointLightComponent>().each()) {
+		glm::mat4 transform = ctx.scene->getGlobalTransform(entity);
+
+		glm::vec3 translate;
+		glm::quat rotate;
+		glm::vec3 scale;
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::decompose(transform, scale, rotate, translate, skew, perspective);
+
+		lights.emplace_back(scale * component.offset + translate, component.color, component.radius);
+	}
+
 	// setup pass
 	OtRenderPass pass;
 	pass.start(framebuffer);
+	pass.bindPipeline(pointLightsPipeline);
 	ctx.pass = &pass;
+
+	// set vertex uniforms
+	struct VertexUniforms {
+		glm::mat4 viewProjectionMatrix;
+	} vertexUniforms{
+		ctx.camera.viewProjectionMatrix
+	};
+
+	pass.setVertexUniforms(0, &vertexUniforms, sizeof(vertexUniforms));
+
+	// set fragment uniforms
+	struct FragmentUniforms {
+		glm::mat4 inverseViewProjectionMatrix;
+		float viewWidth;
+		float viewHeight;
+	} fragmentUniforms{
+		glm::inverse(ctx.camera.viewProjectionMatrix),
+		static_cast<float>(ctx.camera.width),
+		static_cast<float>(ctx.camera.height)
+	};
+
+	pass.setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
+	ctx.setLightingUniforms(1, 4);
+
+	// send out particle(instance) data
+	pointLightInstances.set(lights.data(), lights.size(), OtVertexParticle::getDescription());
+	pass.setInstanceData(pointLightInstances);
+
+	// bind samplers
+	pass.bindFragmentSampler(0, ctx.lightingAlbedoSampler, gbuffer.getAlbedoTexture());
+	pass.bindFragmentSampler(1, ctx.lightingNormalSampler, gbuffer.getNormalTexture());
+	pass.bindFragmentSampler(2, ctx.lightingPbrSampler, gbuffer.getPbrTexture());
+	pass.bindFragmentSampler(3, ctx.lightingDepthSampler, gbuffer.getDepthTexture());
+
+	// render lights
+	pass.render(pointLightVertices, pointLightIndices);
 	pass.end();
 }
 
@@ -202,4 +258,34 @@ void OtDeferredPass::initializeResources() {
 	directionalLightPipeline.setShaders(OtDeferredLightingVert, sizeof(OtDeferredLightingVert), OtDeferredLightingFrag, sizeof(OtDeferredLightingFrag));
 	directionalLightPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	directionalLightPipeline.setDepthTest(OtRenderPipeline::CompareOperation::always);
+
+	pointLightsPipeline.setShaders(OtPointLightsVert, sizeof(OtPointLightsVert), OtPointLightsFrag, sizeof(OtPointLightsFrag));
+	pointLightsPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
+	pointLightsPipeline.setVertexDescription(OtVertexPos::getDescription());
+	pointLightsPipeline.setInstanceDescription(OtVertexPointLight::getDescription());
+	pointLightsPipeline.setDepthTest(OtRenderPipeline::CompareOperation::greaterEqual);
+	pointLightsPipeline.setCulling(OtRenderPipeline::Culling::ccw);
+
+	pointLightsPipeline.setBlend(
+		OtRenderPipeline::BlendOperation::add,
+		OtRenderPipeline::BlendFactor::one,
+		OtRenderPipeline::BlendFactor::one
+	);
+
+	static glm::vec3 vertices[] = {
+		glm::vec3{-1.0f, -1.0f, 1.0f}, glm::vec3{ 1.0f, -1.0f, 1.0f}, glm::vec3{-1.0f, 1.0f, 1.0f}, glm::vec3{1.0f, 1.0f, 1.0f},
+		glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{-1.0f, 1.0f, -1.0f}, glm::vec3{1.0f, 1.0f, -1.0f}
+	};
+
+	static uint32_t indices[] = {
+		0, 1, 3, 3, 2, 0, // front
+		5, 4, 6, 6, 7, 5, // back
+		4, 0, 2, 2, 6, 4, // left
+		1, 5, 7, 7, 3, 1, // right
+		2, 3, 7, 7, 6, 2, // top
+		4, 5, 1, 1, 0, 4  // bottom
+	};
+
+	pointLightVertices.set(vertices, sizeof(vertices) / sizeof(*vertices), OtVertexPos::getDescription());
+	pointLightIndices.set(indices, sizeof(indices) / sizeof(*indices));
 }
