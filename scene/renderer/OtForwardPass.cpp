@@ -34,8 +34,7 @@ void OtForwardPass::render(OtSceneRendererContext& ctx) {
 	pass.start(framebuffer);
 	ctx.pass = &pass;
 
-	// submit common uniforms
-	ctx.setCameraUniforms(1);
+	// submit common fragment uniforms
 	ctx.setLightingUniforms(1, 5);
 	ctx.setShadowUniforms(2, 8);
 

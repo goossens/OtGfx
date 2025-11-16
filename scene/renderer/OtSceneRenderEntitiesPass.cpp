@@ -163,6 +163,16 @@ void OtSceneRenderEntitiesPass::renderGeometryHelper(
 		// setup instance data
 		ctx.pass->setInstanceData(grd.cameras[ctx.cameraID].idb);
 
+		// set vertex uniforms
+		struct Uniforms {
+			glm::mat4 viewProjectionMatrix;
+
+		} uniforms {
+			ctx.camera.viewProjectionMatrix
+		};
+
+		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
+
 	} else {
 		// bind pipeline
 		if (grd.component->wireframe) {
@@ -177,12 +187,14 @@ void OtSceneRenderEntitiesPass::renderGeometryHelper(
 
 		// set vertex uniforms
 		struct Uniforms {
+			glm::mat4 viewProjectionMatrix;
 			glm::mat4 modelMatrix;
 		} uniforms {
+			ctx.camera.viewProjectionMatrix,
 			ctx.scene->getGlobalTransform(grd.entity)
 		};
 
-		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
 	}
 
 	// set fragment uniforms
@@ -215,11 +227,13 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 
 			// set vertex uniforms
 			struct Uniforms {
+				glm::mat4 viewProjectionMatrix;
 				glm::mat4 models[64];
 			} uniforms;
 
-			std::memcpy(&uniforms, cmd.transforms.data(), std::min(cmd.transforms.size(), 64ul) * sizeof(glm::mat4));
-			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+			uniforms.viewProjectionMatrix = ctx.camera.viewProjectionMatrix;
+			std::memcpy(&uniforms.models, cmd.transforms.data(), std::min(cmd.transforms.size(), 64ul) * sizeof(glm::mat4));
+			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
 
 			// bind animation data
 			ctx.pass->setAnimationData(cmd.mesh->getBonesBuffer());
@@ -230,12 +244,14 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 
 			// set vertex uniforms
 			struct Uniforms {
+				glm::mat4 viewProjectionMatrix;
 				glm::mat4 modelMatrix;
 			} uniforms {
+				ctx.camera.viewProjectionMatrix,
 				cmd.transforms[0]
 			};
 
-			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(Uniforms));
+			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
 		}
 
 		// set fragment uniforms

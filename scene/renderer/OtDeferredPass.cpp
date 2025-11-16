@@ -63,9 +63,6 @@ void OtDeferredPass::renderGeometry(OtSceneRendererContext& ctx) {
 	pass.start(gbuffer);
 	ctx.pass = &pass;
 
-	// submit common uniforms
-	ctx.setCameraUniforms(1);
-
 	// render all entities
 	renderEntities(ctx);
 
@@ -124,7 +121,7 @@ void OtDeferredPass::renderDirectionalLight(OtSceneRendererContext& ctx) {
 		glm::inverse(ctx.camera.viewProjectionMatrix)
 	};
 
-	pass.setFragmentUniforms(0, &uniforms, sizeof(Uniforms));
+	pass.setFragmentUniforms(0, &uniforms, sizeof(uniforms));
 	ctx.setLightingUniforms(1, 5);
 	ctx.setShadowUniforms(2, 8);
 

@@ -5,15 +5,15 @@
 //	For a copy, see <https://opensource.org/licenses/MIT>.
 
 #version 450 core
-#extension GL_GOOGLE_include_directive : require
-
-#define CAMERA_UNIFORMS 0
-#include "camera.glsl"
 
 layout(location=0) in vec3 aPosition;
 
 layout(location=0) out vec3 vNear;
 layout(location=1) out vec3 vFar;
+
+layout(std140, set=1, binding=0) uniform UBO {
+	mat4 inverseViewProjectionMatrix;
+};
 
 vec3 unproject(float x, float y, float z) {
 	vec4 unprojectedPoint = inverseViewProjectionMatrix * vec4(x, y, z, 1.0);

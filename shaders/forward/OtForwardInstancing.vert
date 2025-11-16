@@ -5,10 +5,6 @@
 //	For a copy, see <https://opensource.org/licenses/MIT>.
 
 #version 450
-#extension GL_GOOGLE_include_directive : require
-
-#define CAMERA_UNIFORMS 1
-#include "camera.glsl"
 
 layout(location=0) in vec3 aPosition;
 layout(location=1) in vec3 aNormal;
@@ -27,11 +23,11 @@ layout(location=3) out vec3 vBitangent;
 layout(location=4) out vec2 vUv;
 
 layout(std140, set=1, binding=0) uniform UBO {
-	mat4 modelMatrix;
+	mat4 viewProjectionMatrix;
 };
 
 void main() {
-	mat4 instanceMatrix = modelMatrix * mat4(data0, data1, data2, data3);
+	mat4 instanceMatrix = mat4(data0, data1, data2, data3);
 
 	vUv = aUv;
 	vPosition = (instanceMatrix * vec4(aPosition, 1.0f)).xyz;

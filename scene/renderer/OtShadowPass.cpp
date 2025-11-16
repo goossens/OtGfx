@@ -52,7 +52,6 @@ void OtShadowPass::render(OtSceneRendererContext& ctx) {
 		ctx.cameraID = OtSceneRendererContext::getShadowCameraID(i);
 
 		// render all entities
-		ctx.setCameraUniforms(1);
 		renderEntities(ctx);
 
 		// we're done

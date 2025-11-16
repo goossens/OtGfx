@@ -105,9 +105,6 @@ void OtWaterPass::renderWater(OtSceneRendererContext& ctx, OtWaterComponent& wat
 	pass.start(framebuffer);
 	ctx.pass = &pass;
 
-	// submit vertex uniforms
-	ctx.setCameraUniforms(0);
-
 	// determine time
 	using namespace std::chrono;
 	uint64_t now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
@@ -123,8 +120,17 @@ void OtWaterPass::renderWater(OtSceneRendererContext& ctx, OtWaterComponent& wat
 	glm::vec4 farPoint = ctx.camera.projectionMatrix * glm::vec4(0.0, water.level, -water.distance, 1.0);
 	float distance = farPoint.z / farPoint.w;
 
+	// submit vertex uniforms
+	struct VertexUniforms {
+		glm::mat4 inverseViewProjectionMatrix;
+	} vertexUniforms {
+		glm::inverse(ctx.camera.viewProjectionMatrix)
+	};
+
+	ctx.pass->setVertexUniforms(0, &vertexUniforms, sizeof(vertexUniforms));
+
 	// submit fragment uniforms
-	struct Uniforms {
+	struct FragmentUniforms {
 		glm::mat4 viewMatrix;
 		glm::mat4 viewProjectionMatrix;
 		glm::vec4 waterColor;
@@ -139,7 +145,7 @@ void OtWaterPass::renderWater(OtSceneRendererContext& ctx, OtWaterComponent& wat
 		float ao;
 		float reflectivity;
 		uint32_t refractanceFlag;
-	} uniforms {
+	} fragmentUniforms {
 		ctx.camera.viewMatrix,
 		ctx.camera.viewProjectionMatrix,
 		glm::vec4(water.color, 1.0f),
@@ -156,7 +162,7 @@ void OtWaterPass::renderWater(OtSceneRendererContext& ctx, OtWaterComponent& wat
 		static_cast<uint32_t>(water.useRefractance)
 	};
 
-	pass.setFragmentUniforms(0, &uniforms, sizeof(Uniforms));
+	pass.setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
 	ctx.setLightingUniforms(1, 4);
 	ctx.setShadowUniforms(2, 7);
 
