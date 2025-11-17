@@ -24,7 +24,7 @@ struct Material {
 
 // convert color to linear colorspace
 vec3 toLinear(vec3 color) {
-	return pow(color, vec3(2.2f));
+	return pow(color, vec3(2.2));
 }
 
 vec4 toLinear(vec4 color) {
@@ -33,33 +33,33 @@ vec4 toLinear(vec4 color) {
 
 // fresnel equations
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+	return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
-	return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 // Normal Distribution Function (NDF)
 float distributionGGX(vec3 N, vec3 H, float roughness) {
 	float a = roughness * roughness;
 	float a2 = a * a;
-	float NdotH = max(dot(N, H), 0.0f);
+	float NdotH = max(dot(N, H), 0.0);
 	float NdotH2 = NdotH * NdotH;
-	float denominator = max(NdotH2 * (a2 - 1.0f) + 1.0f, 0.0001f);
+	float denominator = max(NdotH2 * (a2 - 1.0) + 1.0, 0.0001);
 	return a2 / (PI * denominator * denominator);
 }
 
 // geometry function
 float geometrySchlickGGX(float NdotV, float roughness) {
-	float r = (roughness + 1.0f);
-	float k = (r * r) / 8.0f;
-	return NdotV / (NdotV * (1.0f - k) + k);
+	float r = (roughness + 1.0);
+	float k = (r * r) / 8.0;
+	return NdotV / (NdotV * (1.0 - k) + k);
 }
 
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
-	float NdotV = max(dot(N, V), 0.0f);
-	float NdotL = max(dot(N, L), 0.0f);
+	float NdotV = max(dot(N, V), 0.0);
+	float NdotL = max(dot(N, L), 0.0);
 	float ggx2 = geometrySchlickGGX(NdotV, roughness);
 	float ggx1 = geometrySchlickGGX(NdotL, roughness);
 	return ggx1 * ggx2;
@@ -68,13 +68,13 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 //	PBR calculation for directional light
 vec3 directionalLightPBR(Material material, DirectionalLight light, vec3 V) {
 	// calculate surface reflection at zero incidence
-	vec3 F0 = mix(vec3(0.04f), material.albedo, material.metallic);
+	vec3 F0 = mix(vec3(0.04), material.albedo, material.metallic);
 
 	// calculate halfway vector between view direction and light direction
 	vec3 H = normalize(V + light.L);
 
 	// calculate the ratio between specular and diffuse reflection
-	vec3 F = fresnelSchlick(max(dot(H, V), 0.0f), F0); // Schlick Fresnel function
+	vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0); // Schlick Fresnel function
 
 	// Cook-Torrance Microfacet Bidirectional Reflective Distribution (BRDF)
 	float NDF = distributionGGX(material.normal, H, material.roughness); // GGX normal distribution function
@@ -82,14 +82,14 @@ vec3 directionalLightPBR(Material material, DirectionalLight light, vec3 V) {
 
 	vec3 specular =
 		(NDF * G * F) /
-		(4.0f * max(dot(material.normal, V), 0.0f) * max(dot(material.normal, light.L), 0.0f) + 0.0001f);
+		(4.0 * max(dot(material.normal, V), 0.0) * max(dot(material.normal, light.L), 0.0) + 0.0001);
 
 	// calculate contribution to the reflectance equation
 	vec3 kS = F;
-	vec3 kD = (vec3(1.0f) - kS) * (1.0f - material.metallic);
+	vec3 kD = (vec3(1.0) - kS) * (1.0 - material.metallic);
 
 	// determine outgoing radiance
-	float NdotL = max(dot(material.normal, light.L), 0.0f);
+	float NdotL = max(dot(material.normal, light.L), 0.0);
 	vec3 color = (kD * material.albedo / PI + specular) * light.color * NdotL;
 
 	// apply shadow
@@ -105,13 +105,13 @@ vec3 directionalLightPBR(Material material, DirectionalLight light, vec3 V) {
 //	PBR calculation for point light
 vec3 pointLightPBR(Material material, PointLight light, vec3 V) {
 	// calculate surface reflection at zero incidence
-	vec3 F0 = mix(vec3(0.04f), material.albedo, material.metallic);
+	vec3 F0 = mix(vec3(0.04), material.albedo, material.metallic);
 
 	// calculate halfway vector between view direction and light direction
 	vec3 H = normalize(V + light.L);
 
 	// calculate the ratio between specular and diffuse reflection
-	vec3 F = fresnelSchlick(max(dot(H, V), 0.0f), F0); // Schlick Fresnel function
+	vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0); // Schlick Fresnel function
 
 	// Cook-Torrance Microfacet Bidirectional Reflective Distribution (BRDF)
 	float NDF = distributionGGX(material.normal, H, material.roughness); // GGX normal distribution function
@@ -119,14 +119,14 @@ vec3 pointLightPBR(Material material, PointLight light, vec3 V) {
 
 	vec3 specular =
 		(NDF * G * F) /
-		(4.0f * max(dot(material.normal, V), 0.0f) * max(dot(material.normal, light.L), 0.0f) + 0.0001f);
+		(4.0 * max(dot(material.normal, V), 0.0) * max(dot(material.normal, light.L), 0.0) + 0.0001);
 
 	// calculate contribution to the reflectance equation
 	vec3 kS = F;
-	vec3 kD = (vec3(1.0f) - kS) * (1.0f - material.metallic);
+	vec3 kD = (vec3(1.0) - kS) * (1.0 - material.metallic);
 
 	// determine outgoing radiance
-	float NdotL = clamp(dot(material.normal, light.L), 0.0f, 1.0f);
+	float NdotL = clamp(dot(material.normal, light.L), 0.0, 1.0);
 	vec3 color = (kD / PI + specular) * light.color * NdotL;
 
 	// return result
@@ -136,14 +136,14 @@ vec3 pointLightPBR(Material material, PointLight light, vec3 V) {
 //	PBR calculation for image based lighting
 vec3 imageBasedLightingPBR(Material material, vec3 V, int envLevels, sampler2D brdfLUT, samplerCube irradianceMap, samplerCube envMap) {
 	// calculate surface reflection at zero incidence
-	vec3 F0 = mix(vec3(0.04f), material.albedo, material.metallic);
+	vec3 F0 = mix(vec3(0.04), material.albedo, material.metallic);
 
 	// calculate the ratio between specular and diffuse reflection
-	vec3 F = fresnelSchlickRoughness(max(dot(material.normal, V), 0.0f), F0, material.roughness);
+	vec3 F = fresnelSchlickRoughness(max(dot(material.normal, V), 0.0), F0, material.roughness);
 
 	// calculate contribution to the reflectance equation
 	vec3 kS = F;
-	vec3 kD = (vec3(1.0f) - kS) * (1.0f - material.metallic);
+	vec3 kD = (vec3(1.0) - kS) * (1.0 - material.metallic);
 
 	// get diffuse part
     vec3 diffuse = kD * texture(irradianceMap, material.normal).rgb * material.albedo;

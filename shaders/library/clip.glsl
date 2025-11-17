@@ -13,7 +13,7 @@ layout(std140, set=3, binding=CLIP_UNIFORMS) uniform ClipUniforms {
 };
 
 void clipAgainstPlane(vec3 position) {
-	if (dot(clipPlane, vec4(position, 1.0f)) < 0.0f) {
+	if (dot(clipPlane, vec4(position, 1.0)) < 0.0) {
 		discard;
 	}
 }

@@ -36,7 +36,7 @@ void main() {
 
 	vec2 uv = vec2(gl_FragCoord.x / viewWidth, gl_FragCoord.y / viewHeight);
 	float depth = texture(lightingDepthTexture, uv).x;
-	vec4 ndc = vec4(uv.x * 2.0f - 1.0f, uv.y * -2.0f + 1.0f, depth, 1.0f);
+	vec4 ndc = vec4(uv.x * 2.0 - 1.0, uv.y * -2.0 + 1.0, depth, 1.0);
 
 	vec4 world = inverseViewProjectionMatrix * ndc;
 	world = world / world.w;
@@ -48,13 +48,13 @@ void main() {
 	light.color = vColor.rgb;
 	light.L = normalize(lightPosition - vertexPosition);
 	light.attenuation = smoothAttenuation(distance(lightPosition, vertexPosition), light.radius);
-	vec3 color = vec3(0.0f);
+	vec3 color = vec3(0.0);
 
-	if (light.attenuation > 0.0f) {
+	if (light.attenuation > 0.0) {
 		// determine material data
 		Material material;
 		material.albedo = toLinear(texture(lightingAlbedoTexture, uv).rgb);
-		material.normal = texture(lightingNormalTexture, uv).xyz * 2.0f - 1.0f;
+		material.normal = texture(lightingNormalTexture, uv).xyz * 2.0 - 1.0;
 		vec4 data = texture(lightingPbrTexture, uv);
 		material.metallic = data.r;
 		material.roughness = data.g;
@@ -65,5 +65,5 @@ void main() {
 		color = pointLightPBR(material, light, V);
 	}
 
-	fragColor = vec4(color, 1.0f);
+	fragColor = vec4(color, 1.0);
 }

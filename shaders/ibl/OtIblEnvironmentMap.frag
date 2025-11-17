@@ -31,8 +31,8 @@ vec3 prefilterEnvMap(vec3 R) {
 	// Isotropic approximation: we lose stretchy reflections :(
 	vec3 N = R;
 	vec3 V = R;
-	vec3 prefilteredColor = vec3(0.0f);
-	float totalWeight = 0.0f;
+	vec3 prefilteredColor = vec3(0.0);
+	float totalWeight = 0.0;
 
 	const int numSamples = 64;
 
@@ -41,21 +41,21 @@ vec3 prefilterEnvMap(vec3 R) {
 		vec3 H = importanceSampleGGX(Xi, roughness, N);
 		float VoH = dot(V, H);
 		float NoH = VoH; // Since N = V in our approximation
-		vec3 L = 2.0f * VoH * H - V;
-		float NoL = clamp(dot(N, L), 0.0f, 1.0f);
-		NoH = clamp(NoH, 0.0f, 1.0f);
+		vec3 L = 2.0 * VoH * H - V;
+		float NoL = clamp(dot(N, L), 0.0, 1.0);
+		NoH = clamp(NoH, 0.0, 1.0);
 
 		if (NoL > 0.0) {
 			// Based off https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch20.html
 			// Typically you'd have the following:
 			// float pdf = D_GGX(NoH, roughness) * NoH / (4.0 * VoH);
 			// but since V = N => VoH == NoH
-			float pdf = D_GGX(NoH, roughness) / 4.0f + 0.001f;
+			float pdf = D_GGX(NoH, roughness) / 4.0 + 0.001;
 			// Solid angle of current sample -- bigger for less likely samples
-			float omegaS = 1.0f / (float(numSamples) * pdf);
+			float omegaS = 1.0 / (float(numSamples) * pdf);
 			// Solid angle  of pixel
-			float omegaP = 4.0f * PI / (6.0f * size * size);
-			float mipLevel = roughness == 0.0f ? 0.0f : max(0.5f * log2(omegaS / omegaP), 0.0f);
+			float omegaP = 4.0 * PI / (6.0 * size * size);
+			float mipLevel = roughness == 0.0 ? 0.0 : max(0.5 * log2(omegaS / omegaP), 0.0);
 			prefilteredColor += textureLod(inTexture, L, mipLevel).rgb * NoL;
 			totalWeight += NoL;
 		}
@@ -66,16 +66,16 @@ vec3 prefilterEnvMap(vec3 R) {
 
 vec4 processSide(vec3 N) {
 	// Don't need to integrate for roughness == 0, since it's a perfect reflector
-	return (roughness == 0.0f) ? texture(inTexture, N, 0) :  vec4(prefilterEnvMap(N), 1.0f);
+	return (roughness == 0.0) ? texture(inTexture, N, 0) :  vec4(prefilterEnvMap(N), 1.0);
 }
 
 void main() {
-	vec2 uv = 2.0f * vec2(vUv.x, 1.0f - vUv.y) - vec2(1.0f);
+	vec2 uv = 2.0 * vec2(vUv.x, 1.0 - vUv.y) - vec2(1.0);
 
-	side1Color = processSide(normalize(vec3(1.0f, uv.y, -uv.x)));
-	side2Color = processSide(normalize(vec3(-1.0f, uv.y, uv.x)));
-	side3Color = processSide(normalize(vec3(uv.x, 1.0f, -uv.y)));
-	side4Color = processSide(normalize(vec3(uv.x, -1.0f, uv.y)));
-	side5Color = processSide(normalize(vec3(uv.x, uv.y, 1.0f)));
-	side6Color = processSide(normalize(vec3(-uv.x, uv.y, -1.0f)));
+	side1Color = processSide(normalize(vec3(1.0, uv.y, -uv.x)));
+	side2Color = processSide(normalize(vec3(-1.0, uv.y, uv.x)));
+	side3Color = processSide(normalize(vec3(uv.x, 1.0, -uv.y)));
+	side4Color = processSide(normalize(vec3(uv.x, -1.0, uv.y)));
+	side5Color = processSide(normalize(vec3(uv.x, uv.y, 1.0)));
+	side6Color = processSide(normalize(vec3(-uv.x, uv.y, -1.0)));
 }

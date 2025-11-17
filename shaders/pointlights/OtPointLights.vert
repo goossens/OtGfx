@@ -22,5 +22,5 @@ void main() {
 	// gather information for fragment shader
 	vLightPos = aLightPos;
 	vColor = vec4(aColor, aRadius);
-	gl_Position = viewProjectionMatrix * vec4(aLightPos + aPosition * aRadius, 1.0f);
+	gl_Position = viewProjectionMatrix * vec4(aLightPos + aPosition * aRadius, 1.0);
 }

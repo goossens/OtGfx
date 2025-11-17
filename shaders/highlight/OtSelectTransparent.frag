@@ -29,9 +29,9 @@ void main() {
 	}
 
 	// discard pixel if too transparent
-	if (albedo.a < 0.3f) {
+	if (albedo.a < 0.3) {
 		discard;
 	}
 
-	fragColor = vec4(1.0f);
+	fragColor = vec4(1.0);
 }

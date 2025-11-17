@@ -19,10 +19,10 @@ layout(std140, set=1, binding=0) uniform UBO {
 
 void main() {
 	gl_Position = vec4(
-		2.0f * aPosition.x / width - 1.0f,
-		1.0f - 2.0f * aPosition.y / height,
-		0.0f,
-		1.0f);
+		2.0 * aPosition.x / width - 1.0,
+		1.0 - 2.0 * aPosition.y / height,
+		0.0,
+		1.0);
 
 	vPosition = aPosition;
 	vUv = aUv;

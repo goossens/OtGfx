@@ -45,7 +45,7 @@ void main() {
 	}
 
 	// discard pixel if too transparent
-	if (albedo.a < 0.3f) {
+	if (albedo.a < 0.3) {
 		discard;
 	}
 
@@ -59,7 +59,7 @@ void main() {
 		vec3 bitangent = normalize(vBitangent);
 		vec3 normal = normalize(vNormal);
 		mat3 TBN = mat3(tangent, bitangent, normal);
-		material.normal = normalize(TBN * texture(normalTexture, uv).rgb * 2.0f - 1.0f);
+		material.normal = normalize(TBN * texture(normalTexture, uv).rgb * 2.0 - 1.0);
 
 	} else {
 		material.normal = normalize(vNormal);
@@ -74,7 +74,7 @@ void main() {
 	vec3 V = normalize(cameraPosition - vPosition);
 
 	// total color
-	vec3 color = vec3(0.0f);
+	vec3 color = vec3(0.0);
 
 	// process directional light (if required)
 	if (hasDirectionalLighting) {
@@ -82,7 +82,7 @@ void main() {
 		light.L = normalize(directionalLightDirection);
 		light.color = directionalLightColor;
 		light.ambient = directionalLightAmbient;
-		light.shadow = getShadow(vPosition, (viewTransform * vec4(vPosition, 1.0f)).xyz, dot(material.normal, light.L));
+		light.shadow = getShadow(vPosition, (viewTransform * vec4(vPosition, 1.0)).xyz, dot(material.normal, light.L));
 
 		color += directionalLightPBR(material, light, V);
 	}

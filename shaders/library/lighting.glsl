@@ -41,12 +41,12 @@ struct PointLight {
 
 // inverse square falloff
 float distanceAttenuation(float distance) {
-	return 1.0 / max(distance * distance, 0.01f * 0.01f);
+	return 1.0 / max(distance * distance, 0.01 * 0.01);
 }
 
 // window function with smooth transition to 0
 float smoothAttenuation(float distance, float radius) {
-	float nom = clamp(1.0f - pow(distance / radius, 4.0f), 0.0f, 1.0f);
+	float nom = clamp(1.0 - pow(distance / radius, 4.0), 0.0, 1.0);
 	return nom * nom * distanceAttenuation(distance);
 }
 

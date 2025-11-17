@@ -24,7 +24,7 @@ void main() {
 	vec4 color = mix(color1, color2, blend);
 	color.a *= alpha;
 
-	if (color.a < 0.1f) {
+	if (color.a < 0.1) {
 		discard;
 	}
 

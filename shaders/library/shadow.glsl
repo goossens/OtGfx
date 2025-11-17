@@ -39,30 +39,30 @@ float hardShadow(sampler2D shadowmap, vec2 shadowCoord, float depth, float bias)
 
 // get shadow value using Percentage-Closer Filtering (PCF)
 float getCascadeShadow(sampler2D shadowmap, vec2 shadowCoord, float depth, float bias) {
-	float shadow = 0.0f;
+	float shadow = 0.0;
 	float offset = shadowTexelSize;
 
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5f, -1.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5f, -0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5f,  0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5f,  1.5f) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5, -1.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5, -0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5,  0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-1.5,  1.5) * offset, depth, bias);
 
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5f, -1.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5f, -0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5f,  0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5f,  1.5f) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5, -1.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5, -0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5,  0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(-0.5,  1.5) * offset, depth, bias);
 
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5f, -1.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5f, -0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5f,  0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5f,  1.5f) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5, -1.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5, -0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5,  0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(0.5,  1.5) * offset, depth, bias);
 
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5f, -1.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5f, -0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5f,  0.5f) * offset, depth, bias);
-	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5f,  1.5f) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5, -1.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5, -0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5,  0.5) * offset, depth, bias);
+	shadow += hardShadow(shadowmap, shadowCoord + vec2(1.5,  1.5) * offset, depth, bias);
 
-	return shadow / 16.0f;
+	return shadow / 16.0;
 }
 
 // get shadow value at specified position and distance from camera
@@ -70,35 +70,35 @@ float getShadow(vec3 wordPosition, vec3 viewPosition, float NdotL) {
 	// see if we have shadowmaps
 	if (shadowEnabled) {
 		// determine shadow bias based on slope (shadowmap resolution is applied below)
-		float bias = max(0.05f * (1.0f - NdotL), 0.005f);
+		float bias = max(0.05 * (1.0 - NdotL), 0.005);
 
 		// determine cascade and calculate shadow
 		if (-viewPosition.z < cascadeDistance0) {
-			vec4 pos = shadowViewProjTransform0 * vec4(wordPosition, 1.0f);
+			vec4 pos = shadowViewProjTransform0 * vec4(wordPosition, 1.0);
 			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
-			return getCascadeShadow(shadowMap0, uv, pos.z, bias * (1.0f / (cascadeDistance0 * 0.5f)));
+			return getCascadeShadow(shadowMap0, uv, pos.z, bias * (1.0 / (cascadeDistance0 * 0.5)));
 
 		} else if (-viewPosition.z < cascadeDistance1) {
-			vec4 pos = shadowViewProjTransform1 * vec4(wordPosition, 1.0f);
+			vec4 pos = shadowViewProjTransform1 * vec4(wordPosition, 1.0);
 			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
-			return getCascadeShadow(shadowMap1, uv, pos.z, bias * (1.0f / (cascadeDistance1 * 0.5f)));
+			return getCascadeShadow(shadowMap1, uv, pos.z, bias * (1.0 / (cascadeDistance1 * 0.5)));
 
 		} else if (-viewPosition.z < cascadeDistance2) {
-			vec4 pos = shadowViewProjTransform2 * vec4(wordPosition, 1.0f);
+			vec4 pos = shadowViewProjTransform2 * vec4(wordPosition, 1.0);
 			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
-			return getCascadeShadow(shadowMap2, uv, pos.z, bias * (1.0f / (cascadeDistance2 * 0.5f)));
+			return getCascadeShadow(shadowMap2, uv, pos.z, bias * (1.0 / (cascadeDistance2 * 0.5)));
 
 		} else if (-viewPosition.z < cascadeDistance3) {
-			vec4 pos = shadowViewProjTransform3 * vec4(wordPosition, 1.0f);
+			vec4 pos = shadowViewProjTransform3 * vec4(wordPosition, 1.0);
 			vec2 uv = clipToUvSpace((pos / pos.w).xyz);
-			return getCascadeShadow(shadowMap3, uv, pos.z, bias * (1.0f / (cascadeDistance3 * 0.5f)));
+			return getCascadeShadow(shadowMap3, uv, pos.z, bias * (1.0 / (cascadeDistance3 * 0.5)));
 
 		} else {
-			return 1.0f;
+			return 1.0;
 		}
 
 	} else {
-		return 1.0f;
+		return 1.0;
 	}
 }
 

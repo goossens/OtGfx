@@ -20,5 +20,5 @@ void main() {
 	vec3 color = texture(skyTexture, vPosition).rgb;
 	color = pow(color, vec3(gamma));
 	color = brightness * color;
-	fragColor = vec4(color, 1.0f);
+	fragColor = vec4(color, 1.0);
 }

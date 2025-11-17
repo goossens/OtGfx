@@ -18,7 +18,7 @@ layout(std140, set=1, binding=0) uniform UBO {
 };
 
 void main() {
-	gl_Position = matrix * vec4(aPosition, 0.0f, 1.0f);
+	gl_Position = matrix * vec4(aPosition, 0.0, 1.0);
 	vUv = aUv;
 	vColor = aColor;
 }

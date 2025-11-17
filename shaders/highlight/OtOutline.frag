@@ -17,7 +17,7 @@ layout(std140, set=3, binding=0) uniform UBO {
 void main() {
 	float value = texture(inTexture, vUv).r;
 
-	if (value > 0.0f) {
+	if (value > 0.0) {
 		discard;
 	}
 
@@ -30,9 +30,9 @@ void main() {
 	value += texture(inTexture, vUv + vec2(0.0, texelSize.y)).r;
 	value += texture(inTexture, vUv + vec2(texelSize.x, texelSize.y)).r;
 
-	if (value > 0.0f) {
-		value = 0.5f + value / 9.0f;
+	if (value > 0.0) {
+		value = 0.5 + value / 9.0;
 	}
 
-	fragColor = vec4(0.8f, 0.8f, 0.0f, value);
+	fragColor = vec4(0.8, 0.8, 0.0, value);
 }

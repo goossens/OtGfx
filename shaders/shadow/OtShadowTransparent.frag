@@ -28,7 +28,7 @@ void main() {
 	}
 
 	// discard pixel if too transparent
-	if (albedo.a < 0.3f) {
+	if (albedo.a < 0.3) {
 		discard;
 	}
 }

@@ -30,9 +30,9 @@ void main() {
 	mat4 instanceMatrix = mat4(data0, data1, data2, data3);
 
 	vUv = aUv;
-	vPosition = (instanceMatrix * vec4(aPosition, 1.0f)).xyz;
-	vNormal = (instanceMatrix * vec4(aNormal, 0.0f)).xyz;
-	vTangent = (instanceMatrix * vec4(aTangent, 0.0f)).xyz;
-	vBitangent = (instanceMatrix * vec4(aBitangent, 0.0f)).xyz;
-	gl_Position = viewProjectionMatrix * vec4(vPosition, 1.0f);
+	vPosition = (instanceMatrix * vec4(aPosition, 1.0)).xyz;
+	vNormal = (instanceMatrix * vec4(aNormal, 0.0)).xyz;
+	vTangent = (instanceMatrix * vec4(aTangent, 0.0)).xyz;
+	vBitangent = (instanceMatrix * vec4(aBitangent, 0.0)).xyz;
+	gl_Position = viewProjectionMatrix * vec4(vPosition, 1.0);
 }

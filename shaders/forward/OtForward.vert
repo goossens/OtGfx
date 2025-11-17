@@ -25,9 +25,9 @@ layout(std140, set=1, binding=0) uniform UBO {
 
 void main() {
 	vUv = aUv;
-	vPosition = (modelMatrix * vec4(aPosition, 1.0f)).xyz;
-	vNormal = (modelMatrix * vec4(aNormal, 0.0f)).xyz;
-	vTangent = (modelMatrix * vec4(aTangent, 0.0f)).xyz;
-	vBitangent = (modelMatrix * vec4(aBitangent, 0.0f)).xyz;
-	gl_Position = viewProjectionMatrix * vec4(vPosition, 1.0f);
+	vPosition = (modelMatrix * vec4(aPosition, 1.0)).xyz;
+	vNormal = (modelMatrix * vec4(aNormal, 0.0)).xyz;
+	vTangent = (modelMatrix * vec4(aTangent, 0.0)).xyz;
+	vBitangent = (modelMatrix * vec4(aBitangent, 0.0)).xyz;
+	gl_Position = viewProjectionMatrix * vec4(vPosition, 1.0);
 }

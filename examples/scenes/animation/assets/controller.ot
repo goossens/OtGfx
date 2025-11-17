@@ -116,7 +116,7 @@ class controller : scene.Entity {
 		var speed = this.model.getAnimationSpeed() / input.getFrameRate();
 
 		this.floorOffsetX = (this.floorOffsetX - rotation.sin() * speed) % 1.0;
-		this.floorOffsetY = (this.floorOffsetY - rotation.cos() * speed) % 1.0;
+		this.floorOffsetY = (this.floorOffsetY + rotation.cos() * speed) % 1.0;
 
 		this.floor.setTextureOffset(math.Vec2(this.floorOffsetX, this.floorOffsetY));
 	}

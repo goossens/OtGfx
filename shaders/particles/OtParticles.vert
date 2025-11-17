@@ -29,12 +29,12 @@ void main() {
 	vec2 local = aPosition.xy * aScale;
 	float cosR = cos(aRotate);
 	float sinR = sin(aRotate);
-	vec3 pos = aPos + vec3(cosR * local.x - sinR * local.y, sinR * local.x + cosR * local.y, 0.0f);
+	vec3 pos = aPos + vec3(cosR * local.x - sinR * local.y, sinR * local.x + cosR * local.y, 0.0);
 
 	// determine texture coordinates
-	vec2 uv = aPosition.xy + vec2(0.5f);
-	uv.y = 1.0f - uv.y;
-	uv = uv / vec2(round(mod(aGrid, 100.0f)), round(aGrid / 100.0f));
+	vec2 uv = aPosition.xy + vec2(0.5);
+	uv.y = 1.0 - uv.y;
+	uv = uv / vec2(round(mod(aGrid, 100.0)), round(aGrid / 100.0));
 
 	vec2 uv1 = aOffset1 + uv;
 	vec2 uv2 = aOffset2 + uv;
@@ -42,5 +42,5 @@ void main() {
 	// pass to fragment shader
 	vData0 = vec3(uv1, aAlpha);
 	vData1 = vec3(uv2, aBlend);
-	gl_Position = modelViewProjectionMatrix * vec4(pos, 1.0f);
+	gl_Position = modelViewProjectionMatrix * vec4(pos, 1.0);
 }

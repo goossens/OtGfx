@@ -21,7 +21,7 @@ layout(std140, set=1, binding=0) uniform UBO {
 };
 
 void main() {
-	vPosition = (model * vec4(aPosition, 1.0f)).xyz;
-	vNormal = (model * vec4(aNormal, 0.0f)).xyz;
-	gl_Position = modelViewProj * vec4(aPosition, 1.0f);
+	vPosition = (model * vec4(aPosition, 1.0)).xyz;
+	vNormal = (model * vec4(aNormal, 0.0)).xyz;
+	gl_Position = modelViewProj * vec4(aPosition, 1.0);
 }

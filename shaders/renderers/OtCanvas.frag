@@ -41,22 +41,22 @@ const int rgbaTexture = 2;
 float sdroundrect(vec2 pt, vec2 ext, float rad) {
 	vec2 ext2 = ext - vec2(rad, rad);
 	vec2 d = abs(pt) - ext2;
-	return min(max(d.x, d.y), 0.0f) + length(max(d, 0.0f)) - rad;
+	return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - rad;
 }
 
 float scissorMask(vec2 p) {
-	vec2 sc = (abs((scissorMat * vec3(p, 1.0f)).xy) - scissorExt);
-	sc = vec2(0.5f, 0.5f) - sc * scissorScale;
-	return clamp(sc.x, 0.0f, 1.0f) * clamp(sc.y, 0.0f, 1.0f);
+	vec2 sc = (abs((scissorMat * vec3(p, 1.0)).xy) - scissorExt);
+	sc = vec2(0.5, 0.5) - sc * scissorScale;
+	return clamp(sc.x, 0.0, 1.0) * clamp(sc.y, 0.0, 1.0);
 }
 
 float strokeMask() {
-	return min(1.0f, (1.0f - abs(vUv.x * 2.0f - 1.0f)) * strokeMult) * vUv.y;
+	return min(1.0, (1.0 - abs(vUv.x * 2.0 - 1.0)) * strokeMult) * vUv.y;
 }
 
 void main(void) {
 	if (type == simpleShader) {
-		fragColor = vec4(1.0f);
+		fragColor = vec4(1.0);
 
 	} else {
 		float scissor = scissorMask(vPosition);
@@ -75,13 +75,13 @@ void main(void) {
 
 			if (type == fillGradientShader) {
 				// calculate gradient color
-				vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy;
-				float d = clamp((sdroundrect(pt, extent, radius) + feather * 0.5f) / feather, 0.0f, 1.0f);
+				vec2 pt = (paintMat * vec3(vPosition, 1.0)).xy;
+				float d = clamp((sdroundrect(pt, extent, radius) + feather * 0.5) / feather, 0.0, 1.0);
 				fragColor = mix(innerCol, outerCol, d) * scissor * strokeAlpha;
 
 			} else if (type == fillTextureShader) {
 				// calculate color from texture
-				vec2 pt = (paintMat * vec3(vPosition, 1.0f)).xy / extent;
+				vec2 pt = (paintMat * vec3(vPosition, 1.0)).xy / extent;
 				vec4 color = texture(tex, pt);
 				color = texType == 1 ? vec4(color.r) :  vec4(color.rgb * color.a, color.a);
 				fragColor = color * innerCol * scissor * strokeAlpha;

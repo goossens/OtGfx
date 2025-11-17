@@ -17,25 +17,25 @@ layout(location=3) out vec4 side4Color;
 layout(location=4) out vec4 side5Color;
 layout(location=5) out vec4 side6Color;
 
-const vec2 invAtan = vec2(0.1591f, -0.3183f);
+const vec2 invAtan = vec2(0.1591, -0.3183);
 
 vec4 processSide(vec3 v) {
 	// convert cartesian direction vector to spherical coordinates
 	vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
 	uv *= invAtan;
-	uv += 0.5f;
+	uv += 0.5;
 
 	// sample equirectangular texture
 	return texture(inTexture, uv);
 }
 
 void main() {
-	vec2 uv = 2.0f * vec2(vUv.x, 1.0f - vUv.y) - vec2(1.0f);
+	vec2 uv = 2.0 * vec2(vUv.x, 1.0 - vUv.y) - vec2(1.0);
 
-	side1Color = processSide(normalize(vec3(1.0f, uv.y, -uv.x)));
-	side2Color = processSide(normalize(vec3(-1.0f, uv.y, uv.x)));
-	side3Color = processSide(normalize(vec3(uv.x, 1.0f, -uv.y)));
-	side4Color = processSide(normalize(vec3(uv.x, -1.0f, uv.y)));
-	side5Color = processSide(normalize(vec3(uv.x, uv.y, 1.0f)));
-	side6Color = processSide(normalize(vec3(-uv.x, uv.y, -1.0f)));
+	side1Color = processSide(normalize(vec3(1.0, uv.y, -uv.x)));
+	side2Color = processSide(normalize(vec3(-1.0, uv.y, uv.x)));
+	side3Color = processSide(normalize(vec3(uv.x, 1.0, -uv.y)));
+	side4Color = processSide(normalize(vec3(uv.x, -1.0, uv.y)));
+	side5Color = processSide(normalize(vec3(uv.x, uv.y, 1.0)));
+	side6Color = processSide(normalize(vec3(-uv.x, uv.y, -1.0)));
 }

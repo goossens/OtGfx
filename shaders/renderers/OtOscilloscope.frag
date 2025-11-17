@@ -18,5 +18,5 @@ layout(std140, set=3, binding=0) uniform UBO {
 };
 
 void main() {
-	fragColor = vColor * texture(brush, vUv) * vec4(1.0f, 1.0f, 1.0f, alpha);
+	fragColor = vColor * texture(brush, vUv) * vec4(1.0, 1.0, 1.0, alpha);
 }

@@ -58,7 +58,7 @@ void main() {
 
 	// get the world and NDC positions
 	vec3 waterWorldPos = vNear + t * (vFar - vNear);
-	vec4 waterClipPos = viewProjectionMatrix * vec4(waterWorldPos, 1.0f);
+	vec4 waterClipPos = viewProjectionMatrix * vec4(waterWorldPos, 1.0);
 	vec3 waterNdcPos = waterClipPos.xyz / waterClipPos.w;
 
 	// clip to distance
@@ -68,10 +68,10 @@ void main() {
 
 	// get normal
 	vec2 uv = waterWorldPos.xz * scale;
-	vec2 uv1 = (uv / 103.0f) + vec2(time / 17.0f, time / 29.0f);
-	vec2 uv2 = (uv / 107.0f) - vec2(time / -19.0f, time / 31.0f) + vec2(0.23f);
-	vec2 uv3 = (uv / vec2(897.0f, 983.0f)) + vec2(time / 101.0f, time / 97.0f) + vec2(0.51f);
-	vec2 uv4 = (uv / vec2(991.0f, 877.0f)) - vec2(time / 109.0f, time / -113.0f) + vec2(0.71f);
+	vec2 uv1 = (uv / 103.0) + vec2(time / 17.0, time / 29.0);
+	vec2 uv2 = (uv / 107.0) - vec2(time / -19.0, time / 31.0) + vec2(0.23);
+	vec2 uv3 = (uv / vec2(897.0, 983.0)) + vec2(time / 101.0, time / 97.0) + vec2(0.51);
+	vec2 uv4 = (uv / vec2(991.0, 877.0)) - vec2(time / 109.0, time / -113.0) + vec2(0.71);
 
 	vec4 noise =
 		texture(waterNormalMapTexture, uv1) +
@@ -82,13 +82,13 @@ void main() {
 	noise = noise * 0.5 - 1.0;
 
 	float dist = length(cameraPosition - waterWorldPos);
-	vec3 normal = normalize(noise.xzy * vec3(2.0f, clamp(dist * 0.001f, 1.0f, 100.0f), 2.0f));
+	vec3 normal = normalize(noise.xzy * vec3(2.0, clamp(dist * 0.001, 1.0, 100.0), 2.0));
 
 	// determine reflection and refraction colors
 	vec2 refractionUv = gl_FragCoord.xy / size;
-	vec2 reflectionUv = vec2(refractionUv.x, 1.0f - refractionUv.y);
+	vec2 reflectionUv = vec2(refractionUv.x, 1.0 - refractionUv.y);
 	vec3 reflectionColor = texture(reflectionTexture, reflectionUv).rgb;
-	vec3 refractionColor = waterColor.rgb * (refractanceFlag ? texture(refractionTexture, refractionUv).rgb : vec3(1.0f));
+	vec3 refractionColor = waterColor.rgb * (refractanceFlag ? texture(refractionTexture, refractionUv).rgb : vec3(1.0));
 
 	// determine view direction and water depth
 	vec3 viewDirection = normalize(cameraPosition - waterWorldPos);
@@ -101,7 +101,7 @@ void main() {
 	// determine water color and transparency
 	float refractiveFactor = pow(dot(viewDirection, normal), reflectivity);
 	vec3 color = mix(reflectionColor, refractionColor, refractiveFactor);
-	float alpha = clamp(waterDepth * depthFactor, 0.0f, 1.0f);
+	float alpha = clamp(waterDepth * depthFactor, 0.0, 1.0);
 
 	// material data
 	Material material;
@@ -121,7 +121,7 @@ void main() {
 	vec3 V = normalize(cameraPosition - waterWorldPos);
 
 	// total color
-	color = vec3(0.0f);
+	color = vec3(0.0);
 
 	// process directional light (if required)
 	if (hasDirectionalLighting) {
@@ -129,7 +129,7 @@ void main() {
 		light.L = normalize(directionalLightDirection);
 		light.color = directionalLightColor;
 		light.ambient = directionalLightAmbient;
-		light.shadow = getShadow(waterWorldPos, (viewMatrix * vec4(waterWorldPos, 1.0f)).xyz, dot(material.normal, light.L));
+		light.shadow = getShadow(waterWorldPos, (viewMatrix * vec4(waterWorldPos, 1.0)).xyz, dot(material.normal, light.L));
 
 		color += directionalLightPBR(material, light, V);
 	}

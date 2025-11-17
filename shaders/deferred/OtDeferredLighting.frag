@@ -48,7 +48,7 @@ void main() {
 	// ignore pixels without geometry
 	vec4 albedoSample = texture(lightingAlbedoTexture, vUv);
 
-	if (albedoSample.a == 0.0f) {
+	if (albedoSample.a == 0.0) {
 		discard;
 	}
 
@@ -56,7 +56,7 @@ void main() {
 	float depth = texture(lightingDepthTexture, vUv).x;
 
 	// determine world coordinates
-	vec4 p = invViewProjUniform * vec4(uvToClipSpace(vUv, depth), 1.0f);
+	vec4 p = invViewProjUniform * vec4(uvToClipSpace(vUv, depth), 1.0);
 	vec3 pos = p.xyz / p.w;
 
 	// determine view direction
@@ -65,14 +65,14 @@ void main() {
 	// determine material data
 	Material material;
 	material.albedo = toLinear(albedoSample.rgb);
-	material.normal = texture(lightingNormalTexture, vUv).xyz * 2.0f - 1.0f;
+	material.normal = texture(lightingNormalTexture, vUv).xyz * 2.0 - 1.0;
 	vec4 data = texture(lightingPbrTexture, vUv);
 	material.metallic = data.r;
 	material.roughness = data.g;
 	material.ao = data.b;
 
 	// total color
-	vec3 color = vec3(0.0f);
+	vec3 color = vec3(0.0);
 
 	// process directional light (if required)
 	if (hasDirectionalLighting) {
@@ -80,7 +80,7 @@ void main() {
 		light.L = normalize(directionalLightDirection);
 		light.color = directionalLightColor;
 		light.ambient = directionalLightAmbient;
-		light.shadow = getShadow(pos, (viewUniform * vec4(pos, 1.0f)).xyz, dot(material.normal, light.L));
+		light.shadow = getShadow(pos, (viewUniform * vec4(pos, 1.0)).xyz, dot(material.normal, light.L));
 
 		color += directionalLightPBR(material, light, V);
 	}
@@ -92,6 +92,6 @@ void main() {
 
 	// finalize color (tonemapping and gamma correction are done during post-processing)
 	vec3 emissive = texture(lightingEmissiveTexture, vUv).rgb;
-	fragColor = vec4(color + toLinear(emissive), 1.0f);
+	fragColor = vec4(color + toLinear(emissive), 1.0);
 	gl_FragDepth = depth;
 }

@@ -26,7 +26,7 @@ layout(std140, set=1, binding=0) uniform UBO1 {
 };
 
 void main() {
-	vec4 pos = vec4(aPosition, 1.0f);
+	vec4 pos = vec4(aPosition, 1.0);
 
 	vec4 worldPos =
 		modelMatrix[int(aIndices.x)] * pos * aWeights.x +
@@ -36,8 +36,8 @@ void main() {
 
 	vUv = aUv;
 	vPosition = worldPos.xyz;
-	vNormal = (modelMatrix[0] * vec4(aNormal, 0.0f)).xyz;
-	vTangent = (modelMatrix[0] * vec4(aTangent, 0.0f)).xyz;
-	vBitangent = (modelMatrix[0] * vec4(aBitangent, 0.0f)).xyz;
+	vNormal = (modelMatrix[0] * vec4(aNormal, 0.0)).xyz;
+	vTangent = (modelMatrix[0] * vec4(aTangent, 0.0)).xyz;
+	vBitangent = (modelMatrix[0] * vec4(aBitangent, 0.0)).xyz;
 	gl_Position = viewProjectionMatrix * worldPos;
 }
