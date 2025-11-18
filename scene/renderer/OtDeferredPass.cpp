@@ -22,6 +22,9 @@
 #include "OtDeferredInstancingVert.h"
 #include "OtDeferredPbrFrag.h"
 
+#include "OtGrassVert.h"
+#include "OtGrassFrag.h"
+
 #include "OtDeferredLightingVert.h"
 #include "OtDeferredLightingFrag.h"
 
@@ -97,6 +100,27 @@ void OtDeferredPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRende
 		mrd,
 		cullingPipeline,
 		animatedPipeline);
+}
+
+
+//
+//	OtDeferredPass::renderTerrain
+//
+
+void OtDeferredPass::renderTerrain([[maybe_unused]] OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, [[maybe_unused]] OtTerrainComponent& terrain) {
+}
+
+
+//
+//	OtDeferredPass::renderGrass
+//
+
+void OtDeferredPass::renderGrass(OtSceneRendererContext& ctx, OtEntity entity, OtGrassComponent& grass) {
+	renderGrassHelper(
+		ctx,
+		entity,
+		grass,
+		grassPipeline);
 }
 
 
@@ -250,6 +274,12 @@ void OtDeferredPass::initializeResources() {
 	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
 	animatedPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	animatedPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	grassPipeline.setShaders(OtGrassVert, sizeof(OtGrassVert), OtGrassFrag, sizeof(OtGrassFrag));
+	grassPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
+	grassPipeline.setVertexDescription(OtVertexPos::getDescription());
+	grassPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	grassPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	directionalLightPipeline.setShaders(OtDeferredLightingVert, sizeof(OtDeferredLightingVert), OtDeferredLightingFrag, sizeof(OtDeferredLightingFrag));
 	directionalLightPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);

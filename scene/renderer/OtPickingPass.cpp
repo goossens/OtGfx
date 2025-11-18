@@ -18,6 +18,7 @@
 #include "OtSimpleVert.h"
 #include "OtSimpleAnimatedVert.h"
 #include "OtSimpleInstancingVert.h"
+#include "OtSimpleGrassVert.h"
 
 #include "OtPickingOpaqueFrag.h"
 #include "OtPickingTransparentFrag.h"
@@ -101,15 +102,7 @@ OtEntity OtPickingPass::render(OtSceneRendererContext& ctx, glm::vec2 uv) {
 //
 
 void OtPickingPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
-	// set fragment uniforms
-	struct Uniforms {
-		float entityID;
-	} uniforms {
-		static_cast<float>(nextID) / 255.0f
-	};
-
-	ctx.pass->setFragmentUniforms(1, &uniforms, sizeof(uniforms));
-	entityMap[nextID++] = grd.entity;
+	setFragmentUniforms(ctx, grd.entity);
 
 	renderGeometryHelper(
 		ctx,
@@ -128,15 +121,7 @@ void OtPickingPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometry
 //
 
 void OtPickingPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderData& mrd) {
-	// set fragment uniforms
-	struct Uniforms {
-		float entityID;
-	} uniforms {
-		static_cast<float>(nextID) / 255.0f
-	};
-
-	ctx.pass->setFragmentUniforms(1, &uniforms, sizeof(uniforms));
-	entityMap[nextID++] = mrd.entity;
+	setFragmentUniforms(ctx, mrd.entity);
 
 	renderModelHelper(
 		ctx,
@@ -147,19 +132,34 @@ void OtPickingPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRender
 
 
 //
+//	OtPickingPass::renderTerrain
+//
+
+void OtPickingPass::renderTerrain([[maybe_unused]] OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, [[maybe_unused]] OtTerrainComponent& terrain) {
+}
+
+
+//
+//	OtPickingPass::renderGrass
+//
+
+void OtPickingPass::renderGrass(OtSceneRendererContext& ctx, OtEntity entity, OtGrassComponent& grass) {
+	setFragmentUniforms(ctx, entity);
+
+	renderGrassHelper(
+		ctx,
+		entity,
+		grass,
+		grassPipeline);
+}
+
+
+//
 //	OtPickingPass::renderTransparentGeometry
 //
 
 void OtPickingPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
-	// set fragment uniforms
-	struct Uniforms {
-		float entityID;
-	} uniforms {
-		static_cast<float>(nextID) / 255.0f
-	};
-
-	ctx.pass->setFragmentUniforms(1, &uniforms, sizeof(uniforms));
-	entityMap[nextID++] = grd.entity;
+	setFragmentUniforms(ctx, grd.entity);
 
 	renderGeometryHelper(
 		ctx,
@@ -170,6 +170,22 @@ void OtPickingPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeo
 		transparentInstancedCullingPipeline,
 		transparentInstancedNoCullingPipeline,
 		transparentInstancedLinesPipeline);
+}
+
+
+//
+//	OtPickingPass::setFragmentUniforms
+//
+
+void OtPickingPass::setFragmentUniforms(OtSceneRendererContext& ctx, OtEntity entity) {
+	struct Uniforms {
+		float entityID;
+	} uniforms {
+		static_cast<float>(nextID) / 255.0f
+	};
+
+	ctx.pass->setFragmentUniforms(1, &uniforms, sizeof(uniforms));
+	entityMap[nextID++] = entity;
 }
 
 
@@ -221,6 +237,12 @@ void OtPickingPass::initializeResources() {
 	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
 	animatedPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	animatedPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	grassPipeline.setShaders(OtSimpleGrassVert, sizeof(OtSimpleGrassVert), OtPickingOpaqueFrag, sizeof(OtPickingOpaqueFrag));
+	grassPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8d32);
+	grassPipeline.setVertexDescription(OtVertexPos::getDescription());
+	grassPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	grassPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
 	transparentCullingPipeline.setShaders(OtSimpleVert, sizeof(OtSimpleVert), OtPickingTransparentFrag, sizeof(OtPickingTransparentFrag));
 	transparentCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8d32);

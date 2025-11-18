@@ -325,6 +325,15 @@ void OtRenderPass::setInstanceData(OtVertexBuffer& idb) {
 
 
 //
+//	OtRenderPass::setInstanceCount
+//
+
+void OtRenderPass::setInstanceCount(size_t instances) {
+	instanceCount = instances;
+}
+
+
+//
 //	OtRenderPass::setAnimationData
 //
 
@@ -343,25 +352,10 @@ void OtRenderPass::render(size_t vertices, size_t instances) {
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer) {
-	// bind the vertex buffer(s) to the pass
 	OtAssert(open);
-	SDL_GPUBufferBinding bufferBindings[2];
-	bufferBindings[0] = SDL_GPUBufferBinding{vertexBuffer.getBuffer(), 0};
-
-	if (animationBuffer) {
-		bufferBindings[1] = SDL_GPUBufferBinding{animationBuffer, 0};
-
-	} else if (instanceBuffer) {
-		bufferBindings[1] = SDL_GPUBufferBinding{instanceBuffer, 0};
-	}
-
-	SDL_BindGPUVertexBuffers(pass, 0, bufferBindings, (animationBuffer || instanceBuffer) ? 2 : 1);
-
-	// render the triangles
-	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(vertexBuffer.getCount()), static_cast<Uint32>(instanceCount), 0, 0);
-	animationBuffer = nullptr;
-	instanceBuffer = nullptr;
-	instanceCount = 1;
+	SDL_GPUBufferBinding bufferBinding{vertexBuffer.getBuffer(), 0};
+	SDL_BindGPUVertexBuffers(pass, 0, &bufferBinding, 1);
+	SDL_DrawGPUPrimitives(pass, static_cast<Uint32>(vertexBuffer.getCount()), 1, 0, 0);
 }
 
 void OtRenderPass::render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset, size_t count) {

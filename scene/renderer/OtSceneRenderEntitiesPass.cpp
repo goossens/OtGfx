@@ -14,6 +14,8 @@
 #include <cstring>
 #include <vector>
 
+#include "imgui.h"
+
 #include "OtGpu.h"
 #include "OtMaterial.h"
 
@@ -264,10 +266,87 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 
 
 //
+//	OtSceneRenderEntitiesPass::renderGrassHelper
+//
+
+void OtSceneRenderEntitiesPass::renderGrassHelper(
+	OtSceneRendererContext& ctx,
+	OtEntity entity,
+	OtGrassComponent& component,
+	OtRenderPipeline& pipeline) {
+
+	// set uniforms
+	auto& grass = *component.grass;
+
+	struct Uniforms {
+		glm::mat4 viewProjectionMatrix;
+		glm::mat4 modelMatrix;
+
+		glm::vec4 baseColor;
+		glm::vec4 tipColor;
+
+		float patchWidth;
+		float patchDepth;
+		int32_t segments;
+		int32_t blades;
+
+		float bladeWidth;
+		float bladeHeight;
+		float BladePointiness;
+		float BladeCurve;
+
+		float time;
+		float windDirection;
+		float windStrength;
+
+		float widthVariation;
+		float heightVariation;
+		float windVariation;
+		float colorVariation;
+	} uniforms {
+		ctx.camera.viewProjectionMatrix,
+		ctx.scene->getGlobalTransform(entity),
+
+		glm::vec4(grass.baseColor, 1.0f),
+		glm::vec4(grass.tipColor, 1.0f),
+
+		grass.patchWidth,
+		grass.patchDepth,
+		static_cast<int32_t>(grass.bladeSegments),
+		static_cast<int32_t>(grass.blades),
+
+		grass.bladeWidth,
+		grass.bladeHeight,
+		grass.bladePointiness,
+		grass.bladeCurve,
+
+		static_cast<float>(ImGui::GetTime()),
+		glm::radians(grass.windDirection),
+		grass.windStrength,
+
+		grass.widthVariation,
+		grass.heightVariation,
+		grass.windVariation,
+		grass.colorVariation
+	};
+
+	ctx.pass->bindPipeline(pipeline);
+	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
+	ctx.pass->setInstanceCount(grass.blades);
+	ctx.pass->render(grass.getVertexBuffer(), grass.getIndexBuffer());
+}
+
+
+//
 //	OtSceneRenderEntitiesPass::setMaterialUniforms
 //
 
-void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material) {
+void OtSceneRenderEntitiesPass::setMaterialUniforms(
+	OtSceneRendererContext& ctx,
+	size_t uniformSlot,
+	size_t samplerSlot,
+	std::shared_ptr<OtMaterial> material) {
+
 	// set uniforms
 	struct Uniforms {
 		glm::vec4 albedoColor;

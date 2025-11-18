@@ -17,6 +17,8 @@
 #include "glm/glm.hpp"
 #include "nlohmann/json_fwd.hpp"
 
+#include "OtIndexBuffer.h"
+#include "OtVertexBuffer.h"
 
 //
 //	OtGrass
@@ -30,6 +32,10 @@ public:
 	// (de)serialize material
 	nlohmann::json serialize(std::string* basedir);
 	void deserialize(nlohmann::json data, std::string* basedir);
+
+	// get access to the buffers
+	OtVertexBuffer& getVertexBuffer();
+	OtIndexBuffer& getIndexBuffer();
 
 	// grass properties
 	float patchWidth = 1.0f;
@@ -54,4 +60,10 @@ public:
 	float colorVariation = 0.2f;
 
 	bool castShadow = true;
+
+	// rendering tools
+	OtIndexBuffer indexBuffer;
+	OtVertexBuffer vertexBuffer;
+	int bufferBladeSegments = -1;
+	void updateBuffers();
 };

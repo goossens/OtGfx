@@ -11,7 +11,6 @@ set(SPIRV_CROSS_ENABLE_HLSL OFF CACHE BOOL "" FORCE)
 set(SPIRV_CROSS_ENABLE_CPP OFF CACHE BOOL "" FORCE)
 set(SPIRV_CROSS_CLI OFF CACHE BOOL "" FORCE)
 
-# FetchContent_Populate(spirvcross QUIET GIT_REPOSITORY "https://github.com/KhronosGroup/SPIRV-Cross" GIT_TAG "vulkan-sdk-1.4.328.1")
 FetchContent_Populate(spirvcross QUIET GIT_REPOSITORY "https://github.com/KhronosGroup/SPIRV-Cross" GIT_TAG "main")
 add_subdirectory(${spirvcross_SOURCE_DIR} ${spirvcross_BINARY_DIR} EXCLUDE_FROM_ALL)
 

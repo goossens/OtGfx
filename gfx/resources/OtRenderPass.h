@@ -72,6 +72,7 @@ public:
 
 	// set instance data
 	void setInstanceData(OtVertexBuffer& buffer);
+	void setInstanceCount(size_t instances);
 
 	// set animation data
 	void setAnimationData(OtVertexBuffer& buffer);
@@ -79,6 +80,7 @@ public:
 	// execute a rendering command
 	void render(size_t vertices, size_t instances=1);
 	void render(OtVertexBuffer& buffer);
+
 	void render(OtVertexBuffer& vertexBuffer, OtIndexBuffer& indexBuffer, size_t offset=0, size_t count=0);
 	inline void render(OtMesh& mesh) { render(mesh.getVertexBuffer(), mesh.getIndexBuffer()); }
 	inline void render(OtGeometry& geometry) { render(geometry.getMesh()); }
