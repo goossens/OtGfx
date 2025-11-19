@@ -153,7 +153,7 @@ void OtTexture::load(void* data, size_t size, bool async) {
 //
 
 void OtTexture::load(int w, int h, Format f, void* pixels, bool async) {
-	OtImage::Format fmt;
+	OtImage::Format fmt = OtImage::Format::none;
 
 	if (f == Format::r8) {
 		fmt = OtImage::Format::r8;

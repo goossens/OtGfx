@@ -234,7 +234,7 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 			} uniforms;
 
 			uniforms.viewProjectionMatrix = ctx.camera.viewProjectionMatrix;
-			std::memcpy(&uniforms.models, cmd.transforms.data(), std::min(cmd.transforms.size(), 64ul) * sizeof(glm::mat4));
+			std::memcpy(&uniforms.models, cmd.transforms.data(), std::min(cmd.transforms.size(), size_t(64)) * sizeof(glm::mat4));
 			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
 
 			// bind animation data

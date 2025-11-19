@@ -12,8 +12,6 @@
 //	Include files
 //
 
-#include <cstdint>
-
 #include "glm/glm.hpp"
 
 #include "OtCheckerBoardComp.h"
@@ -43,11 +41,11 @@ public:
 		struct Uniforms {
 			glm::vec4 blackColor;
 			glm::vec4 whiteColor;
-			int32_t repeat;
+			float repeat;
 		} uniforms{
 			blackColor,
 			whiteColor,
-			static_cast<int32_t>(repeat)};
+			repeat};
 
 		pass.addUniforms(&uniforms, sizeof(uniforms));
 	}
@@ -56,5 +54,5 @@ private:
 	// properties
 	OtColor blackColor{0.0f};
 	OtColor whiteColor{1.0f};
-	int repeat = 10;
+	float repeat = 10.0f;
 };

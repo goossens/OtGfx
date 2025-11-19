@@ -48,7 +48,7 @@ void OtHeightMap::update(int w, int h, bool clear) {
 //	OtHeightMap::load
 //
 
-void OtHeightMap::load(const std::filesystem::path& path, float minValue, float maxValue) {
+void OtHeightMap::load(const std::string& path, float minValue, float maxValue) {
 	// load height map from image
 	OtImage image;
 	image.load(path);
@@ -60,8 +60,7 @@ void OtHeightMap::load(const std::filesystem::path& path, float minValue, float 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			auto pixel = image.getPixelGray(x, y);
-			auto height = std::lerp(minValue, maxValue, pixel);
-			setHeight(x, y, height);
+			setHeight(x, y, std::lerp(minValue, maxValue, pixel));
 		}
 	}
 }
@@ -105,8 +104,8 @@ float OtHeightMap::getHeight(float x, float y) {
 	x *= width - 1;
 	y *= height - 1;
 
-	int x1 = std::floor(x);
-	int y1 = std::floor(y);
+	int x1 = static_cast<int>(std::floor(x));
+	int y1 = static_cast<int>(std::floor(y));
 	int x2 = x1 + 1;
 	int y2 = y1 + 1;
 

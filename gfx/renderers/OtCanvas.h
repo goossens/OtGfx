@@ -270,7 +270,6 @@ private:
 	OtRenderPipeline strokeBasePipeline;
 	OtRenderPipeline strokeFragmentPipeline;
 	OtRenderPipeline clearStencilPipeline;
-	OtSampler sampler;
 
 	size_t paintToUniforms(NVGpaint* paint, NVGscissor* scissor, float width, float fringe, float strokeThr, int shaderType);
 

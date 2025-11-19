@@ -34,7 +34,7 @@ public:
 
 	// clear GPU resources
 	virtual inline void clear() {
-		pipeline.clear();
+		renderPipeline.clear();
 		sampler.clear();
 	}
 
@@ -53,7 +53,7 @@ public:
 		}
 
 		// create pipeline (if required)
-		if (!pipeline.isValid()) {
+		if (!renderPipeline.isValid()) {
 			// determine render target type
 			OtRenderPipeline::RenderTargetType renderTargetType = OtRenderPipeline::RenderTargetType::none;
 
@@ -66,15 +66,15 @@ public:
 				default: OtLogFatal("Unsupported render target type");
 			}
 
-			pipeline.setShaders(OtCompositingVert, sizeof(OtCompositingVert), OtCompositingFrag, sizeof(OtCompositingFrag));
-			pipeline.setRenderTargetType(renderTargetType);
-			configurePipeline(pipeline);
+			renderPipeline.setShaders(OtCompositingVert, sizeof(OtCompositingVert), OtCompositingFrag, sizeof(OtCompositingFrag));
+			renderPipeline.setRenderTargetType(renderTargetType);
+			configurePipeline(renderPipeline);
 		}
 
 		// configure pass
 		OtRenderPass pass;
 		pass.start(destination);
-		pass.bindPipeline(pipeline);
+		pass.bindPipeline(renderPipeline);
 		pass.bindFragmentSampler(0, sampler, source);
 
 		// set uniforms
@@ -94,8 +94,8 @@ protected:
 	virtual void configurePipeline([[maybe_unused]] OtRenderPipeline& pipeline) {}
 	virtual void configurePass([[maybe_unused]] OtRenderPass& pass) {}
 
-	// the specific rendering pipeline (to be set by derived class)
-	OtRenderPipeline pipeline;
+	// the rendering pipeline
+	OtRenderPipeline renderPipeline;
 
 	// work variables
 	OtSampler sampler{OtSampler::Filter::nearest, OtSampler::Addressing::clamp};

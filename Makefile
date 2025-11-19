@@ -4,7 +4,7 @@
 #	This work is licensed under the terms of the MIT license.
 #	For a copy, see <https://opensource.org/licenses/MIT>.
 
-SRC = $(wildcard *.cpp */*.cpp */*/*.cpp */*/*.glsl)
+SRC = $(wildcard *.cpp */*.cpp */*/*.cpp */*/*.vert */*/*.frag */*/*.glsl)
 INC = $(wildcard *.h */*.h */*/*.h)
 TST = $(wildcard tests/*/*.ot)
 
@@ -32,16 +32,16 @@ xcode:
 
 .PHONY: vs
 vs:
-	cmake -B build/vs -G "Visual Studio 17 2022" -A x64
-	cmake --build build/vs
+	cmake -B $(HOME)/build/OtGfx -G "Visual Studio 17 2022" -A x64
+	cmake --build $(HOME)/build/OtGfx
 
 .PHONY: test
 test: debug
-	ctest --test-dir build/$(SYSTEM) --build-config Debug --output-on-failure
+	ctest --test-dir $(HOME)/build/OtGfx --build-config Debug --output-on-failure
 
 .PHONY: rtest
 rtest: release
-	ctest --test-dir build/$(SYSTEM) --build-config Release --output-on-failure
+	ctest --test-dir $(HOME)/build/OtGfx --build-config Release --output-on-failure
 
 .PHONY: docs
 docs:

@@ -12,8 +12,8 @@
 //	Include files
 //
 
-#include <filesystem>
 #include <memory>
+#include <string>
 
 #include "glm/glm.hpp"
 
@@ -28,7 +28,7 @@ public:
 	void update(int w, int h, bool clear=false);
 
 	// load heightmap from file
-	void load(const std::filesystem::path& path, float minValue, float maxValue);
+	void load(const std::string& path, float minValue, float maxValue);
 
 	// clear heightmap
 	inline void clear() {
