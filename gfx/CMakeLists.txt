@@ -39,7 +39,6 @@ target_link_libraries(gfx PUBLIC
 	spirv-cross-reflect
 	spirv-cross-core
 	SDL3::SDL3
-	SDL3_image::SDL3_image
 	shadercross
 	imgui
 	imguifd

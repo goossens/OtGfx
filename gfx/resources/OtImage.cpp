@@ -13,8 +13,8 @@
 #include <cstring>
 #include <fstream>
 
+#include "stb_image.h"
 #include "SDL3/SDL_iostream.h"
-#include "SDL3_image/SDL_image.h"
 
 #include "OtAssert.h"
 #include "OtException.h"
@@ -101,14 +101,13 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 
 	} else {
 		// load image from file
-		auto sdlSurface = IMG_Load(address.c_str());
+		SDL_IOStream* io = SDL_IOFromFile(address.c_str(), "r");
 
-		if (!sdlSurface) {
-			OtLogFatal("Error in IMG_Load: {}", SDL_GetError());
+		if (!io) {
+			OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
 		}
 
-		assign(sdlSurface);
-		normalize();
+		load(io);
 	}
 
 	// validate sides are power of 2 (if required)
@@ -142,14 +141,41 @@ void OtImage::load(void* data, size_t size) {
 		OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
 	}
 
-	auto sdlSurface = IMG_Load_IO(io, true);
+	load(io);
+}
 
-	if (!sdlSurface) {
-		OtLogFatal("Error in IMG_Load_IO: {}", SDL_GetError());
+
+//
+//	OtImage::load
+//
+
+void OtImage::load(SDL_IOStream* src) {
+	// setup stream
+	stbi_io_callbacks callbacks;
+
+	callbacks.read = [](void* user, char* data, int size) {
+		return static_cast<int>(SDL_ReadIO((SDL_IOStream*) user, data, size));
+	};
+
+	callbacks.skip = [](void* user, int n) {
+		SDL_SeekIO((SDL_IOStream*) user, n, SDL_IO_SEEK_CUR);
+	};
+
+	callbacks.eof = [](void* user) {
+	    return static_cast<int>(SDL_GetIOStatus((SDL_IOStream*) user) == SDL_IO_STATUS_EOF);
+	};
+
+	// read image
+	int w, h, n;
+	auto pixels = stbi_load_from_callbacks(&callbacks, src, &w, &h, &n, 4);
+
+	if (pixels) {
+		load(w, h, Format::rgba8, pixels);
+		stbi_image_free(pixels);
+
+	} else {
+		SDL_SetError("%s", stbi_failure_reason());
 	}
-
-	assign(sdlSurface);
-	normalize();
 }
 
 
@@ -174,9 +200,9 @@ void OtImage::load(int width, int height, Format format, void* pixels) {
 		}
 
 		for (int i = 0; i < palette->ncolors; i++) {
-			palette->colors[i].r = i;
-			palette->colors[i].g = i;
-			palette->colors[i].b = i;
+			palette->colors[i].r = static_cast<Uint8>(i);
+			palette->colors[i].g = static_cast<Uint8>(i);
+			palette->colors[i].b = static_cast<Uint8>(i);
 		}
 	}
 
@@ -203,8 +229,8 @@ void OtImage::saveToPNG(const std::string& path) {
 	OtAssert(isValid());
 
 	// write image to file
-	if (!IMG_SavePNG(surface.get(), path.c_str())){
-		OtLogFatal("Error in IMG_SavePNG: {}", SDL_GetError());
+	if (!SDL_SavePNG(surface.get(), path.c_str())){
+		OtLogFatal("Error in SDL_SavePNG: {}", SDL_GetError());
 	}
 }
 
@@ -329,8 +355,8 @@ void OtImage::normalize() {
 		}
 
 	} else {
-		if (surface->format != SDL_PIXELFORMAT_INDEX8 && surface->format != SDL_PIXELFORMAT_ABGR8888) {
-			auto sdlSurface = SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_ABGR8888);
+		if (surface->format != SDL_PIXELFORMAT_INDEX8 && surface->format != SDL_PIXELFORMAT_RGBA32) {
+			auto sdlSurface = SDL_ConvertSurface(surface.get(), SDL_PIXELFORMAT_RGBA32);
 
 			if (!sdlSurface) {
 				OtLogFatal("Error in SDL_ConvertSurface: {}", SDL_GetError());

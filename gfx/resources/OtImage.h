@@ -105,4 +105,7 @@ private:
 
 	// local utility functions
 	void normalize();
+
+	// load image from stream
+	void load(SDL_IOStream *src);
 };

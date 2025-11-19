@@ -10,7 +10,6 @@
 //
 
 #include "nlohmann/json.hpp"
-#include "SDL3_image/SDL_image.h"
 #include "stb_image.h"
 
 #include "OtLog.h"
@@ -143,27 +142,23 @@ void OtCubeMap::loadJSON(const std::string& path, bool async) {
 		}
 
 		// load image
-		SDL_Surface *surface = IMG_Load(paths[i].c_str());
+		int w, h, n;
+		auto pixels = stbi_load(paths[i].c_str(), &w, &h, &n, 4);
 
-		if (!surface) {
-			OtLogFatal("Error while loading [{}]: {}", paths[i], SDL_GetError());
-
-		} else if (surface->w != size) {
-			OtLogFatal("Image [{}] has incorrect width [{}]. Should be [{}]", paths[i], surface->w, size);
-
-		} else if (surface->h != size) {
-			OtLogFatal("Image [{}] has incorrect height [{}]. Should be [{}]", paths[i], surface->h, size);
+		if (!pixels) {
+			OtLogError("Can't open image in [{}]", path);
 		}
 
-		if (surface->format != SDL_PIXELFORMAT_RGBA32) {
-			SDL_Surface* next = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
-			SDL_DestroySurface(surface);
-			surface = next;
+		if (w != size) {
+			OtLogFatal("Image [{}] has incorrect width [{}]. Should be [{}]", paths[i], w, size);
+
+		} else if (h != size) {
+			OtLogFatal("Image [{}] has incorrect height [{}]. Should be [{}]", paths[i], h, size);
 		}
 
 		// copy pixels
-		std::memcpy(imageData.get() + bytesPerImage * i, surface->pixels, bytesPerImage);
-		SDL_DestroySurface(surface);
+		std::memcpy(imageData.get() + bytesPerImage * i, pixels, bytesPerImage);
+		stbi_image_free(pixels);
 	}
 
 	if (async) {
