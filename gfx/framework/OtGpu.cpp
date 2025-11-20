@@ -25,19 +25,27 @@ void OtGpu::init(SDL_Window* win, int w, int h) {
 	height = h;
 
 	// create GPU device
+	SDL_PropertiesID props = SDL_CreateProperties();
+	SDL_SetStringProperty(props, SDL_PROP_GPU_DEVICE_CREATE_NAME_STRING, nullptr);
+	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_MSL_BOOLEAN, true);
+	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_SPIRV_BOOLEAN, true);
+	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_DXBC_BOOLEAN, true);
+	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_DXIL_BOOLEAN, true);
+
 #if OT_DEBUG
-	static constexpr bool debug = true;
-#else
-	static constexpr bool debug = false;
+	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_DEBUGMODE_BOOLEAN, true);
+	SDL_SetLogPriorities(SDL_LOG_PRIORITY_INFO);
 #endif
 
-	device = SDL_CreateGPUDevice(
-		SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
-		debug,
-		nullptr);
+#if _WIN32
+	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_D3D12_ALLOW_FEWER_RESOURCE_SLOTS_BOOLEAN, true);
+#endif
+
+	device = SDL_CreateGPUDeviceWithProperties(props);
+	SDL_DestroyProperties(props);
 
 	if (device == nullptr) {
-		OtLogFatal("Error in SDL_CreateGPUDevice: {}", SDL_GetError());
+		OtLogFatal("Error in SDL_CreateGPUDeviceWithProperties: {}", SDL_GetError());
 	}
 
 	// claim window for GPU device
