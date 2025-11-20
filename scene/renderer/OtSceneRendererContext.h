@@ -129,6 +129,12 @@ public:
 	OtSampler refractionSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
 	OtSampler refractionDepthSampler{OtSampler::Filter::linear, OtSampler::Addressing::clamp};
 
+	OtSampler normalmapSampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler region1Sampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler region2Sampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler region3Sampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+	OtSampler region4Sampler{OtSampler::Filter::linear, OtSampler::Addressing::repeat};
+
 	// support functions
 	void setLightingUniforms(size_t uniformSlot, size_t samplerSlot);
 	void setShadowUniforms(size_t uniformSlot, size_t samplerSlot);

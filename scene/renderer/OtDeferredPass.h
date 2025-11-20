@@ -55,7 +55,8 @@ private:
 	OtRenderPipeline instancedLinesPipeline;
 
 	OtRenderPipeline animatedPipeline;
-	OtRenderPipeline terrainPipeline;
+	OtRenderPipeline terrainCullingPipeline;
+	OtRenderPipeline terrainLinesPipeline;
 	OtRenderPipeline grassPipeline;
 
 	OtRenderPipeline directionalLightPipeline;

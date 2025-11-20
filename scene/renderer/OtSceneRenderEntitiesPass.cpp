@@ -266,6 +266,122 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 
 
 //
+//	OtSceneRenderEntitiesPass::renderTerrainHelper
+//
+
+void OtSceneRenderEntitiesPass::renderTerrainHelper(
+	OtSceneRendererContext& ctx,
+	OtTerrainComponent& component,
+	OtRenderPipeline& cullingPipeline,
+	OtRenderPipeline& linesPipeline) {
+
+	// get terrain data
+	auto& terrain = *component.terrain;
+	OtTerrainHeights& heights = terrain.heights;
+	OtTerrainMaterial& material = terrain.material;
+
+	// setup pipeline
+	ctx.pass->bindPipeline(terrain.isWireframe() ? linesPipeline : cullingPipeline);
+
+	// set (per terrain) vertex uniforms
+	struct TerrainVertexUniforms {
+		glm::mat4 viewProjectionMatrix;
+		float hScale;
+		float heightMapSize;
+	} terrainVertexUniforms {
+		ctx.camera.viewProjectionMatrix,
+		terrain.hScale,
+		static_cast<float>(heights.heightmapSize)
+	};
+
+	ctx.pass->setVertexUniforms(0, &terrainVertexUniforms, sizeof(terrainVertexUniforms));
+	ctx.pass->bindVertexSampler(0, ctx.normalmapSampler, heights.normalmap);
+
+	// set fragment uniforms
+	struct FragmentUniforms {
+		glm::vec4 region1Color;
+		glm::vec4 region2Color;
+		glm::vec4 region3Color;
+		glm::vec4 region4Color;
+
+		float hScale;
+		float vScale;
+		float vOffset;
+		float heightMapSize;
+
+		float region1TextureSize;
+		float region2TextureSize;
+		float region3TextureSize;
+		float region4TextureSize;
+
+		float region1TextureScale;
+		float region2TextureScale;
+		float region3TextureScale;
+		float region4TextureScale;
+
+		float region1Transition;
+		float region2Transition;
+		float region3Transition;
+
+		float region1Overlap;
+		float region2Overlap;
+		float region3Overlap;
+	} fragmentUniforms {
+		glm::vec4(material.region1Color, static_cast<float>(material.region1Texture.isReady())),
+		glm::vec4(material.region2Color, static_cast<float>(material.region2Texture.isReady())),
+		glm::vec4(material.region3Color, static_cast<float>(material.region3Texture.isReady())),
+		glm::vec4(material.region4Color, static_cast<float>(material.region4Texture.isReady())),
+
+		terrain.hScale,
+		terrain.vScale,
+		terrain.vOffset,
+		static_cast<float>(heights.heightmapSize),
+
+		static_cast<float>(material.region1Texture.isReady() ? material.region1Texture->getTexture().getWidth() : 1),
+		static_cast<float>(material.region2Texture.isReady() ? material.region2Texture->getTexture().getWidth() : 1),
+		static_cast<float>(material.region3Texture.isReady() ? material.region3Texture->getTexture().getWidth() : 1),
+		static_cast<float>(material.region4Texture.isReady() ? material.region4Texture->getTexture().getWidth() : 1),
+
+		material.region1TextureScale,
+		material.region2TextureScale,
+		material.region3TextureScale,
+		material.region4TextureScale,
+
+		material.region1Transition,
+		material.region2Transition,
+		material.region3Transition,
+
+		material.region1Overlap,
+		material.region2Overlap,
+		material.region3Overlap
+	};
+
+	ctx.pass->setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
+
+	// bind textures
+	ctx.bindFragmentSampler(0, ctx.region1Sampler, material.region1Texture);
+	ctx.bindFragmentSampler(1, ctx.region2Sampler, material.region2Texture);
+	ctx.bindFragmentSampler(2, ctx.region3Sampler, material.region3Texture);
+	ctx.bindFragmentSampler(3, ctx.region4Sampler, material.region4Texture);
+
+	// process all the terrain meshes
+	for (auto& mesh : terrain.getMeshes()) {
+		// set (per mesh) vertex uniforms
+		struct MeshVertexUniforms {
+			glm::mat4 modelMatrix;
+		} meshVertexUniforms {
+			mesh.transform
+		};
+
+		ctx.pass->setVertexUniforms(1, &meshVertexUniforms, sizeof(meshVertexUniforms));
+
+		// render terrain tile
+		ctx.pass->render(mesh.tile.vertices, mesh.tile.triangles);
+	}
+}
+
+
+//
 //	OtSceneRenderEntitiesPass::renderGrassHelper
 //
 

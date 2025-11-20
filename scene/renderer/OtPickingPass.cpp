@@ -18,6 +18,7 @@
 #include "OtSimpleVert.h"
 #include "OtSimpleAnimatedVert.h"
 #include "OtSimpleInstancingVert.h"
+#include "OtSimpleTerrainVert.h"
 #include "OtSimpleGrassVert.h"
 
 #include "OtPickingOpaqueFrag.h"
@@ -135,7 +136,14 @@ void OtPickingPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRender
 //	OtPickingPass::renderTerrain
 //
 
-void OtPickingPass::renderTerrain([[maybe_unused]] OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, [[maybe_unused]] OtTerrainComponent& terrain) {
+void OtPickingPass::renderTerrain(OtSceneRendererContext& ctx, OtEntity entity, OtTerrainComponent& terrain) {
+	setFragmentUniforms(ctx, entity);
+
+	renderTerrainHelper(
+		ctx,
+		terrain,
+		terrainCullingPipeline,
+		terrainLinesPipeline);
 }
 
 
@@ -237,6 +245,17 @@ void OtPickingPass::initializeResources() {
 	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
 	animatedPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	animatedPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	terrainCullingPipeline.setShaders(OtSimpleTerrainVert, sizeof(OtSimpleTerrainVert), OtPickingOpaqueFrag, sizeof(OtPickingOpaqueFrag));
+	terrainCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8d32);
+	terrainCullingPipeline.setVertexDescription(OtVertexPos::getDescription());
+	terrainCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+
+	terrainLinesPipeline.setShaders(OtSimpleTerrainVert, sizeof(OtSimpleTerrainVert), OtPickingOpaqueFrag, sizeof(OtPickingOpaqueFrag));
+	terrainLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8d32);
+	terrainLinesPipeline.setVertexDescription(OtVertexPos::getDescription());
+	terrainLinesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	terrainLinesPipeline.setFill(false);
 
 	grassPipeline.setShaders(OtSimpleGrassVert, sizeof(OtSimpleGrassVert), OtPickingOpaqueFrag, sizeof(OtPickingOpaqueFrag));
 	grassPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::r8d32);

@@ -67,6 +67,12 @@ protected:
 		OtRenderPipeline& staticPipeline,
 		OtRenderPipeline& animatedPipeline);
 
+	void renderTerrainHelper(
+		OtSceneRendererContext& ctx,
+		OtTerrainComponent& terrain,
+		OtRenderPipeline& cullingPipeline,
+		OtRenderPipeline& linesPipeline);
+
 	void renderGrassHelper(
 		OtSceneRendererContext& ctx,
 		OtEntity entity,
@@ -75,5 +81,4 @@ protected:
 
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material);
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity);
-
 };

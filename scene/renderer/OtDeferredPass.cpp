@@ -22,6 +22,9 @@
 #include "OtDeferredInstancingVert.h"
 #include "OtDeferredPbrFrag.h"
 
+#include "OtTerrainVert.h"
+#include "OtTerrainFrag.h"
+
 #include "OtGrassVert.h"
 #include "OtGrassFrag.h"
 
@@ -107,7 +110,12 @@ void OtDeferredPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRende
 //	OtDeferredPass::renderTerrain
 //
 
-void OtDeferredPass::renderTerrain([[maybe_unused]] OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, [[maybe_unused]] OtTerrainComponent& terrain) {
+void OtDeferredPass::renderTerrain(OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, OtTerrainComponent& terrain) {
+	renderTerrainHelper(
+		ctx,
+		terrain,
+		terrainCullingPipeline,
+		terrainLinesPipeline);
 }
 
 
@@ -274,6 +282,23 @@ void OtDeferredPass::initializeResources() {
 	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
 	animatedPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	animatedPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	cullingPipeline.setShaders(OtDeferredVert, sizeof(OtDeferredVert), OtDeferredPbrFrag, sizeof(OtDeferredPbrFrag));
+	cullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
+	cullingPipeline.setVertexDescription(OtVertex::getDescription());
+	cullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	cullingPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	terrainCullingPipeline.setShaders(OtTerrainVert, sizeof(OtTerrainVert), OtTerrainFrag, sizeof(OtTerrainFrag));
+	terrainCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
+	terrainCullingPipeline.setVertexDescription(OtVertexPos::getDescription());
+	terrainCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+
+	terrainLinesPipeline.setShaders(OtTerrainVert, sizeof(OtTerrainVert), OtTerrainFrag, sizeof(OtTerrainFrag));
+	terrainLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);
+	terrainLinesPipeline.setVertexDescription(OtVertexPos::getDescription());
+	terrainLinesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	terrainLinesPipeline.setFill(false);
 
 	grassPipeline.setShaders(OtGrassVert, sizeof(OtGrassVert), OtGrassFrag, sizeof(OtGrassFrag));
 	grassPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::gBuffer);

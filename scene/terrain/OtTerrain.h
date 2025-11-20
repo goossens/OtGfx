@@ -44,8 +44,11 @@ public:
 	nlohmann::json serialize(std::string* basedir);
 	void deserialize(nlohmann::json data, std::string* basedir);
 
+	// update state based on provided camera
+	void update(OtCamera& camera);
+
 	// access the meshes
-	std::vector<OtTerrainMesh>& getMeshes(OtCamera& camera);
+	inline std::vector<OtTerrainMesh>& getMeshes() { return meshes; }
 
 	// are we rendering a wireframe
 	inline bool isWireframe() { return wireframe; }
@@ -53,9 +56,9 @@ public:
 	// is the terrain casting a shadow
 	inline bool isCastingShadow() { return castShadow; }
 
-	private:
+private:
 	// the scene renderer needs access to our properties
-	friend class OtSceneRenderPass;
+	friend class OtSceneRenderEntitiesPass;
 
 	// terrain properties
 	int tileSize = 32;

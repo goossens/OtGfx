@@ -17,6 +17,7 @@
 #include "OtSimpleAnimatedVert.h"
 #include "OtSimpleInstancingVert.h"
 #include "OtSimpleGrassVert.h"
+#include "OtSimpleTerrainVert.h"
 
 #include "OtShadowOpaqueFrag.h"
 #include "OtShadowTransparentFrag.h"
@@ -100,7 +101,12 @@ void OtShadowPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRenderD
 //	OtShadowPass::renderTerrain
 //
 
-void OtShadowPass::renderTerrain([[maybe_unused]] OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, [[maybe_unused]] OtTerrainComponent& terrain) {
+void OtShadowPass::renderTerrain(OtSceneRendererContext& ctx, [[maybe_unused]] OtEntity entity, OtTerrainComponent& terrain) {
+	renderTerrainHelper(
+		ctx,
+		terrain,
+		terrainCullingPipeline,
+		terrainLinesPipeline);
 }
 
 
@@ -182,6 +188,17 @@ void OtShadowPass::initializeResources() {
 	animatedPipeline.setAnimatedDescription(OtVertexBones::getDescription());
 	animatedPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	animatedPipeline.setCulling(OtRenderPipeline::Culling::cw);
+
+	terrainCullingPipeline.setShaders(OtSimpleTerrainVert, sizeof(OtSimpleTerrainVert), OtShadowOpaqueFrag, sizeof(OtShadowOpaqueFrag));
+	terrainCullingPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::d32);
+	terrainCullingPipeline.setVertexDescription(OtVertexPos::getDescription());
+	terrainCullingPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+
+	terrainLinesPipeline.setShaders(OtSimpleTerrainVert, sizeof(OtSimpleTerrainVert), OtShadowOpaqueFrag, sizeof(OtShadowOpaqueFrag));
+	terrainLinesPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::d32);
+	terrainLinesPipeline.setVertexDescription(OtVertexPos::getDescription());
+	terrainLinesPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
+	terrainLinesPipeline.setFill(false);
 
 	grassPipeline.setShaders(OtSimpleGrassVert, sizeof(OtSimpleGrassVert), OtShadowOpaqueFrag, sizeof(OtShadowOpaqueFrag));
 	grassPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::d32);

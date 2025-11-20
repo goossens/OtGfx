@@ -55,8 +55,8 @@ private:
 	OtRenderPipeline opaqueInstancedLinesPipeline;
 
 	OtRenderPipeline animatedPipeline;
-
-	OtRenderPipeline terrainPipeline;
+	OtRenderPipeline terrainCullingPipeline;
+	OtRenderPipeline terrainLinesPipeline;
 	OtRenderPipeline grassPipeline;
 
 	OtRenderPipeline transparentCullingPipeline;

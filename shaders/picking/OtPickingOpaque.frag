@@ -8,7 +8,6 @@
 #extension GL_GOOGLE_include_directive : require
 
 #define MATERIAL_UNIFORMS 0
-#define MATERIAL_SAMPLERS 0
 #include "material.glsl"
 
 layout(location=0) in vec2 vUv;

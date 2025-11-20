@@ -129,6 +129,8 @@ void OtSceneRendererContext::initialize(OtScene* s, OtCamera c) {
 
 		// process all terrain entities
 		if (scene->hasComponent<OtTerrainComponent>(entity)) {
+			auto& terrain = scene->getComponent<OtTerrainComponent>(entity);
+			terrain.terrain->update(camera);
 			hasOpaqueEntities = true;
 			hasTerrainEntities = true;
 		}

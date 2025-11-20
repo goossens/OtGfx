@@ -124,10 +124,10 @@ void OtTerrain::deserialize(nlohmann::json data, std::string* basedir) {
 
 
 //
-//	OtTerrain::getMeshes
+//	OtTerrain::update
 //
 
-std::vector<OtTerrainMesh>& OtTerrain::getMeshes(OtCamera& camera) {
+void OtTerrain::update(OtCamera& camera) {
 	// update heights (if required)
 	if (heights.dirty) {
 		heights.update(tileableFbm, normalMapper);
@@ -166,9 +166,6 @@ std::vector<OtTerrainMesh>& OtTerrain::getMeshes(OtCamera& camera) {
 			processTile(tile, camera, i);
 		}
 	}
-
-	// return the list of visible meshes
-	return meshes;
 }
 
 

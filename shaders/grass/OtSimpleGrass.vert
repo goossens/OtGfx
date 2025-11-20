@@ -10,7 +10,6 @@
 #include "common.glsl"
 
 layout(location=0) in vec3 aPosition;
-
 layout(location=0) out vec2 vUv; // just a dummy to match the fragment shaders
 
 // main function
