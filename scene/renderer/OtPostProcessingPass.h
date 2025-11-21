@@ -19,7 +19,7 @@
 
 #include "OtFrameBuffer.h"
 #include "OtPostProcessing.h"
-// #include "OtRenderLight.h"
+#include "OtRenderLight.h"
 #include "OtTexture.h"
 
 #include "OtSceneRendererContext.h"
@@ -28,11 +28,10 @@
 #include "OtBloomDownSample.h"
 #include "OtBloomUpSample.h"
 #include "OtCompositingAdd.h"
+#include "OtGodRays.h"
 #include "OtFog.h"
 #include "OtFxaa.h"
-
-// #include "OtRenderPipeline.h"
-// #include "OtOcclusionPass.h"
+#include "OtOcclusionPass.h"
 
 
 //
@@ -57,8 +56,9 @@ private:
 	OtTexture postProcessBuffer2;
 	OtTexture occlusionBuffer;
 
-	// OtRenderLight renderLight;
-	// OtOcclusionPass occlusionPass{occlusionBuffer};
+	OtRenderLight renderLight;
+	OtOcclusionPass occlusionPass{occlusionBuffer};
+	OtGodRays godRays;
 
 	static constexpr int bloomDepth = 5;
 	OtTexture bloomBuffer[bloomDepth];

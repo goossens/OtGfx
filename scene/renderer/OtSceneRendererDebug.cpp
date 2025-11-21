@@ -124,7 +124,7 @@ void OtSceneRendererDebug::renderShadowMaps(OtSceneRenderer& renderer) {
 //	OtSceneRendererDebug::renderReflection
 //
 
-void OtSceneRendererDebug::renderReflection([[maybe_unused]] OtSceneRenderer& renderer) {
+void OtSceneRendererDebug::renderReflection(OtSceneRenderer& renderer) {
 	if (ImGui::CollapsingHeader("Reflection/Refraction")) {
 		auto& water = renderer.waterPass;
 
@@ -150,17 +150,16 @@ void OtSceneRendererDebug::renderReflection([[maybe_unused]] OtSceneRenderer& re
 //	OtSceneRendererDebug::renderOcclusion
 //
 
-void OtSceneRendererDebug::renderOcclusion([[maybe_unused]] OtSceneRenderer& renderer) {
+void OtSceneRendererDebug::renderOcclusion(OtSceneRenderer& renderer) {
 	if (ImGui::CollapsingHeader("Occlusion")) {
-		// auto& postProcessor = renderer.postProcessingPass;
+		auto& postProcessor = renderer.postProcessingPass;
 
-		// if (postProcessor.occlusionBuffer.isValid()) {
-		// 	auto texture = postProcessor.occlusionBuffer.getColorTexture();
-		// 	renderTexture("Occlusion Buffer", texture);
+		if (postProcessor.occlusionBuffer.isValid()) {
+			renderTexture("Occlusion Buffer", postProcessor.occlusionBuffer);
 
-		// } else {
-		// 	ImGui::SeparatorText("No Data");
-		// }
+		} else {
+			ImGui::SeparatorText("No Data");
+		}
 	}
 }
 

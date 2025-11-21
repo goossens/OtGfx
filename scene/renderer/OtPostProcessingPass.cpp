@@ -46,7 +46,7 @@ OtTexture* OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
 
 		} else {
 			// convert to UV
-			uv = glm::vec2(clipspace.x, clipspace.y) * 0.5f + 0.5f;
+			uv = glm::vec2(clipspace.x, -clipspace.y) * 0.5f + 0.5f;
 		}
 	}
 
@@ -107,48 +107,36 @@ OtTexture* OtPostProcessingPass::render(OtSceneRendererContext& ctx) {
 
 	// render godrays (if required)
 	if (settings.godrays) {
-		// 	// update occlusion buffer
-		// 	int width = ctx.camera.width / 2;
-		// 	int height = ctx.camera.height / 2;
-		// 	occlusionBuffer.update(width, height);
+		// update occlusion buffer
+		int width = ctx.camera.width / 2;
+		int height = ctx.camera.height / 2;
 
-		// 	// render light to occlusion buffer
-		// 	renderLight.setCenter(uv);
-		// 	renderLight.setSize(glm::vec2(0.05f, 0.05f * width / height));
-		// 	renderLight.setColor(ctx.directionalLightColor);
-		// 	renderLight.render(occlusionBuffer);
+		occlusionBuffer.update(
+			width,
+			height,
+			OtTexture::Format::r8,
+			OtTexture::Usage::rwDefault);
 
-		// 	// create an occlusion camera
-		// 	OtCamera camera{ctx.camera};
-		// 	camera.width = width;
-		// 	camera.height = height;
+		// render light to occlusion buffer
+		renderLight.setColor(ctx.directionalLightColor);
+		renderLight.setCenter(uv);
+		renderLight.setSize(glm::vec2(0.05f, 0.05f * width / height));
+		renderLight.render(occlusionBuffer);
 
-		// 	// render all objects to the occlusion buffer
-		// 	OtSceneRendererContext octx{ctx};
-		// 	octx.camera = camera;
-		// 	occlusionPass.render(octx);
+		// render entities to occlusion buffer
+		auto camera = ctx.camera;
+		ctx.camera.width = width;
+		ctx.camera.height = height;
+		occlusionPass.render(ctx);
+		ctx.camera = camera;
 
-		// 	// setup godray pass
-		// 	OtPass pass;
-		// 	pass.setFrameBuffer(*output);
-		// 	pass.submitQuad(ctx.camera.width, ctx.camera.height);
+		// render god rays
+		godRays.setLightColor(glm::vec4(ctx.directionalLightColor, 0.6f));
+		godRays.setLightUv(uv);
+		godRays.setOcclusion(occlusionBuffer);
+		godRays.render(*input, *output);
 
-		// 	// set the uniforms
-		// 	godrayUniforms.setValue(0, uv, 0.0f, 0.0f);
-		// 	godrayUniforms.setValue(1, ctx.directionalLightColor, 0.6f);
-		// 	godrayUniforms.setValue(2, 0.92f, 0.5f, 0.9f, 0.5f);
-		// 	godrayUniforms.submit();
-
-		// 	// bind the textures
-		// 	input->bindColorTexture(postProcessSampler, 0);
-		// 	occlusionBuffer.bindColorTexture(occlusionSampler, 1);
-
-		// 	// run the program
-		// 	pass.setState(OtStateWriteRgb | OtStateWriteA);
-		// 	pass.runShaderProgram(godrayProgram);
-		// }
-
-		// swap();
+		swap();
 	}
 
 	// combine all post-processing effects

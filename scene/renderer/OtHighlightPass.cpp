@@ -9,13 +9,9 @@
 //	Include files
 //
 
-#include "OtGeometryComponent.h"
-#include "OtGrassComponent.h"
-#include "OtHighlightPass.h"
-#include "OtModelComponent.h"
-#include "OtTerrainComponent.h"
-
 #include "OtRenderPass.h"
+
+#include "OtHighlightPass.h"
 
 #include "OtSimpleVert.h"
 #include "OtSimpleAnimatedVert.h"
