@@ -28,7 +28,7 @@
 #include "OtGrassVert.h"
 #include "OtGrassFrag.h"
 
-#include "OtDeferredLightingVert.h"
+#include "OtFullScreenVert.h"
 #include "OtDeferredLightingFrag.h"
 
 #include "OtPointLightsVert.h"
@@ -309,7 +309,7 @@ void OtDeferredPass::initializeResources() {
 	grassPipeline.setDepthTest(OtRenderPipeline::CompareOperation::less);
 	grassPipeline.setCulling(OtRenderPipeline::Culling::cw);
 
-	directionalLightPipeline.setShaders(OtDeferredLightingVert, sizeof(OtDeferredLightingVert), OtDeferredLightingFrag, sizeof(OtDeferredLightingFrag));
+	directionalLightPipeline.setShaders(OtFullScreenVert, sizeof(OtFullScreenVert), OtDeferredLightingFrag, sizeof(OtDeferredLightingFrag));
 	directionalLightPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16d32);
 	directionalLightPipeline.setDepthTest(OtRenderPipeline::CompareOperation::always);
 

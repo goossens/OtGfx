@@ -24,7 +24,7 @@
 #include "OtTexture.h"
 #include "OtVertex.h"
 
-#include "OtHdrReprojectVert.h"
+#include "OtFullScreenVert.h"
 #include "OtHdrReprojectFrag.h"
 
 
@@ -306,7 +306,7 @@ void OtCubeMap::createCubemapFromHDR() {
 
 	// setup the rendering pipeline
 	OtRenderPipeline pipeline;
-	pipeline.setShaders(OtHdrReprojectVert, sizeof(OtHdrReprojectVert), OtHdrReprojectFrag, sizeof(OtHdrReprojectFrag));
+	pipeline.setShaders(OtFullScreenVert, sizeof(OtFullScreenVert), OtHdrReprojectFrag, sizeof(OtHdrReprojectFrag));
 	pipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
 
 	// run a render pass

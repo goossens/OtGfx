@@ -16,7 +16,7 @@
 
 #include "OtImageBasedLighting.h"
 
-#include "OtIblVert.h"
+#include "OtFullScreenVert.h"
 #include "OtIblIrradianceMapFrag.h"
 #include "OtIblEnvironmentMapFrag.h"
 
@@ -97,9 +97,9 @@ void OtImageBasedLighting::update(OtIblComponent& component) {
 //
 
 void OtImageBasedLighting::initializeResources() {
-	irradiancePipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
+	irradiancePipeline.setShaders(OtFullScreenVert, sizeof(OtFullScreenVert), OtIblIrradianceMapFrag, sizeof(OtIblIrradianceMapFrag));
 	irradiancePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
 
-	environmentPipeline.setShaders(OtIblVert, sizeof(OtIblVert), OtIblEnvironmentMapFrag, sizeof(OtIblEnvironmentMapFrag));
+	environmentPipeline.setShaders(OtFullScreenVert, sizeof(OtFullScreenVert), OtIblEnvironmentMapFrag, sizeof(OtIblEnvironmentMapFrag));
 	environmentPipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::cubemap);
 }

@@ -22,7 +22,7 @@
 #include "OtSelectOpaqueFrag.h"
 #include "OtSelectTransparentFrag.h"
 
-#include "OtOutlineVert.h"
+#include "OtFullScreenVert.h"
 #include "OtOutlineFrag.h"
 
 
@@ -298,7 +298,7 @@ void OtHighlightPass::initializeResources() {
 	transparentInstancedLinesPipeline.setInstanceDescription(OtVertexMatrix::getDescription());
 	transparentInstancedLinesPipeline.setFill(false);
 
-	outlinePipeline.setShaders(OtOutlineVert, sizeof(OtOutlineVert), OtOutlineFrag, sizeof(OtOutlineFrag));
+	outlinePipeline.setShaders(OtFullScreenVert, sizeof(OtFullScreenVert), OtOutlineFrag, sizeof(OtOutlineFrag));
 	outlinePipeline.setRenderTargetType(OtRenderPipeline::RenderTargetType::rgba16);
 
 	outlinePipeline.setBlend(
