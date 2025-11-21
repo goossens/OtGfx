@@ -108,6 +108,7 @@ void OtPickingPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometry
 	renderGeometryHelper(
 		ctx,
 		grd,
+		MaterialSubmission::none,
 		opaqueCullingPipeline,
 		opaqueNoCullingPipeline,
 		opaqueLinesPipeline,
@@ -127,6 +128,7 @@ void OtPickingPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRender
 	renderModelHelper(
 		ctx,
 		mrd,
+		MaterialSubmission::none,
 		opaqueCullingPipeline,
 		animatedPipeline);
 }
@@ -142,6 +144,7 @@ void OtPickingPass::renderTerrain(OtSceneRendererContext& ctx, OtEntity entity, 
 	renderTerrainHelper(
 		ctx,
 		terrain,
+		false,
 		terrainCullingPipeline,
 		terrainLinesPipeline);
 }
@@ -168,10 +171,12 @@ void OtPickingPass::renderGrass(OtSceneRendererContext& ctx, OtEntity entity, Ot
 
 void OtPickingPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeometryRenderData& grd) {
 	setFragmentUniforms(ctx, grd.entity);
+	albedoUniformSlot = 1;
 
 	renderGeometryHelper(
 		ctx,
 		grd,
+		MaterialSubmission::justAlbedo,
 		transparentCullingPipeline,
 		transparentNoCullingPipeline,
 		transparentLinesPipeline,
@@ -192,7 +197,7 @@ void OtPickingPass::setFragmentUniforms(OtSceneRendererContext& ctx, OtEntity en
 		static_cast<float>(nextID) / 255.0f
 	};
 
-	ctx.pass->setFragmentUniforms(1, &uniforms, sizeof(uniforms));
+	ctx.pass->setFragmentUniforms(0, &uniforms, sizeof(uniforms));
 	entityMap[nextID++] = entity;
 }
 

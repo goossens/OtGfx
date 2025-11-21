@@ -5,15 +5,11 @@
 //	For a copy, see <https://opensource.org/licenses/MIT>.
 
 #version 450 core
-#extension GL_GOOGLE_include_directive : require
-
-#define MATERIAL_UNIFORMS 0
-#include "material.glsl"
 
 layout(location=0) in vec2 vUv;
 layout(location=0) out vec4 fragColor;
 
-layout(std140, set=3, binding=1) uniform UBO {
+layout(std140, set=3, binding=0) uniform UBO {
 	float entityID;
 };
 

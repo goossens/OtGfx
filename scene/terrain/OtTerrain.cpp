@@ -72,7 +72,7 @@ bool OtTerrain::renderUI() {
 	changed |= OtUi::toggleButton("Wireframe", &wireframe);
 
 #ifdef OT_DEBUG
-	OtUi::readonlySizeT("Visible Meshes", meshes.size());
+	OtUi::readonlySizeT("Visible Tiles", meshes.size());
 #endif
 
 	return changed;

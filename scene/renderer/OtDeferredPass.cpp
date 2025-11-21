@@ -84,6 +84,7 @@ void OtDeferredPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeometr
 	renderGeometryHelper(
 		ctx,
 		grd,
+		MaterialSubmission::full,
 		cullingPipeline,
 		noCullingPipeline,
 		linesPipeline,
@@ -101,6 +102,7 @@ void OtDeferredPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRende
 	renderModelHelper(
 		ctx,
 		mrd,
+		MaterialSubmission::full,
 		cullingPipeline,
 		animatedPipeline);
 }
@@ -114,6 +116,7 @@ void OtDeferredPass::renderTerrain(OtSceneRendererContext& ctx, [[maybe_unused]]
 	renderTerrainHelper(
 		ctx,
 		terrain,
+		true,
 		terrainCullingPipeline,
 		terrainLinesPipeline);
 }

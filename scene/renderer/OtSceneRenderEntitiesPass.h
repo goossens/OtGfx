@@ -50,10 +50,17 @@ protected:
 	virtual bool isRenderingOpaque() { return false; }
 	virtual bool isRenderingTransparent() { return false; }
 
-	// utility function for subclasses
+	// helper functions
+	enum class MaterialSubmission {
+		none,
+		full,
+		justAlbedo
+	};
+
 	void renderGeometryHelper(
 		OtSceneRendererContext& ctx,
 		OtGeometryRenderData& grd,
+		MaterialSubmission materialSubmission,
 		OtRenderPipeline& cullingPipeline,
 		OtRenderPipeline& noCullingPipeline,
 		OtRenderPipeline& linesPipeline,
@@ -64,12 +71,14 @@ protected:
 	void renderModelHelper(
 		OtSceneRendererContext& ctx,
 		OtModelRenderData& mrd,
+		MaterialSubmission materialSubmission,
 		OtRenderPipeline& staticPipeline,
 		OtRenderPipeline& animatedPipeline);
 
 	void renderTerrainHelper(
 		OtSceneRendererContext& ctx,
 		OtTerrainComponent& terrain,
+		bool setFragmentUniforms,
 		OtRenderPipeline& cullingPipeline,
 		OtRenderPipeline& linesPipeline);
 
@@ -81,4 +90,13 @@ protected:
 
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material);
 	void setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity);
+
+	void setAlbedoUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, std::shared_ptr<OtMaterial> material);
+	void setAlbedoUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity);
+
+	size_t materialUniformSlot = 0;
+	size_t materialSamplerSlot = 0;
+
+	size_t albedoUniformSlot = 0;
+	size_t albedoSamplerSlot = 0;
 };

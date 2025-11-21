@@ -143,6 +143,7 @@ void OtHighlightPass::renderOpaqueGeometry(OtSceneRendererContext& ctx, OtGeomet
 	renderGeometryHelper(
 		ctx,
 		grd,
+		MaterialSubmission::none,
 		opaqueCullingPipeline,
 		opaqueNoCullingPipeline,
 		opaqueLinesPipeline,
@@ -160,6 +161,7 @@ void OtHighlightPass::renderOpaqueModel(OtSceneRendererContext& ctx, OtModelRend
 	renderModelHelper(
 		ctx,
 		mrd,
+		MaterialSubmission::none,
 		opaqueCullingPipeline,
 		animatedPipeline);
 }
@@ -173,6 +175,7 @@ void OtHighlightPass::renderTerrain(OtSceneRendererContext& ctx, [[maybe_unused]
 	renderTerrainHelper(
 		ctx,
 		terrain,
+		false,
 		terrainCullingPipeline,
 		terrainLinesPipeline);
 }
@@ -199,6 +202,7 @@ void OtHighlightPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtG
 	renderGeometryHelper(
 		ctx,
 		grd,
+		MaterialSubmission::justAlbedo,
 		transparentCullingPipeline,
 		transparentNoCullingPipeline,
 		transparentLinesPipeline,

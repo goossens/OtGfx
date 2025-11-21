@@ -38,6 +38,7 @@ void OtForwardPass::render(OtSceneRendererContext& ctx) {
 	ctx.pass = &pass;
 
 	// submit common fragment uniforms
+	// uniform slot 0 and sampler slots 0-4 are used for materials
 	ctx.setLightingUniforms(1, 5);
 	ctx.setShadowUniforms(2, 8);
 
@@ -57,6 +58,7 @@ void OtForwardPass::renderTransparentGeometry(OtSceneRendererContext& ctx, OtGeo
 	renderGeometryHelper(
 		ctx,
 		grd,
+		MaterialSubmission::full,
 		cullingPipeline,
 		noCullingPipeline,
 		linesPipeline,

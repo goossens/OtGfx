@@ -142,6 +142,7 @@ void OtSceneRenderEntitiesPass::renderEntity(OtSceneRendererContext& ctx, OtEnti
 void OtSceneRenderEntitiesPass::renderGeometryHelper(
 	OtSceneRendererContext& ctx,
 	OtGeometryRenderData& grd,
+	MaterialSubmission materialSubmission,
 	OtRenderPipeline& cullingPipeline,
 	OtRenderPipeline& noCullingPipeline,
 	OtRenderPipeline& linesPipeline,
@@ -199,8 +200,13 @@ void OtSceneRenderEntitiesPass::renderGeometryHelper(
 		ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
 	}
 
-	// set fragment uniforms
-	setMaterialUniforms(ctx, 0, 0, grd.entity);
+	// submit material uniforms (if required)
+	if (materialSubmission == MaterialSubmission::full) {
+		setMaterialUniforms(ctx, materialUniformSlot, materialSamplerSlot, grd.entity);
+
+	} else if (materialSubmission == MaterialSubmission::justAlbedo) {
+		setAlbedoUniforms(ctx, albedoUniformSlot,albedoSamplerSlot, grd.entity);
+	}
 
 	// render geometry
 	ctx.pass->render(grd.component->asset->getGeometry());
@@ -214,6 +220,7 @@ void OtSceneRenderEntitiesPass::renderGeometryHelper(
 void OtSceneRenderEntitiesPass::renderModelHelper(
 	OtSceneRendererContext& ctx,
 	OtModelRenderData& mrd,
+	MaterialSubmission materialSubmission,
 	OtRenderPipeline& staticPipeline,
 	OtRenderPipeline& animatedPipeline) {
 
@@ -256,8 +263,13 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 			ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
 		}
 
-		// set fragment uniforms
-		setMaterialUniforms(ctx, 0, 0, cmd.material);
+		// submit material uniforms (if required)
+		if (materialSubmission == MaterialSubmission::full) {
+			setMaterialUniforms(ctx, materialUniformSlot, materialSamplerSlot, cmd.material);
+
+		} else if (materialSubmission == MaterialSubmission::justAlbedo) {
+			setAlbedoUniforms(ctx, albedoUniformSlot, albedoSamplerSlot, cmd.material);
+		}
 
 		// render geometry
 		ctx.pass->render(cmd.mesh->getVertexBuffer(), cmd.mesh->getIndexBuffer());
@@ -272,6 +284,7 @@ void OtSceneRenderEntitiesPass::renderModelHelper(
 void OtSceneRenderEntitiesPass::renderTerrainHelper(
 	OtSceneRendererContext& ctx,
 	OtTerrainComponent& component,
+	bool setFragmentUniforms,
 	OtRenderPipeline& cullingPipeline,
 	OtRenderPipeline& linesPipeline) {
 
@@ -298,65 +311,67 @@ void OtSceneRenderEntitiesPass::renderTerrainHelper(
 	ctx.pass->bindVertexSampler(0, ctx.normalmapSampler, heights.normalmap);
 
 	// set fragment uniforms
-	struct FragmentUniforms {
-		glm::vec4 region1Color;
-		glm::vec4 region2Color;
-		glm::vec4 region3Color;
-		glm::vec4 region4Color;
+	if (setFragmentUniforms) {
+		struct FragmentUniforms {
+			glm::vec4 region1Color;
+			glm::vec4 region2Color;
+			glm::vec4 region3Color;
+			glm::vec4 region4Color;
 
-		float hScale;
-		float vScale;
-		float vOffset;
-		float heightMapSize;
+			float hScale;
+			float vScale;
+			float vOffset;
+			float heightMapSize;
 
-		float region1TextureSize;
-		float region2TextureSize;
-		float region3TextureSize;
-		float region4TextureSize;
+			float region1TextureSize;
+			float region2TextureSize;
+			float region3TextureSize;
+			float region4TextureSize;
 
-		float region1TextureScale;
-		float region2TextureScale;
-		float region3TextureScale;
-		float region4TextureScale;
+			float region1TextureScale;
+			float region2TextureScale;
+			float region3TextureScale;
+			float region4TextureScale;
 
-		float region1Transition;
-		float region2Transition;
-		float region3Transition;
+			float region1Transition;
+			float region2Transition;
+			float region3Transition;
 
-		float region1Overlap;
-		float region2Overlap;
-		float region3Overlap;
-	} fragmentUniforms {
-		glm::vec4(material.region1Color, static_cast<float>(material.region1Texture.isReady())),
-		glm::vec4(material.region2Color, static_cast<float>(material.region2Texture.isReady())),
-		glm::vec4(material.region3Color, static_cast<float>(material.region3Texture.isReady())),
-		glm::vec4(material.region4Color, static_cast<float>(material.region4Texture.isReady())),
+			float region1Overlap;
+			float region2Overlap;
+			float region3Overlap;
+		} fragmentUniforms {
+			glm::vec4(material.region1Color, static_cast<float>(material.region1Texture.isReady())),
+			glm::vec4(material.region2Color, static_cast<float>(material.region2Texture.isReady())),
+			glm::vec4(material.region3Color, static_cast<float>(material.region3Texture.isReady())),
+			glm::vec4(material.region4Color, static_cast<float>(material.region4Texture.isReady())),
 
-		terrain.hScale,
-		terrain.vScale,
-		terrain.vOffset,
-		static_cast<float>(heights.heightmapSize),
+			terrain.hScale,
+			terrain.vScale,
+			terrain.vOffset,
+			static_cast<float>(heights.heightmapSize),
 
-		static_cast<float>(material.region1Texture.isReady() ? material.region1Texture->getTexture().getWidth() : 1),
-		static_cast<float>(material.region2Texture.isReady() ? material.region2Texture->getTexture().getWidth() : 1),
-		static_cast<float>(material.region3Texture.isReady() ? material.region3Texture->getTexture().getWidth() : 1),
-		static_cast<float>(material.region4Texture.isReady() ? material.region4Texture->getTexture().getWidth() : 1),
+			static_cast<float>(material.region1Texture.isReady() ? material.region1Texture->getTexture().getWidth() : 1),
+			static_cast<float>(material.region2Texture.isReady() ? material.region2Texture->getTexture().getWidth() : 1),
+			static_cast<float>(material.region3Texture.isReady() ? material.region3Texture->getTexture().getWidth() : 1),
+			static_cast<float>(material.region4Texture.isReady() ? material.region4Texture->getTexture().getWidth() : 1),
 
-		material.region1TextureScale,
-		material.region2TextureScale,
-		material.region3TextureScale,
-		material.region4TextureScale,
+			material.region1TextureScale,
+			material.region2TextureScale,
+			material.region3TextureScale,
+			material.region4TextureScale,
 
-		material.region1Transition,
-		material.region2Transition,
-		material.region3Transition,
+			material.region1Transition,
+			material.region2Transition,
+			material.region3Transition,
 
-		material.region1Overlap,
-		material.region2Overlap,
-		material.region3Overlap
-	};
+			material.region1Overlap,
+			material.region2Overlap,
+			material.region3Overlap
+		};
 
-	ctx.pass->setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
+		ctx.pass->setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
+ 	}
 
 	// bind textures
 	ctx.bindFragmentSampler(0, ctx.region1Sampler, material.region1Texture);
@@ -446,8 +461,9 @@ void OtSceneRenderEntitiesPass::renderGrassHelper(
 		grass.colorVariation
 	};
 
-	ctx.pass->bindPipeline(pipeline);
 	ctx.pass->setVertexUniforms(0, &uniforms, sizeof(uniforms));
+
+	ctx.pass->bindPipeline(pipeline);
 	ctx.pass->setInstanceCount(grass.blades);
 	ctx.pass->render(grass.getVertexBuffer(), grass.getIndexBuffer());
 }
@@ -509,6 +525,51 @@ void OtSceneRenderEntitiesPass::setMaterialUniforms(
 
 void OtSceneRenderEntitiesPass::setMaterialUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity) {
 	setMaterialUniforms(
+		ctx,
+		uniformSlot,
+		samplerSlot,
+		ctx.scene->hasComponent<OtMaterialComponent>(entity)
+			? ctx.scene->getComponent<OtMaterialComponent>(entity).material
+			: std::make_shared<OtMaterial>());
+}
+
+
+//
+//	OtSceneRenderEntitiesPass::setAlbedoUniforms
+//
+
+void OtSceneRenderEntitiesPass::setAlbedoUniforms(
+	OtSceneRendererContext& ctx,
+	size_t uniformSlot,
+	size_t samplerSlot,
+	std::shared_ptr<OtMaterial> material) {
+
+	// set uniforms
+	struct Uniforms {
+		glm::vec4 albedoColor;
+		glm::vec2 textureOffset;
+		float textureScale;
+		uint32_t hasAlbedoTexture;
+	} uniforms {
+		material->albedo,
+		material->offset,
+		material->scale,
+		static_cast<uint32_t>(material->albedoTexture.isReady()),
+	};
+
+	ctx.pass->setFragmentUniforms(uniformSlot, &uniforms, sizeof(uniforms));
+
+	// set textures
+	ctx.bindFragmentSampler(samplerSlot, ctx.albedoSampler, material->albedoTexture);
+}
+
+
+//
+//	OtSceneRenderEntitiesPass::setAlbedoUniforms
+//
+
+void OtSceneRenderEntitiesPass::setAlbedoUniforms(OtSceneRendererContext& ctx, size_t uniformSlot, size_t samplerSlot, OtEntity entity) {
+	setAlbedoUniforms(
 		ctx,
 		uniformSlot,
 		samplerSlot,
