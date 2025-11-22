@@ -63,7 +63,7 @@ void main(void) {
 
 		if (type == textureShader) {
 			vec4 color = texture(tex, vUv);
-			color = texType == 1 ? vec4(color.r) :  vec4(color.rgb * color.a, color.a);
+			color = texType == 1 ? vec4(color.r) :	vec4(color.rgb * color.a, color.a);
 			fragColor = color * innerCol * scissor;
 
 		} else {
@@ -83,7 +83,7 @@ void main(void) {
 				// calculate color from texture
 				vec2 pt = (paintMat * vec3(vPosition, 1.0)).xy / extent;
 				vec4 color = texture(tex, pt);
-				color = texType == 1 ? vec4(color.r) :  vec4(color.rgb * color.a, color.a);
+				color = texType == 1 ? vec4(color.r) :	vec4(color.rgb * color.a, color.a);
 				fragColor = color * innerCol * scissor * strokeAlpha;
 			}
 		}

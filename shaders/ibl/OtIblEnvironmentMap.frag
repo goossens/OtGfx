@@ -53,7 +53,7 @@ vec3 prefilterEnvMap(vec3 R) {
 			float pdf = D_GGX(NoH, roughness) / 4.0 + 0.001;
 			// Solid angle of current sample -- bigger for less likely samples
 			float omegaS = 1.0 / (float(numSamples) * pdf);
-			// Solid angle  of pixel
+			// Solid angle of pixel
 			float omegaP = 4.0 * PI / (6.0 * size * size);
 			float mipLevel = roughness == 0.0 ? 0.0 : max(0.5 * log2(omegaS / omegaP), 0.0);
 			prefilteredColor += textureLod(inTexture, L, mipLevel).rgb * NoL;
@@ -66,7 +66,7 @@ vec3 prefilterEnvMap(vec3 R) {
 
 vec4 processSide(vec3 N) {
 	// Don't need to integrate for roughness == 0, since it's a perfect reflector
-	return (roughness == 0.0) ? texture(inTexture, N, 0) :  vec4(prefilterEnvMap(N), 1.0);
+	return (roughness == 0.0) ? texture(inTexture, N, 0) : vec4(prefilterEnvMap(N), 1.0);
 }
 
 void main() {

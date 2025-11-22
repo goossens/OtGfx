@@ -146,7 +146,7 @@ vec3 imageBasedLightingPBR(Material material, vec3 V, int envLevels, sampler2D b
 	vec3 kD = (vec3(1.0) - kS) * (1.0 - material.metallic);
 
 	// get diffuse part
-    vec3 diffuse = kD * texture(irradianceMap, material.normal).rgb * material.albedo;
+	vec3 diffuse = kD * texture(irradianceMap, material.normal).rgb * material.albedo;
 
 	// get specular part
 	vec3 R = reflect(-V, material.normal);

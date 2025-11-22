@@ -164,7 +164,7 @@ void OtImage::load(SDL_IOStream* src) {
 	};
 
 	callbacks.eof = [](void* user) {
-	    return static_cast<int>(SDL_GetIOStatus((SDL_IOStream*) user) == SDL_IO_STATUS_EOF);
+		return static_cast<int>(SDL_GetIOStatus((SDL_IOStream*) user) == SDL_IO_STATUS_EOF);
 	};
 
 	// read image

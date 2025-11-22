@@ -167,13 +167,13 @@ void OtSceneEditorCamera::handleKeyboardAndMouse() {
 		} else if (ImGui::IsKeyDown(ImGuiKey_Z) || ImGui::IsKeyDown(ImGuiKey_Minus) || ImGui::IsKeyDown(ImGuiKey_Keypad1)) {
 			fov -= maxZoomPerSecond * delta;
 
-		} else if (ImGui::IsKeyDown(ImGuiKey_C) || ImGui::IsKeyDown(ImGuiKey_Equal) ||  ImGui::IsKeyDown(ImGuiKey_Keypad3)) {
+		} else if (ImGui::IsKeyDown(ImGuiKey_C) || ImGui::IsKeyDown(ImGuiKey_Equal) || ImGui::IsKeyDown(ImGuiKey_Keypad3)) {
 			fov += maxZoomPerSecond * delta;
 		}
 	}
 
 	// ensure all properties are in range
- 	pitch = std::clamp(pitch, -89.9f, 89.9f);
+	pitch = std::clamp(pitch, -89.9f, 89.9f);
 
 	if (yaw < -360.0f) {
 		yaw += 360.0f;
@@ -182,7 +182,7 @@ void OtSceneEditorCamera::handleKeyboardAndMouse() {
 		yaw -= 360.0f;
 	}
 
- 	fov = std::clamp(fov, 20.0f, 160.0f);
+	fov = std::clamp(fov, 20.0f, 160.0f);
 }
 
 

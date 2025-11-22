@@ -371,7 +371,7 @@ void OtSceneRenderEntitiesPass::renderTerrainHelper(
 		};
 
 		ctx.pass->setFragmentUniforms(0, &fragmentUniforms, sizeof(fragmentUniforms));
- 	}
+	}
 
 	// bind textures
 	ctx.bindFragmentSampler(0, ctx.region1Sampler, material.region1Texture);

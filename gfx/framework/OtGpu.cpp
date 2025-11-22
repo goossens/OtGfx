@@ -24,10 +24,12 @@ void OtGpu::init(SDL_Window* win, int w, int h) {
 	width = w;
 	height = h;
 
+#if OT_DEBUG
 	// list GPU drivers
 	for (int i = 0; i < SDL_GetNumGPUDrivers(); i++) {
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "GPU Driver %d. %s", i + 1, SDL_GetGPUDriver(i));
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Available GPU Driver %d. %s", i + 1, SDL_GetGPUDriver(i));
 	}
+#endif
 
 	// create GPU device
 	SDL_PropertiesID props = SDL_CreateProperties();
@@ -40,10 +42,6 @@ void OtGpu::init(SDL_Window* win, int w, int h) {
 #if OT_DEBUG
 	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_DEBUGMODE_BOOLEAN, true);
 	SDL_SetLogPriorities(SDL_LOG_PRIORITY_INFO);
-#endif
-
-#if _WIN32
-	SDL_SetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_D3D12_ALLOW_FEWER_RESOURCE_SLOTS_BOOLEAN, true);
 #endif
 
 	device = SDL_CreateGPUDeviceWithProperties(props);
