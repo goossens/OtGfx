@@ -138,6 +138,10 @@ void OtGpu::setWindowSize(int w, int h) {
 //
 
 void OtGpu::startFrame() {
+	// reset pass statistics
+	computePasses = 0;
+	renderPasses = 1; // Dear ImGui uses 1
+
 	// acquire new command buffers
 	acquireCommandBuffers();
 

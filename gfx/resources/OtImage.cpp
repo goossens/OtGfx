@@ -101,13 +101,14 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 
 	} else {
 		// load image from file
-		SDL_IOStream* io = SDL_IOFromFile(address.c_str(), "r");
+		auto io = SDL_IOFromFile(address.c_str(), "r");
 
 		if (!io) {
 			OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
 		}
 
 		load(io);
+		SDL_CloseIO(io);
 	}
 
 	// validate sides are power of 2 (if required)
@@ -135,13 +136,14 @@ void OtImage::load(const std::string& address, bool powerof2, bool square) {
 
 void OtImage::load(void* data, size_t size) {
 	// create the image
-	SDL_IOStream* io = SDL_IOFromMem(data, size);
+	auto io = SDL_IOFromMem(data, size);
 
 	if (!io) {
 		OtLogFatal("Error in SDL_IOFromMem: {}", SDL_GetError());
 	}
 
 	load(io);
+	SDL_CloseIO(io);
 }
 
 

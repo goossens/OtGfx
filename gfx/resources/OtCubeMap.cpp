@@ -99,10 +99,13 @@ void OtCubeMap::assign(SDL_GPUTexture* newTexture) {
 	cubemap = std::shared_ptr<SDL_GPUTexture>(
 		newTexture,
 		[](SDL_GPUTexture* oldTexture) {
-			SDL_ReleaseGPUTexture(OtGpu::instance().device, oldTexture);
+			auto& gpu = OtGpu::instance();
+			SDL_ReleaseGPUTexture(gpu.device, oldTexture);
+			gpu.cubemaps--;
 		});
 
 	incrementVersion();
+	OtGpu::instance().cubemaps++;
 }
 
 //

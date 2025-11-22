@@ -17,6 +17,15 @@
 
 
 //
+//	OtRenderPass::OtRenderPass
+//
+
+OtRenderPass::OtRenderPass() {
+	OtGpu::instance().renderPasses++;
+}
+
+
+//
 //	OtRenderPass::~OtRenderPass
 //
 

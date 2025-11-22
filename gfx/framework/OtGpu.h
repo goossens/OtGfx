@@ -12,6 +12,8 @@
 //	Include files
 //
 
+#include <atomic>
+
 #include "SDL3/SDL.h"
 
 #include "OtSingleton.h"
@@ -50,7 +52,21 @@ public:
 	SDL_GPUTexture* whiteDummyTexture;
 	SDL_GPUTexture* dummyCubeMap;
 
-private:
+	// statistics
+	std::atomic<int> computePasses = 0;
+	std::atomic<int> computePipelines = 0;
+	std::atomic<int> renderPasses = 0;
+	std::atomic<int> renderPipelines = 0;
+	std::atomic<int> renderShaders = 0;
+	std::atomic<int> vertexBuffers = 0;
+	std::atomic<int> indexBuffers = 0;
+	std::atomic<int> frameBuffers = 0;
+	std::atomic<int> gBuffers = 0;
+	std::atomic<int> textures = 0;
+	std::atomic<int> samplers = 0;
+	std::atomic<int> cubemaps = 0;
+
+	private:
 	// support functions
 	SDL_GPUTexture* createDummyTexture(SDL_GPUCopyPass* pass, SDL_GPUTransferBuffer* buffer, SDL_Color pixel);
 	SDL_GPUTexture* createDummyCubeMap();

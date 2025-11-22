@@ -10,6 +10,25 @@
 //
 
 #include "OtGbuffer.h"
+#include "OtGpu.h"
+
+
+//
+//	OtGbuffer::OtGbuffer
+//
+
+OtGbuffer::OtGbuffer() {
+	OtGpu::instance().gBuffers++;
+}
+
+
+//
+//	OtGbuffer::~OtGbuffer
+//
+
+OtGbuffer::~OtGbuffer() {
+	OtGpu::instance().gBuffers--;
+}
 
 
 //

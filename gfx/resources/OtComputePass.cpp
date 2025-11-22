@@ -18,6 +18,15 @@
 
 
 //
+//	OtComputePass::OtComputePass
+//
+
+OtComputePass::OtComputePass() {
+	OtGpu::instance().computePasses++;
+}
+
+
+//
 //	OtComputePass::addInputSampler
 //
 

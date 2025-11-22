@@ -175,5 +175,19 @@ void OtFramework::renderProfiler() {
 	ImGui::Text("Back buffer width:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.width);
 	ImGui::Text("Back buffer height:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.height);
 	ImGui::Text("Anti-aliasing:"); ImGui::SameLine(labelWith); ImGui::Text("%d", antiAliasing);
+
+	ImGui::Separator();
+	ImGui::Text("Compute passes:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.computePasses.load());
+	ImGui::Text("Compute pipelines:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.computePipelines.load());
+	ImGui::Text("Render passes:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.renderPasses.load());
+	ImGui::Text("Render pipelines:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.renderPipelines.load());
+	ImGui::Text("Render shaders:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.renderShaders.load());
+	ImGui::Text("Vertex buffers:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.vertexBuffers.load());
+	ImGui::Text("Index buffers:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.indexBuffers.load());
+	ImGui::Text("Frame buffers:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.frameBuffers.load());
+	ImGui::Text("G-buffers:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.gBuffers.load());
+	ImGui::Text("Textures:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.textures.load());
+	ImGui::Text("Cubemaps:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.cubemaps.load());
+	ImGui::Text("Samplers:"); ImGui::SameLine(labelWith); ImGui::Text("%d", gpu.samplers.load());
 	ImGui::End();
 }

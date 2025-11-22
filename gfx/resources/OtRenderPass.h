@@ -36,7 +36,8 @@
 
 class OtRenderPass {
 public:
-	// destructor
+	// constructor/destructor
+	OtRenderPass();
 	~OtRenderPass();
 
 	// set clear state (must be called before "start")

@@ -30,6 +30,9 @@
 
 class OtComputePass {
 public:
+	// constructor
+	OtComputePass();
+
 	// add input samplers
 	void addInputSampler(OtSampler& sampler, OtTexture& texture);
 	void addInputSampler(OtSampler& sampler, OtCubeMap& cubemap);

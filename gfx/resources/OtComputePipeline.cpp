@@ -42,8 +42,12 @@ void OtComputePipeline::assign(SDL_GPUComputePipeline* newPipeline) {
 	pipeline = std::shared_ptr<SDL_GPUComputePipeline>(
 		newPipeline,
 		[](SDL_GPUComputePipeline* oldPipeline) {
-			SDL_ReleaseGPUComputePipeline(OtGpu::instance().device, oldPipeline);
+			auto& gpu = OtGpu::instance();
+			SDL_ReleaseGPUComputePipeline(gpu.device, oldPipeline);
+			gpu.computePipelines--;
 		});
+
+	OtGpu::instance().computePipelines++;
 }
 
 

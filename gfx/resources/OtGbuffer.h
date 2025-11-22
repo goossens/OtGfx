@@ -25,6 +25,10 @@
 
 class OtGbuffer : public OtRenderTarget {
 public:
+	// constructor/destructor
+	OtGbuffer();
+	~OtGbuffer();
+
 	// clear all resources
 	void clear();
 

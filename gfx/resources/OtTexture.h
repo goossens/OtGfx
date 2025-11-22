@@ -148,15 +148,7 @@ private:
 	std::shared_ptr<SDL_GPUTexture> texture;
 
 	// memory manage SDL resource
-	inline void assign(SDL_GPUTexture* newTexture) {
-		texture = std::shared_ptr<SDL_GPUTexture>(
-			newTexture,
-			[](SDL_GPUTexture* oldTexture) {
-				SDL_ReleaseGPUTexture(OtGpu::instance().device, oldTexture);
-			});
-
-		incrementVersion();
-	}
+	void assign(SDL_GPUTexture* newTexture);
 
 	// properties
 	int width = 1;

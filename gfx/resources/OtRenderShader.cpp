@@ -25,8 +25,8 @@ OtRenderShader::OtRenderShader(const uint32_t* code, size_t size, Stage stage) {
 	// initialize cache (if required)
 	if (!cacheInitialized) {
 		// we need to clear the cache when the framework exits
-		// waiting the cache is destructed doesn't work
-		// since the GPU context is no longer available
+		// waiting until the cache is destructed doesn't work
+		// since the GPU context is no longer available at that point
 		OtFrameworkAtExit::add([]() {
 			for (auto& [hash, shader]: shaders) {
 				SDL_ReleaseGPUShader(OtGpu::instance().device, shader);
@@ -65,6 +65,7 @@ OtRenderShader::OtRenderShader(const uint32_t* code, size_t size, Stage stage) {
 
 		// store shader in cache
 		shaders[hash] = shader;
+		OtGpu::instance().renderShaders++;
 
 		// cleanup
 		SDL_free(metadata);

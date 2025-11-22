@@ -255,3 +255,21 @@ void OtTexture::loadAsync() {
 	status = uv_async_send(asyncHandle);
 	UV_CHECK_ERROR("uv_async_send", status);
 }
+
+
+//
+//	OtTexture::assign
+//
+
+void OtTexture::assign(SDL_GPUTexture* newTexture) {
+		texture = std::shared_ptr<SDL_GPUTexture>(
+			newTexture,
+			[](SDL_GPUTexture* oldTexture) {
+				auto& gpu = OtGpu::instance();
+				SDL_ReleaseGPUTexture(gpu.device, oldTexture);
+				gpu.textures--;
+			});
+
+		OtGpu::instance().textures++;
+		incrementVersion();
+}

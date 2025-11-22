@@ -10,6 +10,30 @@
 //
 
 #include "OtFrameBuffer.h"
+#include "OtGpu.h"
+
+
+//
+//	OtFrameBuffer::OtFrameBuffer
+//
+
+OtFrameBuffer::OtFrameBuffer() {
+	OtGpu::instance().frameBuffers++;
+}
+
+OtFrameBuffer::OtFrameBuffer(OtTexture::Format colorTextureType, OtTexture::Format depthTextureType) {
+	OtGpu::instance().frameBuffers++;
+	initialize(colorTextureType, depthTextureType);
+}
+
+
+//
+//	OtFrameBuffer::~OtFrameBuffer
+//
+
+OtFrameBuffer::~OtFrameBuffer() {
+	OtGpu::instance().frameBuffers--;
+}
 
 
 //

@@ -38,8 +38,12 @@ void OtSampler::assign(SDL_GPUSampler* newSampler) {
 	sampler = std::shared_ptr<SDL_GPUSampler>(
 		newSampler,
 		[](SDL_GPUSampler* oldSampler) {
-			SDL_ReleaseGPUSampler(OtGpu::instance().device, oldSampler);
+			auto& gpu = OtGpu::instance();
+			SDL_ReleaseGPUSampler(gpu.device, oldSampler);
+			gpu.samplers--;
 		});
+
+	OtGpu::instance().samplers++;
 }
 
 

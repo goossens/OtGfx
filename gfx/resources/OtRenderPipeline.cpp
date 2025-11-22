@@ -222,8 +222,12 @@ void OtRenderPipeline::assign(SDL_GPUGraphicsPipeline* newPipeline) {
 	pipeline = std::shared_ptr<SDL_GPUGraphicsPipeline>(
 		newPipeline,
 		[](SDL_GPUGraphicsPipeline* oldPipeline) {
-			SDL_ReleaseGPUGraphicsPipeline(OtGpu::instance().device, oldPipeline);
+			auto& gpu = OtGpu::instance();
+			SDL_ReleaseGPUGraphicsPipeline(gpu.device, oldPipeline);
+			gpu.renderPipelines--;
 		});
+
+	OtGpu::instance().renderPipelines++;
 }
 
 //

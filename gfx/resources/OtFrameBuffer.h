@@ -29,12 +29,10 @@
 
 class OtFrameBuffer : OtRenderTarget {
 public:
-	// constructors
-	OtFrameBuffer() = default;
-
-	OtFrameBuffer(OtTexture::Format colorTextureType, OtTexture::Format depthTextureType=OtTexture::Format::none) {
-		initialize(colorTextureType, depthTextureType);
-	}
+	// constructors/destructor
+	OtFrameBuffer();
+	OtFrameBuffer(OtTexture::Format colorTextureType, OtTexture::Format depthTextureType=OtTexture::Format::none);
+	~OtFrameBuffer();
 
 	// initialize framebuffer
 	void initialize(OtTexture::Format c, OtTexture::Format d=OtTexture::Format::none);

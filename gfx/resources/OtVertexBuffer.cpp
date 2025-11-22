@@ -100,8 +100,12 @@ void OtVertexBuffer::assignVertexBuffer(SDL_GPUBuffer* newBuffer) {
 	vertexBuffer = std::shared_ptr<SDL_GPUBuffer>(
 		newBuffer,
 		[](SDL_GPUBuffer* oldBuffer) {
-			SDL_ReleaseGPUBuffer(OtGpu::instance().device, oldBuffer);
+			auto& gpu = OtGpu::instance();
+			SDL_ReleaseGPUBuffer(gpu.device, oldBuffer);
+			gpu.vertexBuffers--;
 		});
+
+	OtGpu::instance().vertexBuffers++;
 }
 
 
