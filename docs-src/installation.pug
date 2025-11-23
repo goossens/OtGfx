@@ -1,0 +1,27 @@
+include /manual.pug
+
++page("ObjectTalk Installation Guide")
+	+manual()
+		include common/header.pug
+
+		+manual-body()
+			+manual-toc()
+				include:markdown installation/toc.md
+
+			+manual-content()
+				+manual-chapter("overview", "Installation")
+					include:markdown installation/overview.md
+
+				+manual-chapter("macos", "Build and Install on MacOS")
+					include:markdown installation/macos.md
+
+				+manual-chapter("linux", "Build and Install on Linux")
+					include:markdown installation/linux.md
+
+				+manual-chapter("windows", "Build and Install on Windows")
+					include:markdown installation/windows.md
+
+				+manual-chapter("running", "Running ObjectTalk")
+					include:markdown installation/running.md
+
+		include common/footer.pug

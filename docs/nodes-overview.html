@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Nodes Overview</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/theme.css" />
+  </head>
+  <body id="page-top">
+    <div
+      class="container-fluid d-flex flex-column flex-grow-1 vh-100 overflow-hidden"
+    >
+      <nav
+        class="navbar navbar-expand px-0 pt-1 pb-0 flex-shrink-0 manual-header"
+      >
+        <a class="navbar-brand" href="index.html"
+          ><img src="img/icon.png" height="40" alt="" /><span class="ml-2"
+            >Documentation</span
+          ></a
+        ><button
+          class="navbar-toggler navbar-toggler-right"
+          data-toggle="collapse"
+          data-target="#navbarResponsive"
+          type="button"
+          data-toogle="collapse"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="General"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >General</a
+              >
+              <div class="dropdown-menu" aria-labelledby="General">
+                <a class="nav-link page-scroll" href="index.html"
+                  >Introduction</a
+                ><a class="nav-link page-scroll" href="architecture.html"
+                  >Architecture</a
+                ><a class="nav-link page-scroll" href="installation.html"
+                  >Installation</a
+                >
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="Language"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Language</a
+              >
+              <div class="dropdown-menu" aria-labelledby="Language">
+                <a class="nav-link page-scroll" href="tour.html">Tour</a
+                ><a class="nav-link page-scroll" href="guide.html">Guide</a
+                ><a class="nav-link page-scroll" href="language.html"
+                  >Language</a
+                ><a class="nav-link page-scroll" href="classes.html"
+                  >Core Classes</a
+                >
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="Modules"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Modules</a
+              >
+              <div class="dropdown-menu" aria-labelledby="Modules">
+                <a class="nav-link page-scroll" href="http.html">HTTP</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="Nodes"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Nodes</a
+              >
+              <div class="dropdown-menu" aria-labelledby="Nodes">
+                <a class="nav-link page-scroll" href="nodes-overview.html"
+                  >Overview</a
+                ><a class="nav-link page-scroll" href="nodes-reference.html"
+                  >Reference</a
+                >
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="Scenes"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Scenes</a
+              >
+              <div class="dropdown-menu" aria-labelledby="Scenes">
+                <a class="nav-link page-scroll" href="scenes-overview.html"
+                  >Overview</a
+                ><a class="nav-link page-scroll" href="scenes-reference.html"
+                  >Reference</a
+                >
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link page-scroll" href="ide.html">IDE</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="row flex-grow-1 overflow-hidden vh-100">
+        <div class="col-2 mh-100 overflow-auto py-2 manual-toc">
+          <p><strong>Overview</strong></p>
+          <ul>
+            <li>
+              <a class="page-scroll" href="#introduction">Introduction</a>
+            </li>
+            <li>
+              <a class="page-scroll" href="#node-anatomy">Node Anatomy</a>
+            </li>
+            <li>
+              <a class="page-scroll" href="#node-categories">Node Categories</a>
+            </li>
+            <li><a class="page-scroll" href="#pin-types">Pin Type</a></li>
+            <li>
+              <a class="page-scroll" href="#data-flows">Dat Flows Type</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col mh-100 overflow-auto py-2 manual-content">
+          <div id="overview">
+            <h1 class="pb-2">Nodes Overview</h1>
+            <p>
+              Node-based programming is a visual approach to programming that
+              uses interconnected nodes to represent different actions and data
+              flows. These nodes are essentially &quot;blocks&quot; of code that
+              perform specific tasks and they are linked together to create
+              <a href="https://en.wikipedia.org/wiki/Directed_acyclic_graph"
+                >Directed Acyclic Graph (DAG)</a
+              >, where data flows from one node to another.
+            </p>
+            <p><img src="img/nodes.png#center" alt="Nodes" /></p>
+            <p>
+              A node represents a small function that transforms inputs into
+              outputs, optionally using additional parameters. In ObjectTalk,
+              nodes are visually represented by rounded rectangles displaying a
+              title at the top, inputs displayed on the left and outputs on the
+              rights. Inputs and outputs are referred to as pins that can be
+              connected and can carry only one datatype.
+            </p>
+            <p>
+              Each node really feels like an object instance and drawing
+              connections between them is akin to visual programming. Today, in
+              ObjectTalk, the IDE has an node editor that allows you to setup
+              nodes and connect them into a graph. These graphs are
+              automatically reevaluated when values change or connections are
+              made/removed. The examples folder contains image processing chains
+              and nodes are used in the scene examples to process images or
+              create geometry. ObjectTalk already has over 90 nodes already and
+              many will follow depending on my needs.
+            </p>
+            <p>
+              Users can draw connections between nodes (called links) and the
+              editor ensures that output and input nodes have compatible data
+              types, that inputs have a maximum of one connection and that the
+              created graph does not include recursion (i.e stays acyclic). As
+              links are created/moved/deleted or values altered, the editor
+              automatically (re-)evaluates the graphs given the user a realtime
+              programming experience.
+            </p>
+          </div>
+          <div id="node-anatomy">
+            <h1 class="pb-2">Node Anatomy</h1>
+            <p><img src="img/node-anatomy.png#right" alt="screenshot" /></p>
+            <p>
+              A node is depicted as a rounded rectangle with a title bar at the
+              top, optional inputs on the left, optional outputs on the right
+              and optional parameters in the middle of the rectangle.
+            </p>
+            <p><strong>Title Bar</strong></p>
+            <p>
+              At the top of the node is a title bar which by default contains
+              the name of the node. By double clicking on the title, users can
+              name a node anything they want to better express its function in a
+              graph. The background of the title bar is color coded to represent
+              the category of the node (see Node Categories below).
+            </p>
+            <p><strong>Input Pins</strong></p>
+            <p>
+              Optional inputs to a node are represented on the left side of that
+              node by what's called pins. Each pin represents an input with a
+              specified type that is color coded (see Pin Types below). Input
+              pins can only receive data from one output pin. and the pin data
+              types have to match (which is enforced by the IDE).
+            </p>
+            <p>
+              If an input pin is not connected and the data types allows easy
+              specification by the user, a field will be visible to the right of
+              the pin's name to allow the user to specify a static value.
+            </p>
+            <p><strong>Output Pins</strong></p>
+            <p>
+              Optional output from a node are represented on the right side of
+              the node by pins. Each pin represents an output with a specified
+              type that is color coded (see pin types below). Output pins can be
+              connected to multiple input pins as long as the data types match
+              (also enforced by th IDE).
+            </p>
+            <p><strong>Node Parameters</strong></p>
+            <p>
+              Some nodes also might have additional parameters or visualizations
+              to help the node perform its function. The node parameters are
+              rendered in the middle of the node.
+            </p>
+          </div>
+          <div id="node-categories">
+            <h1 class="pb-2">Node Categories</h1>
+            <p>
+              Nodes are grouped in categories that make it easier to find them
+              and recognize them in a graph. Each category has a unique color as
+              shown on the right below.
+            </p>
+            <p><img src="img/node-categories.png#right" alt="screenshot" /></p>
+            <ul>
+              <li>
+                <strong>Input Nodes</strong> - These nodes enable users to input
+                values or select assets (e.g. images, textures, geometries). If
+                a nodes graph is used in another object (e.g. a 3D scene), input
+                fields enable users to interact with the graph's functionality
+                without having the understand the full logic. This in essence
+                makes a nodes graph a macro or sub-function somewhere else.
+              </li>
+              <li>
+                <strong>Field Nodes</strong> - These nodes provides values in
+                the context of a graph and are only useful if there is a node
+                upstream that operates on multiple values. See section below on
+                variable data flows.
+              </li>
+              <li>
+                <strong>Math Nodes</strong> - These nodes perform mathematical
+                operations on primitive (integer, real) and composite (vector)
+                values.
+              </li>
+              <li>
+                <strong>Probe Nodes</strong> - These nodes provide debugging
+                support by visualizing various data types.
+              </li>
+              <li>
+                <strong>Save Nodes</strong> - These nodes enable the user to
+                save various data types to specified files.
+              </li>
+              <li>
+                <strong>Virtualize Nodes</strong> - These nodes save data to the
+                internal virtual (memory-based) file system. This allows assets
+                to be created or transformed dynamically with nodes and then be
+                used in for instance 3D scenes.
+              </li>
+              <li>
+                <strong>Image Nodes</strong> - These nodes create, process,
+                filter or transform images. In ObjectTalk, images are pictures
+                that live on the CPU.
+              </li>
+              <li>
+                <strong>Texture Nodes</strong> - These nodes create, process,
+                filter or transform textures. In ObjectTalk, textures are
+                pictures that live on the GPU. In general, texture nodes are
+                faster than image nodes as all processing is GPU accelerated.
+                Nodes are available to convert between images and textures.
+              </li>
+              <li>
+                <strong>Shape Nodes</strong> - These nodes generate, process or
+                convert 2D vector shapes that are created with one or more
+                paths.
+              </li>
+              <li>
+                <strong>Geometry Nodes</strong> - These nodes generate,
+                manipulate and convert geometries which consist of one or more
+                3D meshes. In ObjectTalk, a geometry is a 3D object made up of
+                meshes which are a collection of interconnected triangles
+                (faces). These triangles are formed by connecting vertices
+                (points) with straight edges. The mesh defines the surface of
+                the 3D object, but not its interior volume.
+              </li>
+              <li>
+                <strong>Manifold Nodes</strong> - These nodes operate on
+                manifolds. In ObjectTalk, manifolds are specializations of
+                geometries. A manifold mesh is watertight and contains no holes
+                or missing faces that would cause leaks into the interior of the
+                shape's volume. For a mesh to be manifold, every edge must have
+                exactly two adjacent faces. Geometries do not have this
+                constraint. Manifolds are often used in CAD applications to
+                create 3D models through Constructive Solid Geometry. You can
+                combined or subtract solid shapes, transform them, extrude them
+                from 2D shapes or slice 3D models back into 2D shapes.
+              </li>
+              <li>
+                <strong>Map Nodes</strong> - These nodes work on geospatial data
+                (either real or fictitious).
+              </li>
+            </ul>
+          </div>
+          <div id="pin-types">
+            <h1 class="pb-2">Pin Types</h1>
+            <p>
+              The input and output pins of a node can only carry one specific
+              data type. Each of these types is color coded and the IDE ensures
+              links are only created using compatible types. Below are all the
+              data types used by pins:
+            </p>
+            <p><img src="img/pin-types.png#right" alt="screenshot" /></p>
+            <ul>
+              <li>
+                <strong>Boolean Pins</strong> - Booleans can only hold two
+                values: true and false.
+              </li>
+              <li>
+                <strong>Integer Pins</strong> - Integers represent negative and
+                positive whole numbers.
+              </li>
+              <li>
+                <strong>Float Pins</strong> - Floats are double-precision
+                floating point numbers.
+              </li>
+              <li>
+                <strong>String Pins</strong> - Strings are sequences of UTF-8
+                encoded characters.
+              </li>
+              <li>
+                <strong>VectorX Pins</strong> - Vectors (2D, 3D or 4D) represent
+                a quantity with both magnitude and direction expressed as
+                coordinates along the dimensional axis.
+              </li>
+              <li>
+                <strong>Color Pins</strong> - Colors are represented by their
+                RGBA values.
+              </li>
+              <li>
+                <strong>Font Pins</strong> - Fonts are a set of printed letters,
+                numbers, and other symbols of the same style.
+              </li>
+              <li>
+                <strong>Image Pins</strong> - Images are a visual representation
+                of something (a picture) that lives on the CPU.
+              </li>
+              <li>
+                <strong>Texture Pins</strong> - Textures are a visual
+                representation of something (a picture) that lives on the GPU.
+              </li>
+              <li>
+                <strong>Shape Pins</strong> - Shapes define the outline or shape
+                of an object using one or more paths.
+              </li>
+              <li>
+                <strong>Geometry Pins</strong> - Geometries are three
+                dimensional objects consisting of triangular faces that connect
+                vertices.
+              </li>
+              <li>
+                <strong>Manifold Pins</strong> - Manifolds are specializations
+                of geometries. A manifold mesh is watertight and contains no
+                holes or missing faces that would cause leaks into the interior
+                of the shape's volume. For a mesh to be manifold, every edge
+                must have exactly two adjacent faces. Geometries do not have
+                this constraint.
+              </li>
+              <li>
+                <strong>Map Pins</strong> - Maps describe geospatial geometries
+                (either real or fictitious) including properties of the faces
+                (e.g. biome type).
+              </li>
+              <li>
+                <strong>Instances Pins</strong> -Instances describe the
+                transforms applied to a numbers of 3D geometry instances.
+              </li>
+            </ul>
+          </div>
+          <div id="data-flows">
+            <h1 class="pb-2">Data Flows</h1>
+            <p>
+              In ObjectTalk, nodes can support different data flows. Most nodes
+              process &quot;fixed&quot; flows that act as simple functions
+              taking the provided inputs (with optional node parameters), apply
+              a one time algorithm and produce outputs.
+            </p>
+            <p>
+              Some nodes (e.g. Instances on Faces) run the algorithm on each
+              element of the input (e.g. faces in a geometry). Those nodes
+              create a context and evaluate each input once per element. If a
+              downstream input node is a &quot;varying&quot; node, the context
+              is accessed and the correct value provided. This allows processing
+              of composite data (e.g. geometries) by evaluating each element
+              (e.g. vertex or face).
+            </p>
+            <p>
+              Some nodes are chameleons (e.g. math nodes) and they can operate
+              on &quot;fixed&quot; and &quot;varying&quot; flows. The nodes are
+              considered &quot;flexible&quot;. The node reference documentation
+              highlights whether a node is considered &quot;fixed&quot;,
+              &quot;varying&quot; or &quot;flexible&quot;.
+            </p>
+            <p>
+              Input and output pins visualize their mode by drawing a circle in
+              &quot;fixed&quot; mode and a diamond in &quot;varying&quot; mode .
+              Link are drawn with a solid line for &quot;fixed&quot; connections
+              and with dashed lines for &quot;varying&quot; connections.
+            </p>
+            <p><img src="img/data-flows.png#center" alt="screenshot" /></p>
+          </div>
+        </div>
+      </div>
+      <div class="row flex-shrink-0 py-1 manual-footer" id="copyright">
+        <p class="mx-auto py-0 my-0 small">
+          Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+        </p>
+      </div>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.easing.min.js"></script>
+    <script src="js/theme.js"></script>
+  </body>
+</html>

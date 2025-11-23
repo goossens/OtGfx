@@ -1,0 +1,42 @@
+include /manual.pug
+
++page("ObjectTalk Guide")
+	+manual()
+		include common/header.pug
+
+		+manual-body()
+			+manual-toc()
+				include:markdown guide/toc.md
+
+			+manual-content()
+				+manual-chapter("overview",  " ObjectTalk Language Guide")
+					include:markdown guide/overview.md
+
+				+manual-chapter("basics", "The Basics")
+					include:markdown guide/basics.md
+
+				+manual-chapter("collections", "Collections")
+					include:markdown guide/collections.md
+
+				+manual-chapter("operators", "Operators")
+					include:markdown guide/operators.md
+
+				+manual-chapter("flow", "Control Flow")
+					include:markdown guide/flow.md
+
+				+manual-chapter("scope", "Scope")
+					include:markdown guide/scope.md
+
+				+manual-chapter("modules", "Modules")
+					include:markdown guide/modules.md
+
+				+manual-chapter("classes", "Classes")
+					include:markdown guide/classes.md
+
+				+manual-chapter("functions", "Functions")
+					include:markdown guide/functions.md
+
+				+manual-chapter("closures", "Closures")
+					include:markdown guide/closures.md
+
+		include common/footer.pug

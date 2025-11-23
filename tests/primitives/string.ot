@@ -1,0 +1,113 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+// String class test
+
+assert("\u20AC" == "€");
+assert("\u20AC".json() == "€".json());
+
+assert("\u20AC".len() == 1);
+assert("\u20AC\u20AC \u20AC".len() == 4);
+
+assert("\u20AC\u20AC \u20AC".left(1) == "€");
+assert("\u20AC\u20AC \u20AC".right(2) == " €");
+assert("\u20AC\u20AC \u20AC".mid(1, 2) == "€ ");
+
+assert("false".boolean() == false);
+assert("x".boolean() == false);
+assert("true".boolean() == true);
+assert("10".integer() == 10);
+assert("-10".integer() == -10);
+assert("10.1".real() - 10.1 < 0.000001);
+assert("-10.1".real() + 10.1 < 0.000001);
+
+assert("Hello" == "Hello");
+assert("Hello" != "World");
+assert("Hello" < "World");
+assert("Hello" <= "World");
+assert("Hello" <= "Hello");
+
+assert("World" > "Hello");
+assert("World" >= "Hello");
+assert("World" >= "World");
+
+assert("Hello".casecmp("Hello") == 0);
+assert("Hello".casecmp("hELLO") == 0);
+assert("Hello".casecmp("World") < 0);
+assert("Hello".casecmp("world") < 0);
+assert("World".casecmp("Hello") > 0);
+assert("world".casecmp("Hello") > 0);
+assert("World".casecmp("hello") > 0);
+
+assert("ä".casecmp("Ä") == 0);
+assert("\u00C4".casecmp("\u00E4") == 0);
+assert("ä ".casecmp("\u00E4 ") == 0);
+
+assert("Hello World"[1] == "e");
+
+var result = "";
+
+for ch in "Hello World" {
+	result = ch + result;
+}
+
+assert(result == "dlroW olleH");
+
+var count = 0;
+
+for ch in "€\u20AC€\u20AC€\u20AC€" {
+	assert(ch == "€");
+	count++;
+}
+
+assert(count == 7);
+
+assert(("Hello" + " " + "World") == "Hello World");
+
+assert("Hello".len() == 5);
+
+assert("Hello".left(4) == "Hell");
+assert("Hello".right(2) == "lo");
+assert("Hello".mid(2, 2) == "ll");
+
+assert("Hello World".find("World") == 6);
+assert("Hello World".startsWith("Hello") == true);
+assert("Hello World".startsWith("World") == false);
+assert("Hello World".contains("World") == true);
+assert("Hello World".contains("world") == false);
+
+assert(("Wor" in "Hello World") == true);
+assert(("Not" in "Hello World") == false);
+assert(("Wor" not in "Hello World") == false);
+assert(("Not" not in "Hello World") == true);
+
+assert("   Hello World	 ".trim() == "Hello World");
+assert("   Hello World	 ".ltrim() == "Hello World	 ");
+assert("   Hello World	 ".rtrim() == "   Hello World");
+assert("   Hello \t\n	World	".compress() == "Hello World");
+
+assert("Hello World".lower() == "hello world");
+assert("Hello World".upper() == "HELLO WORLD");
+
+assert("1. 2. 3".split(". ") == ["1", "2", "3"]);
+assert(". 2. 3. ".split(". ") == ["", "2", "3", ""]);
+
+assert("a %% b".format() == "a % b");
+assert("a %i b".format(1) == "a 1 b");
+assert("a %i b".format(-1) == "a -1 b");
+assert("a %+i b".format(1) == "a +1 b");
+assert("a %3i b".format(1) == "a   1 b");
+assert("a %-3i b".format(1) == "a 1   b");
+assert("a %03i b".format(1) == "a 001 b");
+assert("a %0*i b".format(3, 1) == "a 001 b");
+assert("a %o b".format(10) == "a 012 b");
+assert("a %x b".format(10) == "a 0xa b");
+assert("a %f b".format(1.1) == "a 1.100000 b");
+assert("a %.1f b".format(1.1) == "a 1.1 b");
+assert("a %e b".format(1.1) == "a 1.100000e+00 b");
+assert("a %.1e b".format(1.1) == "a 1.1e+00 b");
+assert("a %c b".format(99) == "a c b");
+assert("a %s b".format("test") == "a test b");

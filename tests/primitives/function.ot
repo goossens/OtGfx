@@ -1,0 +1,34 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+// Function class test
+
+function lower(s) {
+	return s.lower();
+}
+
+var upper = function(s) {
+	return s.upper();
+};
+
+function test(s, f) {
+	return f(s);
+}
+
+assert(test("Hello", lower) == "hello");
+assert(test("Hello", upper) == "HELLO");
+
+var trim = function(s) {
+	return s.trim();
+};
+
+assert(trim(" test	") == "test");
+
+var global = 1;
+
+assert(test(true, function(bool) {
+	return bool == true && global == 1;
+}) == true);

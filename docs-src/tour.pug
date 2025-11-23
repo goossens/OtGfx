@@ -1,0 +1,21 @@
+include /manual.pug
+
++page("ObjectTalk Tour")
+	+manual()
+		include common/header.pug
+
+		+manual-body()
+			+manual-toc()
+				include:markdown tour/toc.md
+
+			+manual-content()
+				+manual-chapter("about", "About ObjectTalk")
+					include:markdown tour/about.md
+
+				+manual-chapter("history", "Language History")
+					include:markdown tour/history.md
+
+				+manual-chapter("overview", "Language Overview")
+					include:markdown tour/overview.md
+
+		include common/footer.pug

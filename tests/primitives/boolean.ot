@@ -1,0 +1,34 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+// Boolean class test
+
+assert(true);
+assert(!false);
+assert(true != false);
+assert(true == !false);
+assert((true && true) == true);
+assert((true && false) == false);
+assert((false && false) == false);
+assert((true || true) == true);
+assert((true || false) == true);
+assert((false || false) == false);
+
+assert(true == 1);
+assert(true == 4);
+assert(true == -4);
+assert(false == 0);
+assert(false == "");
+assert(false == "x");
+assert(true == "true");
+
+assert(true.integer() == 1);
+assert(true.real() == 1.0);
+assert(true.string() == "true");
+
+assert(false.integer() == 0);
+assert(false.real() == 0.0);
+assert(false.string() == "false");

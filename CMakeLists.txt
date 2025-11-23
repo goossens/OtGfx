@@ -1,11 +1,11 @@
-#	TextEditor - A syntax highlighting text editor for ImGui
-#	Copyright (c) 2024-2025 Johan A. Goossens. All rights reserved.
+#	ObjectTalk Scripting Language
+#	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
 #
 #	This work is licensed under the terms of the MIT license.
 #	For a copy, see <https://opensource.org/licenses/MIT>.
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-project(OtGfx VERSION 1.0 DESCRIPTION "ObjectTalk Graphics Framework" LANGUAGES C CXX)
+project(ObjectTalk VERSION 1.0 DESCRIPTION "ObjectTalk - The Completely Object-Oriented Scripting Language" LANGUAGES C CXX)
 
 if(APPLE)
 	set(OT_INCLUDE_UI ON)
@@ -43,8 +43,18 @@ if(OT_INCLUDE_UI)
 	add_subdirectory(ide)
 endif()
 
+add_subdirectory(examples)
+
+if(CMAKE_GENERATOR STREQUAL "Xcode")
+	set(OT_RESOURCES resources/icon.icns)
+endif()
+
 add_executable(ot main.cpp)
 target_link_libraries(ot language network argparse)
+
+target_compile_options(ot PRIVATE
+	$<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang,GNU>:-Werror -Wall -Wpedantic -Wextra>
+	$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/W4 /WX>)
 
 if(OT_INCLUDE_UI)
 	target_compile_definitions(ot PRIVATE OT_INCLUDE_UI)
@@ -57,18 +67,12 @@ if(OT_INCLUDE_UI)
 	endif()
 endif()
 
-target_compile_options(ot PRIVATE
-	$<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang,GNU>:-Werror -Wall -Wpedantic -Wextra>
-	$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/W4 /WX>)
-
-if(APPLE)
-	target_link_options(ot PRIVATE LINKER:-no_warn_duplicate_libraries)
+if(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+	add_custom_command(TARGET ot POST_BUILD COMMAND strip -x $<TARGET_FILE:ot>)
 endif()
 
-add_custom_command(TARGET ot POST_BUILD COMMAND $<$<CONFIG:release>:${CMAKE_STRIP}> ARGS ${CMAKE_BINARY_DIR}/Release/ot)
-
 if(CMAKE_GENERATOR STREQUAL Xcode)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "14.0")
 	set_target_properties(ot PROPERTIES OUTPUT_NAME "ObjectTalk")
 	set_target_properties(ot PROPERTIES MACOSX_BUNDLE ON)
 	set_target_properties(ot PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/resources/info.plist)
@@ -81,3 +85,9 @@ endif()
 if(MSVC)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ot)
 endif()
+
+enable_testing()
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+add_subdirectory(tests)
+
+set_target_properties(examples tests PROPERTIES FOLDER other)

@@ -1,0 +1,85 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+// Integer class test
+
+assert(0.boolean() == false);
+assert(1.boolean() == true);
+assert(-1.boolean() == true);
+assert(10.boolean() == true);
+assert(10.real() == 10.0);
+assert(10.string() == "10");
+
+assert(0 != 1);
+assert(1 == 1);
+assert(0 < 1);
+assert(0 <= 1);
+assert(1 <= 1);
+assert(2 > 1);
+assert(2 >= 1);
+assert(1 >= 1);
+assert(-1 == -1);
+assert(- -1 == 1);
+
+assert(0b10001 == 17);
+assert(0B10001 == 17);
+assert(0o21 == 17);
+assert(0O21 == 17);
+assert(0x11 == 17);
+assert(0X11 == 17);
+assert(0x1a == 26);
+assert(0x1A == 26);
+assert(021 == 17);
+
+assert(-0b10001 == -17);
+assert(-0o21 == -17);
+assert(-0x1a == -26);
+assert(-021 == -17);
+
+assert((1 + 2) == 3);
+assert((-1 + 2) == 1);
+assert((3 - 1) == 2);
+assert((-3 - 1) == -4);
+assert((3 * 2) == 6);
+assert((-3 * 2) == -6);
+assert((-3 * -2) == 6);
+assert((8 / 2) == 4);
+assert((-8 / 2) == -4);
+assert((-8 / -2) == 4);
+assert((11 / 2) == 5);
+assert((8 % 3) == 2);
+assert((-8 % 3) == -2);
+assert((2 << 4) == 32);
+assert((64 >> 2) == 16);
+assert((12 & 4) == 4);
+assert((8 | 4) == 12);
+assert((12 ^ 4) == 8);
+assert(~4 == -5);
+
+assert(1.abs() == 1);
+assert(-1.abs() == 1);
+assert(-11.sign() == -1);
+assert(0.sign() == 0);
+assert(11.sign() == 1);
+assert(3.real() > 2.9);
+
+assert(3.min(2) == 2);
+assert(3.min(4) == 3);
+assert(-3.min(-2) == -3);
+assert(-3.min(-4) == -4);
+
+assert(3.max(2) == 3);
+assert(3.max(4) == 4);
+assert(-3.max(-2) == -2);
+assert(-3.max(-4) == -3);
+
+assert(5.clamp(1, 9) == 5);
+assert(5.clamp(1, 4) == 4);
+assert(5.clamp(7, 9) == 7);
+
+assert(-5.clamp(-9, -1) == -5);
+assert(-5.clamp(-9, -7) == -7);
+assert(-5.clamp(-4, -1) == -4);

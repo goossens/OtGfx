@@ -1,0 +1,59 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+//	Test script for ObjectTalk objects
+
+var a = null;
+var b = Object();
+var c = 1;
+
+assert(a == b);
+assert(a != c);
+
+a = -1;
+a.flag = true;
+assert(a.flag == true);
+assert(a.flag != false);
+
+assert(a.abs() == 1);
+
+Integer.flag2 = false;
+assert(a.flag2 == false);
+
+a = "test";
+b = "test";
+
+a.flag = true;
+
+a.dosomething = function(this) {
+	return "I did it";
+};
+
+assert(a.flag == true);
+assert(a.dosomething() == "I did it");
+
+assert(String.has("flag2") == false);
+assert(String.has("dosomething") == false);
+
+String.flag2 = true;
+
+String.dosomething = function(this) {
+	return "I did it";
+};
+
+assert(a.flag2 == true);
+assert(b.flag2 == true);
+assert(a.dosomething() == "I did it");
+assert(b.dosomething() == "I did it");
+
+assert(String.has("flag2") == true);
+assert(String.has("dosomething") == true);
+
+String.unset("flag2");
+String.unset("dosomething");
+
+assert(String.has("flag2") == false);
+assert(String.has("dosomething") == false);

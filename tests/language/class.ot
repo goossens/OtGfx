@@ -1,0 +1,80 @@
+//	ObjectTalk Scripting Language
+//	Copyright (c) 1993-2025 Johan A. Goossens. All rights reserved.
+//
+//	This work is licensed under the terms of the MIT license.
+//	For a copy, see <https://opensource.org/licenses/MIT>.
+
+//	Test script for ObjectTalk classes
+
+assert(1.getClass().getName() == "Integer");
+assert(1.getClass().getClass().getName() == "Class");
+
+var theClass = 1.getClass();
+var path = theClass.getName();
+
+while theClass.hasParent() {
+	theClass = theClass.getParent();
+	path += "->" + theClass.getName();
+}
+
+assert(path == "Integer->Primitive->Object");
+
+class MyObject : Object {
+	function pedigree(this) {
+		var theClass = this.getClass();
+		var path = theClass.getName();
+
+		while theClass.hasParent() {
+			theClass = theClass.getParent();
+			path += "->" + theClass.getName();
+		}
+
+		return path;
+	}
+
+	function useless(this, useless) {
+		return this.pedigree();
+	}
+
+	function set(this, value) {
+		this.value = value;
+	}
+}
+
+var test = MyObject();
+assert(test.pedigree() == "MyObject->Object");
+assert(test.useless("useless") == "MyObject->Object");
+
+var pedigree = test.pedigree;
+assert(pedigree.getClass().getName() == "BoundFunction");
+assert(pedigree() == "MyObject->Object");
+
+test.set(12);
+assert(test.value == 12);
+
+var set = test.set;
+set(14);
+assert(test.value == 14);
+
+test.value = 16;
+assert(test.value == 16);
+
+class ClassMember : Object {
+	var constant = 13;
+
+	function test(this) {
+		return this.constant;
+	}
+
+	function cb(this, callback) {
+		return callback(this.constant);
+	}
+}
+
+test = ClassMember();
+assert(test.constant == 13);
+assert(test.test() == 13);
+
+assert(test.cb(function(value) {
+	return value + 1;
+}) == 14);
